@@ -26,10 +26,12 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
-        <Navbar />
-        {children}
+          <Navbar />
+          <main className="relative min-h-screen bg-zinc-50 dark:bg-zinc-950 overflow-hidden">
+            {children}
+          </main>
         </ThemeProvider>
-        </body>
+      </body>
     </html>
   );
 }
