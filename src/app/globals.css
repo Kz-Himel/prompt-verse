@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "@heroui/styles"; 
 
+<<<<<<< HEAD
 /* লাইট মোডের জন্য গ্লোবাল ভেরিয়েবল ও ব্যাকগ্রাউন্ড */
 :root {
   --background: #f8fafc;
@@ -35,4 +36,36 @@ body {
 
 .theme-text-muted {
   color: var(--text-muted);
+=======
+@import "tailwindcss";
+
+:root {
+  --primary: #6d28d9;
+  --bg: #ffffff;
+  --card: #f8fafc;
+  --text: #111827;
+  --border: #e5e7eb;
+}
+
+[data-theme="dark"] {
+  --primary: #8b5cf6;
+  --bg: #09090b;
+  --card: #18181b;
+  --text: #f4f4f5;
+  --border: #27272a;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.glass {
+  backdrop-filter: blur(20px);
+  background: rgba(255,255,255,.7);
+}
+
+[data-theme="dark"] .glass {
+  background: rgba(24,24,27,.7);
+>>>>>>> 5aa5e910203ede1b983ee9c5870f283a4263306e
 }
