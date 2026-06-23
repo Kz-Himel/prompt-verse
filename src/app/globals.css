@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@import "@heroui/styles"; 
+
+/* লাইট মোডের জন্য গ্লোবাল ভেরিয়েবল ও ব্যাকগ্রাউন্ড */
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card-bg: #ffffff;
+  --card-border: rgba(226, 232, 240, 0.8);
+  --text-muted: #64748b;
+}
+
+/* ডার্ক মোডের জন্য গ্লোবাল ভেরিয়েবল ও ব্যাকগ্রাউন্ড */
+.dark {
+  --background: #0b0f19;
+  --foreground: #f8fafc;
+  --card-bg: #0f1524;
+  --card-border: rgba(51, 65, 85, 0.6);
+  --text-muted: #94a3b8;
+}
+
+/* সম্পূর্ণ অ্যাপ্লিকেশনের বডি ও থিম রিসেট স্টাইল */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* কাস্টম পিক্সেল পারফেক্ট ইউটিলিটি ক্লাস (কোনো এক্সট্রা ফ্রেমওয়ার্ক ঝামেলা ছাড়া) */
+.theme-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--foreground);
+}
+
+.theme-text-muted {
+  color: var(--text-muted);
+}
