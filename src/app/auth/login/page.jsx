@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button, Input, Card, TextField, Label, InputGroup } from '@heroui/react';
-// gravity-ui বাদ দিয়ে react-icons ইমপোর্ট করা হয়েছে
 import {
   FaEnvelope,
   FaLock,
@@ -13,23 +12,20 @@ import {
 import { FcGoogle } from 'react-icons/fc'; 
 import { useRouter } from 'next/navigation';
 import { signIn } from '@/lib/auth-client';
+import { toast } from 'react-toastify'; // 👈 Named import দিয়ে ফিক্স করা হয়েছে
 
 export default function LoginPage() {
   const router = useRouter();
 
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   
-  // পাসওয়ার্ড শো/হাইড করার জন্য state
   const [showPassword, setShowPassword] = useState(false);
-
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
 
     try {
       const { data, error: authError } = await signIn.email({
@@ -38,15 +34,26 @@ export default function LoginPage() {
       });
 
       if (authError) {
-        setError(authError.message || 'Invalid email or password');
+        toast.error(authError.message || 'Invalid email or password');
       } else {
+        toast.success('Successfully logged in!');
         router.push('/dashboard');
       }
     } catch (err) {
       console.error(err);
-      setError('Something went wrong. Please try again.');
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await signIn.social({ provider: 'google' });
+      toast.info('Connecting with Google...');
+    } catch (err) {
+      console.error(err);
+      toast.error('Google sign in failed.');
     }
   };
 
@@ -69,17 +76,6 @@ export default function LoginPage() {
                 Log in to view premiums & track your dashboard
               </p>
             </div>
-
-            {/* Error Message */}
-            {error && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="p-3 bg-red-50/50 text-red-600 text-sm rounded-xl text-center font-medium border border-red-200"
-              >
-                {error}
-              </motion.div>
-            )}
 
             {/* Form */}
             <form onSubmit={handleLogin} className="flex flex-col gap-4">
@@ -158,9 +154,7 @@ export default function LoginPage() {
               variant="bordered"
               radius="xl"
               size="lg"
-              onClick={async () => {
-                await signIn.social({ provider: 'google' });
-              }}
+              onClick={handleGoogleLogin}
               startContent={<FcGoogle size={20} />}
               className="w-full border-slate-200 font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300"
             >
@@ -169,7 +163,7 @@ export default function LoginPage() {
 
             {/* Footer Redirect */}
             <p className="text-center text-sm text-slate-500">
-              New to PromptVerse?{' '}
+              New to PromptHub?{' '}
               <a href="/auth/register" className="font-semibold text-indigo-600 hover:text-indigo-700 underline-offset-4 hover:underline">
                 Create Account
               </a>

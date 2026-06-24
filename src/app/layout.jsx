@@ -1,4 +1,5 @@
 import { ThemeProvider } from "@/context/ThemeContext";
+import { ToastContainer } from 'react-toastify';
 import "@/app/globals.css"; // Ensure Tailwind v4 is imported here
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
             {children}
           </main>
           <Footer />
+          <ToastContainer />
         </ThemeProvider>
       </body>
     </html>

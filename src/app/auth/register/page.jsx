@@ -23,6 +23,7 @@ import {
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/lib/auth-client";
+import { toast } from "react-toastify"; // 👈 react-toastify ইম্পোর্ট করা হয়েছে
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -38,7 +39,6 @@ export default function RegisterPage() {
 
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -57,10 +57,9 @@ export default function RegisterPage() {
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match!");
+      toast.error("Passwords do not match!"); // 👈 পাসওয়ার্ড ম্যাচ না হলে টোস্ট
       setLoading(false);
       return;
     }
@@ -75,14 +74,15 @@ export default function RegisterPage() {
       });
 
       if (authError) {
-        setError(authError.message || "Registration failed.");
+        toast.error(authError.message || "Registration failed."); // 👈 অথেনটিকেশন এরর টোস্ট
         return;
       }
 
+      toast.success("Account created successfully!"); // 👈 সাকসেস টোস্ট
       router.push("/auth/login");
     } catch (err) {
       console.error(err);
-      setError("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -90,15 +90,15 @@ export default function RegisterPage() {
 
   const handleGoogleSignup = async () => {
     setGoogleLoading(true);
-    setError("");
 
     try {
       await signUp.social({
         provider: "google",
       });
+      toast.info("Connecting with Google..."); // 👈 গুগল সাইন-আপের জন্য ইনফো টোস্ট
     } catch (err) {
       console.error(err);
-      setError("Google sign up failed. Please try again.");
+      toast.error("Google sign up failed. Please try again.");
       setGoogleLoading(false);
     }
   };
@@ -125,17 +125,6 @@ export default function RegisterPage() {
                 Join the community and start sharing amazing AI prompts.
               </p>
             </div>
-
-            {/* Error Message */}
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="rounded-xl border border-red-200 bg-red-50/50 p-3 text-center text-sm font-medium text-red-600"
-              >
-                {error}
-              </motion.div>
-            )}
 
             {/* Form */}
             <form onSubmit={handleRegister} className="space-y-4">
