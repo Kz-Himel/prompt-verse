@@ -1,6 +1,7 @@
 import { ThemeProvider } from "@/context/ThemeContext";
 import "@/app/globals.css"; // Ensure Tailwind v4 is imported here
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata = {
   title: "PromptVerse | AI Prompt Marketplace",
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
           <main className="relative min-h-screen bg-zinc-50 dark:bg-zinc-950 overflow-hidden">
             {children}
           </main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

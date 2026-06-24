@@ -1,10 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'motion/react';
-// যদি সমস্যা হয়:
-// import { motion } from 'framer-motion';
-
+import { motion } from 'framer-motion';
 import { Button, Card, Chip } from '@heroui/react';
 import { Copy, Star, ArrowUpRight } from '@gravity-ui/icons';
 
@@ -73,96 +70,121 @@ export default function FeaturedPrompts() {
   ];
 
   return (
-    <section className="space-y-8">
-      {/* Header */}
-      <div className="flex items-end justify-between">
-        <div className="space-y-1">
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            ✨ Featured Prompts
+    <section className="relative overflow-hidden bg-white py-28">
+      {/* Background Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.04)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(circle_at_center,black_45%,transparent_100%)]" />
+
+      {/* Gradient Blobs */}
+      <div className="absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-violet-500/5 blur-3xl" />
+      <div className="absolute -right-40 bottom-0 h-[500px] w-[500px] rounded-full bg-cyan-500/5 blur-3xl" />
+
+      <div className="relative mx-auto max-w-7xl px-6">
+        {/* Header */}
+        <div className="mb-20 flex flex-col items-center text-center">
+          <span className="mb-5 inline-flex rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-violet-600">
+            ✨ Featured Collection
+          </span>
+
+          <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+            Featured Prompts
           </h2>
-          <p className="text-sm text-slate-500 dark:text-zinc-400">
+
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-500">
             Handpicked high-converting prompt scripts vetted by our team.
+            Discover premium prompts built to save time and maximize
+            productivity.
           </p>
+
+          <Button
+            radius="full"
+            variant="bordered"
+            className="mt-8 border-slate-200 bg-white font-semibold text-slate-700 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+          >
+            View All
+            <ArrowUpRight size={16} />
+          </Button>
         </div>
 
-        <a
-          href="#"
-          className="group flex items-center gap-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400"
-        >
-          View all
-          <ArrowUpRight
-            size={16}
-            className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-          />
-        </a>
-      </div>
+        {/* Cards */}
+        <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+          {featuredPrompts.map((prompt, index) => (
+            <motion.div
+              key={prompt.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{
+                duration: 0.5,
+                delay: index * 0.08,
+              }}
+              whileHover={{
+                y: -8,
+                scale: 1.02,
+              }}
+            >
+              <Card className="group h-full rounded-[28px] border border-slate-200 bg-white/80 backdrop-blur-xl shadow-[0_10px_40px_rgba(15,23,42,0.06)] transition-all duration-300 hover:border-violet-200 hover:shadow-[0_20px_60px_rgba(15,23,42,0.12)]">
+                <div className="flex h-full flex-col justify-between p-7">
+                  {/* Top */}
+                  <div className="space-y-5">
+                    <div className="flex items-center justify-between">
+                      <Chip
+                        size="sm"
+                        className="border border-violet-200 bg-violet-50 font-semibold text-violet-700"
+                      >
+                        {prompt.category}
+                      </Chip>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {featuredPrompts.map((prompt, index) => (
-          <motion.div
-            key={prompt.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: index * 0.05 }}
-          >
-            <Card className="flex h-full flex-col justify-between border border-slate-200 bg-white transition-all duration-300 hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-900">
-              {/* Card Content (NO CardBody in v3) */}
-              <div className="flex h-full flex-col justify-between p-6">
-                
-                {/* Top */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Chip size="sm" variant="flat" color="secondary">
-                      {prompt.category}
-                    </Chip>
-                    <span className="text-xs font-semibold text-slate-400">
-                      {prompt.tool}
-                    </span>
-                  </div>
-
-                  <h3 className="line-clamp-2 text-lg font-bold text-slate-800 dark:text-zinc-100">
-                    {prompt.title}
-                  </h3>
-
-                  <div className="flex items-center gap-4 text-xs text-slate-400">
-                    <span className="flex items-center gap-1">
-                      <Copy size={14} /> {prompt.copies} copies
-                    </span>
-
-                    <span className="flex items-center gap-1 text-amber-500">
-                      <Star size={14} fill="currentColor" /> {prompt.rating}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Bottom */}
-                <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-zinc-800">
-                  <div>
-                    <span className="text-xl font-bold text-slate-900 dark:text-zinc-50">
-                      {prompt.price}
-                    </span>
-
-                    {prompt.oldPrice !== prompt.price && (
-                      <span className="ml-2 text-xs text-slate-400 line-through">
-                        {prompt.oldPrice}
+                      <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                        {prompt.tool}
                       </span>
-                    )}
+                    </div>
+
+                    <h3 className="line-clamp-2 text-xl font-bold leading-snug text-slate-900">
+                      {prompt.title}
+                    </h3>
+
+                    <div className="flex items-center gap-5 text-sm">
+                      <span className="flex items-center gap-1 text-slate-500">
+                        <Copy size={15} />
+                        {prompt.copies} copies
+                      </span>
+
+                      <span className="flex items-center gap-1 font-semibold text-amber-500">
+                        <Star
+                          size={15}
+                          fill="currentColor"
+                        />
+                        {prompt.rating}
+                      </span>
+                    </div>
                   </div>
 
-                  <Button
-                    size="sm"
-                    className="bg-slate-900 font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
-                  >
-                    View Details
-                  </Button>
-                </div>
+                  {/* Bottom */}
+                  <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-5">
+                    <div>
+                      <span className="text-2xl font-extrabold text-slate-900">
+                        {prompt.price}
+                      </span>
 
-              </div>
-            </Card>
-          </motion.div>
-        ))}
+                      {prompt.oldPrice !== prompt.price && (
+                        <span className="ml-2 text-sm text-slate-400 line-through">
+                          {prompt.oldPrice}
+                        </span>
+                      )}
+                    </div>
+
+                    <Button
+                      radius="full"
+                      className="bg-slate-900 px-5 font-semibold text-white transition-all duration-300 group-hover:scale-105 group-hover:bg-violet-600"
+                    >
+                      View Details
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
