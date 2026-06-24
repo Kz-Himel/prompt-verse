@@ -1,4 +1,3 @@
-import { ThemeProvider } from "@/context/ThemeContext";
 import { ToastContainer } from 'react-toastify';
 import "@/app/globals.css"; // Ensure Tailwind v4 is imported here
 import Navbar from "@/components/Navbar";
@@ -16,14 +15,12 @@ export default function RootLayout({ children }) {
       className={`h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <ThemeProvider>
           <Navbar />
           <main className="relative min-h-screen bg-zinc-50 dark:bg-zinc-950 overflow-hidden">
             {children}
           </main>
           <Footer />
           <ToastContainer />
-        </ThemeProvider>
       </body>
     </html>
   );
