@@ -93,13 +93,13 @@ export default function Navbar() {
           {!isLoggedIn ? (
             <div className="flex items-center gap-2">
               <Link 
-                href="/login" 
+                href="/auth/login" 
                 className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-xl transition-all"
               >
                 Login
               </Link>
               <Link 
-                href="/register" 
+                href="/auth/register" 
                 className="px-4 py-2 text-sm font-semibold text-white bg-[#6366f1] hover:bg-[#4f46e5] active:scale-95 rounded-xl shadow-sm shadow-indigo-100 transition-all"
               >
                 Sign Up
