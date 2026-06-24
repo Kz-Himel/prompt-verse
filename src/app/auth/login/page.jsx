@@ -12,7 +12,7 @@ import {
 import { FcGoogle } from 'react-icons/fc'; 
 import { useRouter } from 'next/navigation';
 import { signIn } from '@/lib/auth-client';
-import { toast } from 'react-toastify'; // 👈 Named import দিয়ে ফিক্স করা হয়েছে
+import { toast } from 'react-toastify';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,7 +37,19 @@ export default function LoginPage() {
         toast.error(authError.message || 'Invalid email or password');
       } else {
         toast.success('Successfully logged in!');
-        router.push('/dashboard/user');
+        
+        // ⭐️ ফিক্সড লজিক: router.push এর বদলে window.location.href ব্যবহার করা হয়েছে
+        // এর ফলে পেজটি রিফ্রেশ হয়ে ড্যাশবোর্ডে যাবে এবং নেভবার সাথে সাথে আপডেট হবে।
+        // আপনার অথ ক্লায়েন্ট যেভাবে রোল (role) রিটার্ন করে সেই অনুযায়ী ডাটা চেক করুন (যেমন: data?.user?.role)
+        const userRole = data?.user?.role || "user"; 
+
+        if (userRole === "admin") {
+          window.location.href = '/dashboard/admin';
+        } else if (userRole === "creator") {
+          window.location.href = '/dashboard/creator';
+        } else {
+          window.location.href = '/dashboard/user';
+        }
       }
     } catch (err) {
       console.error(err);
@@ -163,7 +175,7 @@ export default function LoginPage() {
 
             {/* Footer Redirect */}
             <p className="text-center text-sm text-slate-500">
-              New to PromptHub?{' '}
+              New to PromptVerse?{' '}
               <a href="/auth/register" className="font-semibold text-indigo-600 hover:text-indigo-700 underline-offset-4 hover:underline">
                 Create Account
               </a>

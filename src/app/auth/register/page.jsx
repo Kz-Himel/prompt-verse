@@ -23,18 +23,19 @@ import {
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { signUp } from "@/lib/auth-client";
-import { toast } from "react-toastify"; // 👈 react-toastify ইম্পোর্ট করা হয়েছে
+import { toast } from "react-toastify";
 
 export default function RegisterPage() {
   const router = useRouter();
 
+  // ⭐️ useState-এ ডিফল্টভাবে "user" সিলেক্ট থাকবে
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
     photoURL: "",
-    role: "user",
+    role: "user", 
   });
 
   const [loading, setLoading] = useState(false);
@@ -47,39 +48,33 @@ export default function RegisterPage() {
   const toggleConfirmPasswordVisibility = () =>
     setShowConfirmPassword(!showConfirmPassword);
 
-  const handleChange = (field) => (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: e.target.value,
-    }));
-  };
-
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match!"); // 👈 পাসওয়ার্ড ম্যাচ না হলে টোস্ট
+      toast.error("Passwords do not match!");
       setLoading(false);
       return;
     }
 
     try {
+      // ⭐️ সরাসরি এই অবজেক্টের ভেতরে role পাস করা হয়েছে
       const { error: authError } = await signUp.email({
         email: formData.email,
         password: formData.password,
         name: formData.name,
         image: formData.photoURL || undefined,
-        role: formData.role,
+        role: formData.role, // "user" সিলেক্ট থাকলে user যাবে, "creator" সিলেক্ট থাকলে creator যাবে
       });
 
       if (authError) {
-        toast.error(authError.message || "Registration failed."); // 👈 অথেনটিকেশন এরর টোস্ট
+        toast.error(authError.message || "Registration failed.");
         return;
       }
 
-      toast.success("Account created successfully!"); // 👈 সাকসেস টোস্ট
-      router.push("/auth/login");
+      toast.success(`Account created successfully as ${formData.role}!`);
+      router.push("/auth/login"); 
     } catch (err) {
       console.error(err);
       toast.error("Something went wrong. Please try again.");
@@ -90,15 +85,12 @@ export default function RegisterPage() {
 
   const handleGoogleSignup = async () => {
     setGoogleLoading(true);
-
     try {
       await signUp.social({
         provider: "google",
       });
-      toast.info("Connecting with Google..."); // 👈 গুগল সাইন-আপের জন্য ইনফো টোস্ট
     } catch (err) {
       console.error(err);
-      toast.error("Google sign up failed. Please try again.");
       setGoogleLoading(false);
     }
   };
@@ -113,7 +105,6 @@ export default function RegisterPage() {
       >
         <Card className="border border-slate-200/60 bg-white p-6 shadow-xl shadow-slate-100 sm:p-10 rounded-3xl">
           <div className="space-y-6">
-            {/* Header */}
             <div className="text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
                 <FaUser className="text-xl" />
@@ -126,228 +117,106 @@ export default function RegisterPage() {
               </p>
             </div>
 
-            {/* Form */}
             <form onSubmit={handleRegister} className="space-y-4">
               {/* Full Name */}
               <TextField isRequired className="space-y-1.5 w-full">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-                  Full Name
-                </Label>
+                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Full Name</Label>
                 <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
                   <FaUser className="text-slate-400" />
-                  <Input
-                    placeholder="John Doe"
-                    value={formData.name}
-                    onChange={handleChange("name")}
-                    className="w-full bg-transparent outline-none text-sm py-1.5"
-                  />
+                  <Input placeholder="John Doe" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full bg-transparent outline-none text-sm py-1.5" />
                 </InputGroup>
               </TextField>
 
               {/* Email */}
               <TextField isRequired className="space-y-1.5 w-full">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-                  Email Address
-                </Label>
+                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Email Address</Label>
                 <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
                   <FaEnvelope className="text-slate-400" />
-                  <Input
-                    type="email"
-                    placeholder="name@example.com"
-                    value={formData.email}
-                    onChange={handleChange("email")}
-                    className="w-full bg-transparent outline-none text-sm py-1.5"
-                  />
+                  <Input type="email" placeholder="name@example.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full bg-transparent outline-none text-sm py-1.5" />
                 </InputGroup>
               </TextField>
 
               {/* Photo URL */}
               <TextField className="space-y-1.5 w-full">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-                  Photo URL (Optional)
-                </Label>
+                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Photo URL (Optional)</Label>
                 <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
                   <FaLink className="text-slate-400" />
-                  <Input
-                    type="url"
-                    placeholder="https://example.com/avatar.jpg"
-                    value={formData.photoURL}
-                    onChange={handleChange("photoURL")}
-                    className="w-full bg-transparent outline-none text-sm py-1.5"
-                  />
+                  <Input type="url" placeholder="https://example.com/avatar.jpg" value={formData.photoURL} onChange={(e) => setFormData({ ...formData, photoURL: e.target.value })} className="w-full bg-transparent outline-none text-sm py-1.5" />
                 </InputGroup>
               </TextField>
 
-              {/* Role Selection */}
+              {/* Account Type (Role Selection via State) */}
               <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  Account Type
-                </label>
+                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Account Type</label>
                 <div className="grid grid-cols-2 gap-2.5">
-                  {/* User Radio */}
-                  <label
-                    className={`group relative flex cursor-pointer items-center gap-3 rounded-xl border p-2.5 transition-all duration-200 ${
-                      formData.role === "user"
-                        ? "border-indigo-600 bg-indigo-50/40 ring-1 ring-indigo-600"
-                        : "border-slate-200 bg-white hover:border-slate-300"
-                    }`}
+                  {/* User Option */}
+                  <div 
+                    onClick={() => setFormData(prev => ({ ...prev, role: "user" }))}
+                    className={`group relative flex cursor-pointer items-center gap-3 rounded-xl border p-2.5 transition-all duration-200 ${formData.role === "user" ? "border-indigo-600 bg-indigo-50/40 ring-1 ring-indigo-600" : "border-slate-200 bg-white hover:border-slate-300"}`}
                   >
-                    <input
-                      type="radio"
-                      name="role"
-                      value="user"
-                      checked={formData.role === "user"}
-                      onChange={handleChange("role")}
-                      className="sr-only"
-                    />
-                    <div
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${formData.role === "user" ? "bg-indigo-100 text-indigo-600" : "bg-slate-50 text-slate-400 group-hover:text-slate-500"}`}
-                    >
+                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${formData.role === "user" ? "bg-indigo-100 text-indigo-600" : "bg-slate-50 text-slate-400"}`}>
                       <FaUserTie className="text-base" />
                     </div>
                     <div className="text-left">
-                      <p className="text-xs font-bold text-slate-900 leading-tight">
-                        User
-                      </p>
-                      <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">
-                        Browse prompts
-                      </span>
+                      <p className="text-xs font-bold text-slate-900 leading-tight">User</p>
+                      <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">Browse prompts</span>
                     </div>
-                  </label>
+                  </div>
 
-                  {/* Creator Radio */}
-                  <label
-                    className={`group relative flex cursor-pointer items-center gap-3 rounded-xl border p-2.5 transition-all duration-200 ${
-                      formData.role === "creator"
-                        ? "border-indigo-600 bg-indigo-50/40 ring-1 ring-indigo-600"
-                        : "border-slate-200 bg-white hover:border-slate-300"
-                    }`}
+                  {/* Creator Option */}
+                  <div 
+                    onClick={() => setFormData(prev => ({ ...prev, role: "creator" }))}
+                    className={`group relative flex cursor-pointer items-center gap-3 rounded-xl border p-2.5 transition-all duration-200 ${formData.role === "creator" ? "border-indigo-600 bg-indigo-50/40 ring-1 ring-indigo-600" : "border-slate-200 bg-white hover:border-slate-300"}`}
                   >
-                    <input
-                      type="radio"
-                      name="role"
-                      value="creator"
-                      checked={formData.role === "creator"}
-                      onChange={handleChange("role")}
-                      className="sr-only"
-                    />
-                    <div
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${formData.role === "creator" ? "bg-indigo-100 text-indigo-600" : "bg-slate-50 text-slate-400 group-hover:text-slate-500"}`}
-                    >
+                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${formData.role === "creator" ? "bg-indigo-100 text-indigo-600" : "bg-slate-50 text-slate-400"}`}>
                       <FaPen className="text-sm" />
                     </div>
                     <div className="text-left">
-                      <p className="text-xs font-bold text-slate-900 leading-tight">
-                        Creator
-                      </p>
-                      <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">
-                        Create & sell
-                      </span>
+                      <p className="text-xs font-bold text-slate-900 leading-tight">Creator</p>
+                      <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">Create & sell</span>
                     </div>
-                  </label>
+                  </div>
                 </div>
               </div>
 
               {/* Password */}
               <TextField isRequired className="space-y-1.5 w-full">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-                  Password
-                </Label>
+                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Password</Label>
                 <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
                   <FaLock className="text-slate-400" />
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={formData.password}
-                    onChange={handleChange("password")}
-                    className="w-full bg-transparent outline-none text-sm py-1.5"
-                  />
-                  <button
-                    className="focus:outline-none ml-auto"
-                    type="button"
-                    onClick={togglePasswordVisibility}
-                  >
-                    {showPassword ? (
-                      <FaEyeSlash className="text-lg text-slate-400 hover:text-slate-600 transition-colors" />
-                    ) : (
-                      <FaEye className="text-lg text-slate-400 hover:text-slate-600 transition-colors" />
-                    )}
+                  <Input type={showPassword ? "text" : "password"} placeholder="••••••••" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="w-full bg-transparent outline-none text-sm py-1.5" />
+                  <button className="focus:outline-none ml-auto" type="button" onClick={togglePasswordVisibility}>
+                    {showPassword ? <FaEyeSlash className="text-lg text-slate-400" /> : <FaEye className="text-lg text-slate-400" />}
                   </button>
                 </InputGroup>
               </TextField>
 
               {/* Confirm Password */}
               <TextField isRequired className="space-y-1.5 w-full">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-                  Confirm Password
-                </Label>
+                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Confirm Password</Label>
                 <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
                   <FaLock className="text-slate-400" />
-                  <Input
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="••••••••"
-                    value={formData.confirmPassword}
-                    onChange={handleChange("confirmPassword")}
-                    className="w-full bg-transparent outline-none text-sm py-1.5"
-                  />
-                  <button
-                    className="focus:outline-none ml-auto"
-                    type="button"
-                    onClick={toggleConfirmPasswordVisibility}
-                  >
-                    {showConfirmPassword ? (
-                      <FaEyeSlash className="text-lg text-slate-400 hover:text-slate-600 transition-colors" />
-                    ) : (
-                      <FaEye className="text-lg text-slate-400 hover:text-slate-600 transition-colors" />
-                    )}
+                  <Input type={showConfirmPassword ? "text" : "password"} placeholder="••••••••" value={formData.confirmPassword} onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} className="w-full bg-transparent outline-none text-sm py-1.5" />
+                  <button className="focus:outline-none ml-auto" type="button" onClick={toggleConfirmPasswordVisibility}>
+                    {showConfirmPassword ? <FaEyeSlash className="text-lg text-slate-400" /> : <FaEye className="text-lg text-slate-400" />}
                   </button>
                 </InputGroup>
               </TextField>
 
-              {/* Primary Submit Button */}
-              <Button
-                type="submit"
-                isLoading={loading}
-                radius="xl"
-                size="lg"
-                className="w-full bg-indigo-600 font-semibold text-white shadow-lg shadow-indigo-100 transition-transform hover:bg-indigo-700 active:scale-[0.98] mt-2"
-              >
+              <Button type="submit" isLoading={loading} radius="xl" size="lg" className="w-full bg-indigo-600 font-semibold text-white shadow-lg mt-2">
                 Create Account
               </Button>
             </form>
 
-            {/* Visual Divider */}
             <div className="flex items-center gap-3">
               <div className="h-px flex-1 bg-slate-200" />
-              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
-                Or continue with
-              </span>
+              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400">Or continue with</span>
               <div className="h-px flex-1 bg-slate-200" />
             </div>
 
-            {/* Google Signup Button */}
-            <Button
-              variant="bordered"
-              radius="xl"
-              size="lg"
-              isLoading={googleLoading}
-              onPress={handleGoogleSignup}
-              startContent={!googleLoading && <FcGoogle size={20} />}
-              className="w-full border-slate-200 font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300"
-            >
+            <Button variant="bordered" radius="xl" size="lg" isLoading={googleLoading} onPress={handleGoogleSignup} startContent={!googleLoading && <FcGoogle size={20} />} className="w-full border-slate-200 font-medium text-slate-700 hover:bg-slate-50">
               Continue with Google
             </Button>
-
-            {/* Footer Sign-In Redirect */}
-            <p className="text-center text-sm text-slate-500">
-              Already have an account?{" "}
-              <a
-                href="/auth/login"
-                className="font-semibold text-indigo-600 hover:text-indigo-700 underline-offset-4 hover:underline"
-              >
-                Sign In
-              </a>
-            </p>
           </div>
         </Card>
       </motion.div>
