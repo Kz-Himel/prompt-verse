@@ -4,6 +4,7 @@ import WhyChooseUs from "@/components/sections/WhyChooseUs";
 import HowItWorks from "@/components/sections/HowItWorks";
 import TopCreators from "@/components/sections/TopCreators";
 import Reviews from "@/components/sections/Reviews";
+import NewsletterSection from "@/components/sections/NewsLetterSection";
 
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
       <HowItWorks />
       <TopCreators />
       <Reviews />
+      <NewsletterSection />
     </>
   );
 }
