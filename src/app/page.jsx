@@ -3,6 +3,7 @@ import FeaturedPrompts from "@/components/sections/FeaturedPrompts";
 import HeroSection from "@/components/sections/BannerSection";
 import WhyChooseUs from "@/components/sections/WhyChooseUs";
 import HowItWorks from "@/components/sections/HowItWorks";
+import TopCreators from "@/components/sections/TopCreators";
 
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
       <FeaturedPrompts />
       <WhyChooseUs />
       <HowItWorks />
+      <TopCreators />
     </>
   );
 }
