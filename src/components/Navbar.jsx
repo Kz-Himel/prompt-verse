@@ -1,287 +1,213 @@
-<<<<<<< HEAD
-'use client';
-import React, { useState } from 'react';
-import { Button } from '@heroui/react';
-import { Sun, Moon, Magnifier, ChevronDown } from '@gravity-ui/icons';
-import { useTheme } from '../context/ThemeContext';
-
-export default function Navbar() {
-  const { theme, toggleTheme } = useTheme();
-  
-  // এই স্টেটগুলো রিয়েল অ্যাপ্লিকেশনে Auth Context বা JWT সেশন থেকে আসবে
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
-  const [showExploreDropdown, setShowExploreDropdown] = useState(false);
-
-  return (
-    <header className="w-full bg-white dark:bg-zinc-950 border-b border-slate-100 dark:border-zinc-900 sticky top-0 z-50 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-        
-        {/* LEFT SECTION: Logo & Brand Name */}
-        <div className="flex items-center gap-2 shrink-0">
-          {/* Logo Graphic inspired by Screenshot 2026-06-23 224058.jpg */}
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white font-black text-xl shadow-md shadow-indigo-500/20">
-            P
-          </div>
-          <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
-            PromptHub
-          </span>
-        </div>
-
-        {/* MIDDLE SECTION: Navigation Links matching criteria & screenshot */}
-        <nav className="hidden lg:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-zinc-300">
-          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-            Home
-          </a>
-          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-            All Prompts
-          </a>
-          
-          {/* Explore Prompts Dropdown mimicking image spec */}
-          <div className="relative">
-            <button 
-              onClick={() => setShowExploreDropdown(!showExploreDropdown)}
-              className="flex items-center gap-1 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer"
-            >
-              Explore Prompts <ChevronDown size={14} />
-            </button>
-            {showExploreDropdown && (
-              <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-xl shadow-xl p-2 flex flex-col gap-1 z-50">
-                <a href="#" className="px-3 py-2 text-xs rounded-lg hover:bg-slate-50 dark:hover:bg-zinc-800">Trending Prompts</a>
-                <a href="#" className="px-3 py-2 text-xs rounded-lg hover:bg-slate-50 dark:hover:bg-zinc-800">Top Rated</a>
-                <a href="#" className="px-3 py-2 text-xs rounded-lg hover:bg-slate-50 dark:hover:bg-zinc-800">New Releases</a>
-              </div>
-            )}
-          </div>
-
-          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-            Categories
-          </a>
-          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-            How It Works
-          </a>
-          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-            Pricing
-          </a>
-        </nav>
-
-        {/* RIGHT SECTION: Search Shortcut & Authentication State mapping */}
-        <div className="flex items-center gap-3 sm:gap-4">
-          
-          {/* Inline Quick Search Trigger Icon */}
-          <button className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-zinc-200 transition-colors hidden sm:block">
-            <Magnifier size={18} />
-          </button>
-
-          {/* Theme Toggle Wrapper Context */}
-          <Button 
-            isIconOnly 
-            variant="light" 
-            radius="full" 
-            onClick={toggleTheme} 
-            className="text-slate-500 dark:text-zinc-400"
-          >
-            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-          </Button>
-
-          {/* Dynamic Render according to Auth State Criteria */}
-          {!isLoggedIn ? (
-            <>
-              <a 
-                href="#" 
-                className="text-sm font-semibold text-slate-700 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors px-2 py-1"
-              >
-                Login
-              </a>
-              <Button 
-                size="md" 
-                radius="xl" 
-                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-md shadow-indigo-600/10 px-5"
-              >
-                Sign Up
-              </Button>
-            </>
-          ) : (
-            <>
-              <a 
-                href="#" 
-                className="text-sm font-semibold text-slate-700 dark:text-zinc-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
-              >
-                Dashboard
-              </a>
-              <Button 
-                size="md" 
-                radius="xl" 
-                variant="bordered"
-                onClick={() => setIsLoggedIn(false)}
-                className="border-slate-200 dark:border-zinc-800 text-sm font-semibold text-rose-500"
-              >
-                Logout
-              </Button>
-            </>
-          )}
-        </div>
-
-      </div>
-=======
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
-import {
-  Magnifier,
-  Moon,
-  Sun,
-  Bars,
-  Xmark,
-  ChevronDown,
-} from "@gravity-ui/icons";
-import {Sparkles} from '@gravity-ui/icons';
-import { useTheme } from "@/contexts/ThemeContext";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+// Gravity UI Icons (Standard SVG path variations mapped for reliability in Next 15)
+const SearchIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+);
+
+const ChevronDownIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+);
+
+const MenuIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x12="20" y1="12" y2="12"></line><line x1="4" x12="20" y1="6" y2="6"></line><line x1="4" x12="20" y1="18" y2="18"></line></svg>
+);
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
+  const pathname = usePathname();
+  
+  // এটি আপনার Authentication স্টেটের সাথে পরবর্তীতে কানেক্ট করবেন (JWT/Context)
+  // টেস্ট করার জন্য true অথবা false করে দেখতে পারেন
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const [userRole, setUserRole] = useState("user"); // user, creator, admin
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // ড্যাশবোর্ডের ডাইনামিক রুট ডিটারমিনেশন
+  const getDashboardLink = () => {
+    if (userRole === "admin") return "/dashboard/admin";
+    if (userRole === "creator") return "/dashboard/creator";
+    return "/dashboard/user";
+  };
+
+  const handleLogout = () => {
+    // আপনার লগআউট ফাংশনালিটি এখানে যুক্ত করুন
+    setIsLoggedIn(false);
+  };
 
   return (
-    <header className="fixed top-0 left-0 z-50 w-full border-b border-zinc-200/60 bg-white/80 backdrop-blur-xl dark:border-zinc-800/60 dark:bg-zinc-950/80">
-      <div className="mx-auto flex h-[72px] max-w-[1280px] items-center justify-between px-6">
-        {/* Left */}
-        <Link
-          href="/"
-          className="flex items-center gap-2"
-        >
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-500 text-white font-bold shadow-lg shadow-violet-500/20">
-            <Sparkles className="h-5 w-5" />
-          </div>
-
-          <h1 className="text-lg font-bold text-zinc-900 dark:text-white">
-            Prompt
-            <span className="text-violet-600">
-              Verse
-            </span>
-          </h1>
-        </Link>
-
-        {/* Desktop Nav */}
-        <nav className="hidden items-center gap-8 lg:flex">
-          <button className="flex items-center gap-1 text-[15px] font-medium text-zinc-600 transition hover:text-violet-600 dark:text-zinc-300">
-            Explore Prompts
-            <ChevronDown width={16} />
-          </button>
-
-          <Link
-            href="/categories"
-            className="text-[15px] font-medium text-zinc-600 transition hover:text-violet-600 dark:text-zinc-300"
-          >
-            Categories
+    <header className="w-full bg-white border-b border-gray-100 sticky top-0 z-50 font-sans">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        
+        {/* Left Section: Logo & Main Navigation Links */}
+        <div className="flex items-center gap-8">
+          {/* Logo (Exactly matching Screenshot 2026-06-24 004710.png) */}
+          <Link href="/" className="flex items-center gap-2 font-bold text-xl text-[#0f172a] tracking-tight transition-transform active:scale-95">
+            <div className="w-8 h-8 bg-gradient-to-tr from-[#6366f1] to-[#a855f7] rounded-xl flex items-center justify-center text-white text-sm font-black shadow-md shadow-indigo-100">
+              P
+            </div>
+            <span className="font-extrabold text-gray-900 tracking-tight">Prompt<span className="text-[#6366f1]">Verse</span></span>
           </Link>
 
-          <Link
-            href="/how-it-works"
-            className="text-[15px] font-medium text-zinc-600 transition hover:text-violet-600 dark:text-zinc-300"
-          >
-            How It Works
-          </Link>
-
-          <Link
-            href="/pricing"
-            className="text-[15px] font-medium text-zinc-600 transition hover:text-violet-600 dark:text-zinc-300"
-          >
-            Pricing
-          </Link>
-        </nav>
-
-        {/* Right */}
-        <div className="flex items-center gap-3">
-          {/* Search */}
-          <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white transition hover:border-violet-300 hover:text-violet-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
-            <Magnifier width={18} />
-          </button>
-
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white transition hover:border-violet-300 hover:text-violet-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
-          >
-            {theme === "dark" ? (
-              <Sun width={18} />
-            ) : (
-              <Moon width={18} />
-            )}
-          </button>
-
-          {/* Desktop Buttons */}
-          <div className="hidden items-center gap-3 lg:flex">
-            <Link
-              href="/login"
-              className="rounded-xl border border-zinc-200 px-5 py-2 text-sm font-medium text-zinc-700 transition hover:border-violet-300 hover:text-violet-600 dark:border-zinc-800 dark:text-zinc-300"
-            >
-              Login
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:flex items-center gap-6">
+            <Link href="/" className={`text-sm font-medium transition-colors ${pathname === '/' ? 'text-[#6366f1]' : 'text-gray-600 hover:text-gray-900'}`}>
+              Home
             </Link>
 
-            <Link
-              href="/register"
-              className="rounded-xl bg-violet-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-violet-700"
-            >
-              Sign Up
-            </Link>
-          </div>
-
-          {/* Mobile Menu */}
-          <button
-            onClick={() =>
-              setOpen(!open)
-            }
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 lg:hidden dark:border-zinc-800"
-          >
-            {open ? (
-              <Xmark width={20} />
-            ) : (
-              <Bars width={20} />
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Drawer */}
-      {open && (
-        <div className="border-t border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950 lg:hidden">
-          <div className="flex flex-col gap-5">
-            <Link href="/">
-              Explore Prompts
-            </Link>
-
-            <Link href="/categories">
+            {/* Explore Prompts Menu Item with Chevron */}
+            <div className="relative group">
+              <Link href="/all-prompts" className={`flex items-center gap-1 text-sm font-medium transition-colors ${pathname === '/all-prompts' ? 'text-[#6366f1]' : 'text-gray-600 hover:text-gray-900'}`}>
+                Explore Prompts
+                <span className="text-gray-400 group-hover:text-gray-600 transition-colors">
+                  <ChevronDownIcon />
+                </span>
+              </Link>
+            </div>
+            
+            <Link href="/categories" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
               Categories
             </Link>
-
-            <Link href="/how-it-works">
+            
+            <Link href="/#how-it-works" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
               How It Works
             </Link>
-
-            <Link href="/pricing">
+            
+            <Link href="/pricing" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
               Pricing
             </Link>
+          </nav>
+        </div>
 
-            <div className="mt-4 flex gap-3">
-              <Link
-                href="/login"
-                className="flex-1 rounded-xl border border-zinc-200 py-3 text-center dark:border-zinc-800"
+        {/* Right Section: Search & Dynamic Auth Buttons */}
+        <div className="hidden md:flex items-center gap-4">
+          {/* Search Trigger Button */}
+          <button className="p-2 text-gray-500 hover:bg-gray-50 rounded-full transition-colors cursor-pointer" aria-label="Search">
+            <SearchIcon />
+          </button>
+
+          {/* Conditional Rendering base on Authentication State */}
+          {!isLoggedIn ? (
+            <div className="flex items-center gap-2">
+              <Link 
+                href="/login" 
+                className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-xl transition-all"
               >
                 Login
               </Link>
-
-              <Link
-                href="/register"
-                className="flex-1 rounded-xl bg-violet-600 py-3 text-center font-medium text-white"
+              <Link 
+                href="/register" 
+                className="px-4 py-2 text-sm font-semibold text-white bg-[#6366f1] hover:bg-[#4f46e5] active:scale-95 rounded-xl shadow-sm shadow-indigo-100 transition-all"
               >
                 Sign Up
               </Link>
             </div>
-          </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Link 
+                href={getDashboardLink()}
+                className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-xl transition-all border border-gray-200"
+              >
+                Dashboard
+              </Link>
+              <button 
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm font-semibold text-white bg-rose-500 hover:bg-rose-600 active:scale-95 rounded-xl shadow-sm transition-all cursor-pointer"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Hamburger Menu Button */}
+        <div className="flex md:hidden items-center gap-3">
+          <button className="p-2 text-gray-500 hover:bg-gray-50 rounded-full" aria-label="Search Context">
+            <SearchIcon />
+          </button>
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+          >
+            <MenuIcon />
+          </button>
+        </div>
+
+      </div>
+
+      {/* Mobile Dropdown Menu Drawer */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-100 px-4 pt-2 pb-6 space-y-3 shadow-lg absolute w-full left-0 transition-all duration-200">
+          <Link 
+            href="/" 
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Home
+          </Link>
+          <Link 
+            href="/all-prompts" 
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-50"
+          >
+            All Prompts
+          </Link>
+          <Link 
+            href="/categories" 
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Categories
+          </Link>
+          <Link 
+            href="/pricing" 
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Pricing
+          </Link>
+          
+          <hr className="border-gray-100 my-2" />
+
+          {!isLoggedIn ? (
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              <Link 
+                href="/login" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full text-center px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 rounded-xl"
+              >
+                Login
+              </Link>
+              <Link 
+                href="/register" 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full text-center px-4 py-2 text-sm font-semibold text-white bg-[#6366f1] rounded-xl"
+              >
+                Register
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              <Link 
+                href={getDashboardLink()} 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full text-center px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 rounded-xl border border-gray-200"
+              >
+                Dashboard
+              </Link>
+              <button 
+                onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+                className="w-full text-center px-4 py-2 text-sm font-semibold text-white bg-rose-500 rounded-xl"
+              >
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       )}
->>>>>>> 5aa5e910203ede1b983ee9c5870f283a4263306e
     </header>
   );
 }
