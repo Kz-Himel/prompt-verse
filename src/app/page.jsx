@@ -1,9 +1,9 @@
 import BannerSection from "@/components/sections/BannerSection";
 import FeaturedPrompts from "@/components/sections/FeaturedPrompts";
-import HeroSection from "@/components/sections/BannerSection";
 import WhyChooseUs from "@/components/sections/WhyChooseUs";
 import HowItWorks from "@/components/sections/HowItWorks";
 import TopCreators from "@/components/sections/TopCreators";
+import Reviews from "@/components/sections/Reviews";
 
 
 export default function Home() {
@@ -14,6 +14,7 @@ export default function Home() {
       <WhyChooseUs />
       <HowItWorks />
       <TopCreators />
+      <Reviews />
     </>
   );
 }
