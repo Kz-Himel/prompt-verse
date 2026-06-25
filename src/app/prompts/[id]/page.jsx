@@ -16,7 +16,7 @@ export default function PromptDetailsPage() {
   const router = useRouter();
   const { id } = useParams(); 
 
-  // ইউজার কন্টেক্সট (ধরে নিচ্ছি LocalStorage বা আপনার Auth থেকে নেওয়া হচ্ছে)
+  // কারেন্ট ইউজার স্টেট (প্রয়োজন অনুযায়ী রিয়েল Auth স্টেট দিয়ে রিপ্লেস করে নিবেন)
   const [currentUser, setCurrentUser] = useState({ name: "Ahsan Habib", email: "dev@gmail.com" }); 
 
   const [prompt, setPrompt] = useState(null);
@@ -25,7 +25,7 @@ export default function PromptDetailsPage() {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // হেডার কনফিগারেশন (JWT টোকেন এবং মেথডের জন্য)
+  // হেডার জেনারেটর (Async ফেচিং-এ ব্যবহারের জন্য)
   const getHeaders = () => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
     return {
@@ -34,12 +34,14 @@ export default function PromptDetailsPage() {
     };
   };
 
-  // ─── ডাটা ফেচিং (Async/Await) ───
+  // ─── ডাটা ফেচিং ও সিঙ্ক ───
   useEffect(() => {
     const fetchPromptDetails = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/prompts/${id}?email=${currentUser?.email}`, {
+        const url = `http://localhost:5000/prompts/${id}${currentUser?.email ? `?email=${currentUser.email}` : ""}`;
+        
+        const res = await fetch(url, {
           method: "GET",
           headers: getHeaders()
         });
@@ -63,14 +65,14 @@ export default function PromptDetailsPage() {
     if (id) fetchPromptDetails();
   }, [id, currentUser?.email]);
 
-  if (loading) return <div className="text-center py-20 text-sm font-semibold">Loading Prompt Details...</div>;
-  if (!prompt) return <div className="text-center py-20 text-red-500">Prompt not found!</div>;
+  if (loading) return <div className="text-center py-20 text-sm font-semibold text-slate-500">Loading Prompt Details...</div>;
+  if (!prompt) return <div className="text-center py-20 text-red-500 font-medium">Prompt not found!</div>;
 
   const hasAccess = prompt.visibility === "public" || isPremiumUser;
 
-  // ─── ১. বুকমার্ক টগল (Async/Await) ───
+  // ─── ১. বুকমার্ক টগল ───
   const handleBookmarkToggle = async () => {
-    if (!currentUser) return router.push("/login");
+    if (!currentUser?.email) return toast.error("Please login first to bookmark!");
     try {
       const res = await fetch(`http://localhost:5000/prompts/${prompt._id}/bookmark`, {
         method: "POST",
@@ -87,7 +89,7 @@ export default function PromptDetailsPage() {
     }
   };
 
-  // ─── ২. কপি প্রম্পট এবং কাউন্ট বাড়ানো (Async/Await) ───
+  // ─── ২. কপি প্রম্পট এবং কাউন্ট ট্র্যাকিং ───
   const handleCopyPrompt = async () => {
     try {
       await navigator.clipboard.writeText(prompt.content);
@@ -107,8 +109,9 @@ export default function PromptDetailsPage() {
     }
   };
 
-  // ─── ৩. রিভিউ সাবমিট (Async/Await) ───
+  // ─── ৩. রিভিউ সাবমিট হ্যান্ডলার ───
   const handleReviewSubmit = async (reviewData) => {
+    if (!currentUser?.email) return toast.error("Please login to leave a review.");
     try {
       const res = await fetch(`http://localhost:5000/prompts/${prompt._id}/reviews`, {
         method: "POST",
@@ -132,8 +135,9 @@ export default function PromptDetailsPage() {
     }
   };
 
-  // ─── ৪. রিপোর্ট সাবমিট (Async/Await) ───
+  // ─── ৪. রিপোর্ট সাবমিট হ্যান্ডলার ───
   const handleReportSubmit = async (reportData) => {
+    if (!currentUser?.email) return toast.error("Please login to report this prompt.");
     try {
       const res = await fetch(`http://localhost:5000/prompts/${prompt._id}/report`, {
         method: "POST",
@@ -158,7 +162,7 @@ export default function PromptDetailsPage() {
       
       <div className="max-w-5xl mx-auto space-y-6">
         
-        {/* টপ অ্যাকশন বার */}
+        {/* ಟপ অ্যাকশন বার */}
         <div className="flex justify-between items-center bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <button onClick={() => router.push("/marketplace")} className="text-sm font-medium text-violet-600 hover:underline">
             ← Marketplace
@@ -179,7 +183,7 @@ export default function PromptDetailsPage() {
           </div>
         </div>
 
-        {/* মেইন গ্রিড লেআউট */}
+        {/* মেইন লেআউট গ্রিড */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
@@ -203,7 +207,7 @@ export default function PromptDetailsPage() {
                 <p className="text-xs text-slate-600 leading-relaxed">{prompt.instructions || "No custom usage instructions provided."}</p>
               </div>
 
-              {/* প্রম্পট টেক্সট বক্স */}
+              {/* প্রম্পট টেক্সট বক্স এলাকা */}
               <div className="space-y-2 pt-2">
                 <div className="flex justify-between items-center">
                   <h3 className="text-slate-700 text-sm font-semibold">Prompt Template</h3>
@@ -237,10 +241,11 @@ export default function PromptDetailsPage() {
               </div>
             </div>
 
+            {/* রিভিউ সেকশন কম্পোনেন্ট */}
             <ReviewSection reviews={prompt.reviews} hasAccess={hasAccess} onReviewSubmit={handleReviewSubmit} />
           </div>
 
-          {/* সাইডবার মেটাডাটা */}
+          {/* রাইট সাইডবার (মেটাডাটা) */}
           <div className="space-y-6">
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4 text-xs">
               <h3 className="font-bold text-sm border-b pb-2 text-slate-700 uppercase tracking-wider">Metadata</h3>
@@ -256,7 +261,7 @@ export default function PromptDetailsPage() {
                 <div>
                   <p className="text-slate-400 font-medium">Difficulty</p>
                   <p className="font-semibold uppercase text-violet-600 flex items-center gap-1 mt-0.5">
-                    <FiAward /> {prompt.difficulty}
+                    <FiAward /> {prompt.difficulty || "Beginner"}
                   </p>
                 </div>
               </div>
@@ -270,19 +275,21 @@ export default function PromptDetailsPage() {
               </div>
             </div>
 
-            {/* ট্যাগস */}
+            {/* ট্যাগস ক্লাউড */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-2 text-xs">
               <p className="font-semibold text-slate-500 flex items-center gap-1"><FiTag /> Related Tags</p>
               <div className="flex flex-wrap gap-1.5 pt-1">
                 {prompt.tags?.map((tag, i) => (
                   <span key={i} className="bg-slate-100 border border-slate-200 text-slate-600 px-2.5 py-1 rounded-md font-medium">#{tag}</span>
                 ))}
+                {(!prompt.tags || prompt.tags.length === 0) && <span className="text-slate-400 italic">No tags associated</span>}
               </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* রিপোর্ট মডাল */}
       <ReportModal isOpen={isReportModalOpen} onClose={() => setIsReportModalOpen(false)} onSubmit={handleReportSubmit} />
     </div>
   );
