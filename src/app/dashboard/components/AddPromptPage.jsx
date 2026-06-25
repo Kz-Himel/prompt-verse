@@ -61,7 +61,7 @@ export default function AddPromptPage() {
     tags: [],
   });
 
-  // ── యూజర్ ప్రాంప్ట్ కౌంట్ ఫెచ్ చేయడం ──
+  // ── 
   useEffect(() => {
     if (userEmail) {
       fetch(`${BACKEND_URL}/prompts/count/${userEmail}`)
