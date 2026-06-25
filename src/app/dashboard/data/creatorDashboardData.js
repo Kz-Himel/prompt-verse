@@ -5,7 +5,7 @@ import {
   HiHeart,
 } from "react-icons/hi";
 
-export const creatorStats = [
+export const stats = [
   {
     label: "Published Prompts",
     value: "28",

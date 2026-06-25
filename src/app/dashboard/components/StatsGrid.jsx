@@ -1,11 +1,11 @@
 import StatsCard from "./StatsCard";
 
 export default function StatsGrid({
-  userStats,
+  stats = [],
 }) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {userStats.map((item) => (
+      {stats.map((item) => (
         <StatsCard
           key={item.label}
           {...item}

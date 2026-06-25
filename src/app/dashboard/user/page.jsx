@@ -5,7 +5,7 @@ import RecentActivityCard from "../components/RecentActivityCard";
 import RecommendationsCard from "../components/RecommendationsCard";
 
 import {
-  userStats,
+  stats,
   purchases,
   recommendations,
   recentActivities,
@@ -15,11 +15,10 @@ export default function UserDashboardPage() {
   return (
     <div className="space-y-6">
       <DashboardHeader
-        title="Welcome back, Alex! 👋"
         subtitle="Discover and manage your favorite prompts."
       />
 
-      <StatsGrid userStats={userStats} />
+      <StatsGrid stats={stats} />
 
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">

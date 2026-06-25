@@ -5,7 +5,7 @@ import {
   HiCreditCard,
 } from "react-icons/hi";
 
-export const userStats = [
+export const stats = [
   {
     label: "Purchased Prompts",
     value: "12",
