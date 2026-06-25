@@ -37,7 +37,7 @@ export default function Footer() {
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
                 <polygon points="12,6.5 13.5,9.5 16.8,9.5 14.2,11.5 15.2,14.8 12,12.8 8.8,14.8 9.8,11.5 7.2,9.5 10.5,9.5" fill="#fff" />
               </svg>
-              <span className="text-white font-bold text-lg tracking-wide">PromptHub</span>
+              <span className="text-white font-bold text-lg tracking-wide">PromptVerse</span>
             </div>
             <p className="text-gray-400 text-xs sm:text-sm max-w-xs leading-relaxed">
               The #1 marketplace for buying and selling premium AI prompts.
@@ -105,7 +105,7 @@ export default function Footer() {
 
         {/* Copyright Section */}
         <div className="text-center text-xs text-gray-500">
-          © {currentYear} PromptHub. All rights reserved.
+          © {currentYear} PromptVerse. All rights reserved.
         </div>
         
       </div>
