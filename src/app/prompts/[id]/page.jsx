@@ -164,8 +164,8 @@ export default function PromptDetailsPage() {
         
         {/* ಟপ অ্যাকশন বার */}
         <div className="flex justify-between items-center bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-          <button onClick={() => router.push("/marketplace")} className="text-sm font-medium text-violet-600 hover:underline">
-            ← Marketplace
+          <button onClick={() => router.push("/prompts")} className="text-sm font-medium text-violet-600 hover:underline">
+            ← All Prompts
           </button>
           
           <div className="flex items-center gap-3">
