@@ -20,7 +20,7 @@ export const sidebarLinks = {
     },
     {
       label: "Add Prompt",
-      href: "/dashboard/user/add-prompt",
+      href: "/dashboard/user/addprompt",
       icon: RiAddCircleLine,
     },
     {
@@ -48,7 +48,7 @@ export const sidebarLinks = {
     },
     {
       label: "Add Prompt",
-      href: "/dashboard/creator/add-prompt",
+      href: "/dashboard/creator/addprompt",
       icon: RiAddCircleLine,
     },
     {

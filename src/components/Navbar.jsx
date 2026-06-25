@@ -1,15 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import {
-  usePathname,
-  useRouter,
-} from "next/navigation";
-import {
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { Avatar } from "@heroui/react";
 import {
   HiBars3,
@@ -20,25 +13,17 @@ import {
   HiOutlineSquares2X2,
   HiOutlineArrowRightOnRectangle,
 } from "react-icons/hi2";
-import {
-  useSession,
-  signOut,
-} from "@/lib/auth-client";
+import { useSession, signOut } from "@/lib/auth-client";
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const {
-    data: session,
-    isPending,
-  } = useSession();
+  const { data: session, isPending } = useSession();
 
-  const [mobileOpen, setMobileOpen] =
-    useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const [profileOpen, setProfileOpen] =
-    useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const dropdownRef = useRef(null);
 
@@ -49,26 +34,15 @@ export default function Navbar() {
 
   useEffect(() => {
     function handleOutsideClick(e) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(
-          e.target
-        )
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setProfileOpen(false);
       }
     }
 
-    document.addEventListener(
-      "mousedown",
-      handleOutsideClick
-    );
+    document.addEventListener("mousedown", handleOutsideClick);
 
     return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleOutsideClick
-      );
+      document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []);
 
@@ -82,10 +56,7 @@ export default function Navbar() {
       router.push("/");
       router.refresh();
     } catch (error) {
-      console.error(
-        "Logout failed:",
-        error
-      );
+      console.error("Logout failed:", error);
     }
   };
 
@@ -94,9 +65,7 @@ export default function Navbar() {
       return pathname === "/";
     }
 
-    return pathname.startsWith(
-      href
-    );
+    return pathname.startsWith(href);
   };
 
   const navLinkClass = (href) =>
@@ -110,20 +79,27 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-zinc-200/70 bg-white/80 backdrop-blur-xl dark:border-zinc-800/70 dark:bg-zinc-950/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
         {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-3"
-        >
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-lg shadow-indigo-500/20">
-            <HiOutlineSparkles
-              size={22}
+        <Link href="/" className="flex items-center gap-3">
+          <svg
+            className="w-7 h-7 text-[#5643ff]"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path
+              d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+              stroke="currentColor"
+              strokeWidth="1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
-          </div>
+            <polygon
+              points="12,6.5 13.5,9.5 16.8,9.5 14.2,11.5 15.2,14.8 12,12.8 8.8,14.8 9.8,11.5 7.2,9.5 10.5,9.5"
+              fill="#fff"
+            />
+          </svg>
 
           <div>
-            <h1 className="text-lg font-bold tracking-tight">
-              PromptVerse
-            </h1>
+            <h1 className="text-lg font-bold tracking-tight">PromptVerse</h1>
 
             <p className="hidden text-[11px] text-zinc-500 sm:block">
               AI Prompt Marketplace
@@ -133,201 +109,114 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-2 md:flex">
-          <Link
-            href="/"
-            className={navLinkClass(
-              "/"
-            )}
-          >
+          <Link href="/" className={navLinkClass("/")}>
             Home
           </Link>
 
-          <Link
-            href="/prompts"
-            className={navLinkClass(
-              "/prompts"
-            )}
-          >
+          <Link href="/prompts" className={navLinkClass("/prompts")}>
             All Prompts
           </Link>
         </nav>
 
         {/* Desktop Right */}
         <div className="hidden items-center gap-3 md:flex">
-          {!isPending &&
-            !session && (
-              <>
-                <Link
-                  href="/auth/login"
-                  className={navLinkClass(
-                    "/auth/login"
-                  )}
-                >
-                  Login
-                </Link>
+          {!isPending && !session && (
+            <>
+              <Link href="/auth/login" className={navLinkClass("/auth/login")}>
+                Login
+              </Link>
 
-                <Link
-                  href="/auth/register"
-                  className="rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:scale-[1.02]"
-                >
-                  Register
-                </Link>
-              </>
-            )}
-
-          {!isPending &&
-            session && (
-              <div
-                ref={dropdownRef}
-                className="relative"
+              <Link
+                href="/auth/register"
+                className="rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:scale-[1.02]"
               >
-                <button
-                  type="button"
-                  onClick={() =>
-                    setProfileOpen(
-                      !profileOpen
-                    )
-                  }
-                  className="flex items-center gap-2 rounded-full border border-zinc-200 bg-white py-1 pl-1 pr-3 shadow-sm transition-all duration-200 hover:border-zinc-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"
-                >
-                  <Avatar
-                    size="sm"
-                    src={
-                      session?.user
-                        ?.image ||
-                      undefined
-                    }
-                    name={
-                      session?.user
-                        ?.name ||
-                      "U"
-                    }
-                  />
+                Register
+              </Link>
+            </>
+          )}
 
-                  <span className="max-w-[110px] truncate text-sm font-medium text-zinc-700 dark:text-zinc-200">
-                    {session?.user?.name?.split(
-                      " "
-                    )[0] ||
-                      "User"}
-                  </span>
+          {!isPending && session && (
+            <div ref={dropdownRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="flex items-center gap-2 rounded-full border border-zinc-200 bg-white py-1 pl-1 pr-3 shadow-sm transition-all duration-200 hover:border-zinc-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"
+              >
+                <Avatar
+                  size="sm"
+                  src={session?.user?.image || undefined}
+                  name={session?.user?.name || "U"}
+                />
 
-                  {profileOpen ? (
-                    <HiChevronUp
-                      size={16}
-                      className="text-zinc-500"
-                    />
-                  ) : (
-                    <HiChevronDown
-                      size={16}
-                      className="text-zinc-500"
-                    />
-                  )}
-                </button>
+                <span className="max-w-[110px] truncate text-sm font-medium text-zinc-700 dark:text-zinc-200">
+                  {session?.user?.name?.split(" ")[0] || "User"}
+                </span>
 
-                {profileOpen && (
-                  <div className="absolute right-0 top-full mt-3 w-72 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-900">
-                    {/* User Info */}
-                    <div className="border-b border-zinc-100 p-4 dark:border-zinc-800">
-                      <div className="flex items-center gap-3">
-                        <Avatar
-                          size="md"
-                          src={
-                            session
-                              ?.user
-                              ?.image ||
-                            undefined
-                          }
-                          name={
-                            session
-                              ?.user
-                              ?.name ||
-                            "User"
-                          }
-                        />
+                {profileOpen ? (
+                  <HiChevronUp size={16} className="text-zinc-500" />
+                ) : (
+                  <HiChevronDown size={16} className="text-zinc-500" />
+                )}
+              </button>
 
-                        <div className="min-w-0">
-                          <p className="truncate font-semibold text-zinc-900 dark:text-zinc-100">
-                            {
-                              session
-                                ?.user
-                                ?.name
-                            }
-                          </p>
+              {profileOpen && (
+                <div className="absolute right-0 top-full mt-3 w-72 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-900">
+                  {/* User Info */}
+                  <div className="border-b border-zinc-100 p-4 dark:border-zinc-800">
+                    <div className="flex items-center gap-3">
+                      <Avatar
+                        size="md"
+                        src={session?.user?.image || undefined}
+                        name={session?.user?.name || "User"}
+                      />
 
-                          <p className="truncate text-xs text-zinc-500">
-                            {
-                              session
-                                ?.user
-                                ?.email
-                            }
-                          </p>
+                      <div className="min-w-0">
+                        <p className="truncate font-semibold text-zinc-900 dark:text-zinc-100">
+                          {session?.user?.name}
+                        </p>
 
-                          <p className="mt-1 text-xs font-medium capitalize text-indigo-600 dark:text-indigo-400">
-                            {
-                              session
-                                ?.user
-                                ?.role
-                            }
-                          </p>
-                        </div>
+                        <p className="truncate text-xs text-zinc-500">
+                          {session?.user?.email}
+                        </p>
+
+                        <p className="mt-1 text-xs font-medium capitalize text-indigo-600 dark:text-indigo-400">
+                          {session?.user?.role}
+                        </p>
                       </div>
                     </div>
-
-                    {/* Dashboard */}
-                    <Link
-                      href={
-                        dashboardHref
-                      }
-                      onClick={() =>
-                        setProfileOpen(
-                          false
-                        )
-                      }
-                      className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
-                    >
-                      <HiOutlineSquares2X2
-                        size={18}
-                      />
-                      Dashboard
-                    </Link>
-
-                    {/* Logout */}
-                    <button
-                      type="button"
-                      onClick={
-                        handleLogout
-                      }
-                      className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-red-500 transition hover:bg-red-50 dark:hover:bg-red-950/30"
-                    >
-                      <HiOutlineArrowRightOnRectangle
-                        size={18}
-                      />
-                      Logout
-                    </button>
                   </div>
-                )}
-              </div>
-            )}
+
+                  {/* Dashboard */}
+                  <Link
+                    href={dashboardHref}
+                    onClick={() => setProfileOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                  >
+                    <HiOutlineSquares2X2 size={18} />
+                    Dashboard
+                  </Link>
+
+                  {/* Logout */}
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-red-500 transition hover:bg-red-50 dark:hover:bg-red-950/30"
+                  >
+                    <HiOutlineArrowRightOnRectangle size={18} />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Mobile Toggle */}
         <button
-          onClick={() =>
-            setMobileOpen(
-              !mobileOpen
-            )
-          }
+          onClick={() => setMobileOpen(!mobileOpen)}
           className="rounded-xl p-2 hover:bg-zinc-100 dark:hover:bg-zinc-900 md:hidden"
         >
-          {mobileOpen ? (
-            <HiXMark
-              size={24}
-            />
-          ) : (
-            <HiBars3
-              size={24}
-            />
-          )}
+          {mobileOpen ? <HiXMark size={24} /> : <HiBars3 size={24} />}
         </button>
       </div>
 
@@ -335,44 +224,31 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 md:hidden">
           <nav className="flex flex-col gap-2 p-4">
-            <Link
-              href="/"
-              className={navLinkClass(
-                "/"
-              )}
-            >
+            <Link href="/" className={navLinkClass("/")}>
               Home
             </Link>
 
-            <Link
-              href="/prompts"
-              className={navLinkClass(
-                "/prompts"
-              )}
-            >
+            <Link href="/prompts" className={navLinkClass("/prompts")}>
               All Prompts
             </Link>
 
-            {!isPending &&
-              !session && (
-                <>
-                  <Link
-                    href="/auth/login"
-                    className={navLinkClass(
-                      "/auth/login"
-                    )}
-                  >
-                    Login
-                  </Link>
+            {!isPending && !session && (
+              <>
+                <Link
+                  href="/auth/login"
+                  className={navLinkClass("/auth/login")}
+                >
+                  Login
+                </Link>
 
-                  <Link
-                    href="/auth/register"
-                    className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white"
-                  >
-                    Register
-                  </Link>
-                </>
-              )}
+                <Link
+                  href="/auth/register"
+                  className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white"
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       )}
