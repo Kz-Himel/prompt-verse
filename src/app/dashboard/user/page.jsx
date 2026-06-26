@@ -1,10 +1,14 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { FiBookmark, FiMessageSquare, FiAward, FiArrowRight } from "react-icons/fi";
+import { authClient } from "@/lib/auth-client";
 
-// তোমার দেওয়া কাস্টম কম্পোনেন্ট ইমপোর্ট (পাথ প্রজেক্ট অনুযায়ী চেক করে নিও)
+// আপনার প্রজেক্টের কাস্টম কম্পোনেন্ট
 import StatsCard from "../components/StatsCard";
 import RecentActivityCard from "../components/RecentActivityCard";
 
@@ -18,28 +22,64 @@ export default function UserDashboardHome() {
   });
   const [activities, setActivities] = useState([]);
 
+  const { data: session, isPending } = authClient.useSession();
+  const currentUser = session?.user;
+
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+  // ─── ডাইনামিক হেডার জেনারেটর (টোকেনসহ) ───
+  const getHeaders = async () => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    try {
+      const tokenRes = await authClient.token?.();
+      const token = tokenRes?.data?.token;
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+    } catch (err) {
+      console.error("Failed to fetch auth token", err);
+    }
+    return headers;
+  };
+
+  // ─── ড্যাশবোর্ড ডাটা ফেচিং ───
   useEffect(() => {
-    // রিকোয়ারমেন্ট এবং ডিজাইন টেস্টের জন্য রিয়েলিস্টিক মক ডাটা জেনারেশন
-    const timer = setTimeout(() => {
-      setUserStats({
-        savedCount: 15,
-        reviewCount: 4,
-        subscription: "Free", // "Premium" হলে প্রিমিয়াম ব্যানারটি হাইড হয়ে যাবে
-      });
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const headers = await getHeaders();
 
-      setActivities([
-        { id: 1, message: "Bookmarked 'Midjourney Cinematic Prompt'", time: "2 hours ago" },
-        { id: 2, message: "Added a 5-star review on 'ChatGPT SEO Assistant'", time: "1 day ago" },
-        { id: 3, message: "Submitted a new prompt: 'Tailwind v4 Expert'", time: "3 days ago", val: "Pending" },
-      ]);
-      
+        const res = await fetch(`${BACKEND_URL}/user/dashboard-stats`, {
+          method: "GET",
+          headers: headers,
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+          setUserStats(result.stats);
+          setActivities(result.activities || []);
+        } else {
+          toast.error("Failed to load dashboard statistics");
+        }
+      } catch (error) {
+        console.error("Dashboard Fetch Error:", error);
+        toast.error("Network error occurred!");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (currentUser?.email && !isPending) {
+      fetchDashboardData();
+    } else if (!isPending && !currentUser) {
       setLoading(false);
-    }, 600);
+    }
+  }, [currentUser?.email, isPending]);
 
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (loading) {
+  if (isPending || loading) {
     return (
       <div className="p-6 md:p-10 w-full flex items-center justify-center min-h-[400px]">
         <div className="w-10 h-10 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
@@ -47,7 +87,15 @@ export default function UserDashboardHome() {
     );
   }
 
-  // তোমার StatCard কম্পোনেন্টের জন্য ডাটা অ্যারে প্রিপারেশন
+  if (!currentUser) {
+    return (
+      <div className="p-10 text-center text-red-500 font-medium">
+        Please login first to view your dashboard.
+      </div>
+    );
+  }
+
+  // StatCard কম্পোনেন্টের জন্য ডাইনামিক ডাটা অ্যারে প্রিপারেশন
   const statsData = [
     {
       label: "Saved Prompts",
@@ -71,15 +119,19 @@ export default function UserDashboardHome() {
 
   return (
     <div className="p-6 md:p-10 max-w-[1200px] mx-auto w-full space-y-8">
+      <ToastContainer position="top-right" autoClose={2000} />
+
       {/* হেডার সেকশন */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-zinc-100">Welcome back, Explorer! 🚀</h1>
-        <p className="text-default-500 text-sm mt-1">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-zinc-100">
+          Welcome back, {currentUser.name || "Explorer"}! 🚀
+        </h1>
+        <p className="text-gray-500 text-sm mt-1">
           Here is an overview of your saved items, interaction metrics, and activity history.
         </p>
       </div>
 
-      {/* গ্রিড লেআউটে তোমার কাস্টম StatCard সমূহ */}
+      {/* গ্রিড লেআউটে কাস্টম StatCard সমূহ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {statsData.map((stat, index) => (
           <motion.div
@@ -93,18 +145,18 @@ export default function UserDashboardHome() {
         ))}
       </div>
 
-      {/* রিকোয়ারমেন্ট অনুযায়ী Premium Upgrade ব্যানার */}
+      {/* Premium Upgrade ব্যানার (ইউজার Free হলে দেখাবে) */}
       {userStats.subscription.toLowerCase() === "free" && (
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.3 }}
-          className="p-6 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xs"
+          className="p-6 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm"
         >
           <div className="space-y-1 text-center md:text-left">
             <h3 className="text-lg font-bold">Upgrade to Premium for Unlimited Assets! 💎</h3>
             <p className="text-sm text-purple-100 max-w-2xl">
-              You are currently on a **Free Account**. Pay a one-time fee of **$5 via Stripe** to instantly unlock blur-hidden private prompts, copy elite contents, and publish unlimited assets!
+              You are currently on a <strong>Free Account</strong>. Pay a one-time fee of <strong>$5 via Stripe</strong> to instantly unlock blur-hidden private prompts, copy elite contents, and publish unlimited assets!
             </p>
           </div>
           <button
@@ -116,7 +168,7 @@ export default function UserDashboardHome() {
         </motion.div>
       )}
 
-      {/* লেআউট ম্যানেজমেন্টের জন্য তোমার RecentActivityCard */}
+      {/* RecentActivityCard */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
