@@ -45,7 +45,7 @@ export const sidebarLinks = {
   creator: [
     {
       label: "Dashboard Home", // Creator Dashboard Home (Analytics with Recharts)
-      href: "/dashboard/creator/creator-dashboard-home",
+      href: "/dashboard/creator",
       icon: RiBarChartBoxLine,
     },
     {
