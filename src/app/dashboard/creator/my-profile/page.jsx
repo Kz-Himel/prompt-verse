@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import ProfileCard from "../../components/ProfileCard"; // পাথ প্রজেক্ট অনুযায়ী এডজাস্ট করবে
 
-export default function UserProfilePage() {
+export default function CreatorProfilePage() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
