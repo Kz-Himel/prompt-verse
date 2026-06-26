@@ -1,59 +1,102 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { FiBookmark, FiEye, FiTrash2, FiCpu, FiUser } from "react-icons/fi";
+import { authClient } from "@/lib/auth-client";
 
 export default function SavedPromptsPage() {
   const router = useRouter();
   const [savedPrompts, setSavedPrompts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const { data: session, isPending } = authClient.useSession();
+  const currentUser = session?.user;
+
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+  // ─── ডাইনামিক হেডার জেনারেটর (টোকেনসহ) ───
+  const getHeaders = async () => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    try {
+      const tokenRes = await authClient.token?.();
+      const token = tokenRes?.data?.token;
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+    } catch (err) {
+      console.error("Failed to fetch auth token", err);
+    }
+    return headers;
+  };
+
+  // ─── বুকমার্ক করা প্রম্পট ফেচ করা ───
   useEffect(() => {
-    // ডাটাবেজ থেকে ডেটা আসার আগে রিকোয়ারমেন্ট টেস্টের জন্য মক ডাটা
-    const timer = setTimeout(() => {
-      setSavedPrompts([
-        {
-          _id: "sp_1",
-          title: "Midjourney Cinematic Prompt for Cyberpunk City",
-          category: "Design",
-          aiTool: "Midjourney",
-          copyCount: 142,
-          creatorName: "Rahat Chowdhury"
-        },
-        {
-          _id: "sp_2",
-          title: "Advanced SEO Blog Writer & Outline Generator",
-          category: "Content",
-          aiTool: "ChatGPT",
-          copyCount: 320,
-          creatorName: "Anika Tasnim"
-        },
-        {
-          _id: "sp_3",
-          title: "React & Tailwind v4 Custom Hook Boilerplate",
-          category: "Coding",
-          aiTool: "Claude",
-          copyCount: 89,
-          creatorName: "Siam Ahmed"
+    const fetchSavedPrompts = async () => {
+      try {
+        setLoading(true);
+        const headers = await getHeaders();
+
+        const res = await fetch(`${BACKEND_URL}/my-bookmarks`, {
+          method: "GET",
+          headers: headers,
+        });
+
+        const result = await res.json();
+
+        if (result.success) {
+          setSavedPrompts(result.data || []);
+        } else {
+          toast.error(result.message || "Failed to load saved prompts");
         }
-      ]);
+      } catch (error) {
+        console.error("Fetch Error:", error);
+        toast.error("Network error occurred!");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (currentUser?.email && !isPending) {
+      fetchSavedPrompts();
+    } else if (!isPending && !currentUser) {
       setLoading(false);
-    }, 500);
+    }
+  }, [currentUser?.email, isPending]);
 
-    return () => clearTimeout(timer);
-  }, []);
+  // ─── বুকমার্ক রিমুভ হ্যান্ডলার ───
+  const handleRemoveBookmark = async (id) => {
+    if (!confirm("Are you sure you want to remove this prompt from your bookmarks?")) return;
 
-  // বুকমার্ক রিমুভ হ্যান্ডলার (রিকোয়ারমেন্ট অনুযায়ী)
-  const handleRemoveBookmark = (id) => {
-    if (confirm("Are you sure you want to remove this prompt from your bookmarks?")) {
-      setSavedPrompts(savedPrompts.filter((prompt) => prompt._id !== id));
-      // এখানে তোমার ব্যাকএন্ড এপিআই ডিলিট কল হবে (e.g., axios.delete(`/api/bookmarks/${id}`))
-      // টোস্ট মেসেজ দেখাতে চাইলে এখানে `toast.success('Bookmark removed')` দিতে পারো
+    try {
+      const headers = await getHeaders();
+      // আপনার এক্সিস্টিং ৫ নম্বর এপিআই এন্ডপয়েন্টটি ব্যবহার করা হয়েছে যা টগল (Add/Remove) করে
+      const res = await fetch(`${BACKEND_URL}/prompts/${id}/bookmark`, {
+        method: "POST",
+        headers: headers,
+      });
+
+      const result = await res.json();
+
+      if (result.success && !result.bookmarked) {
+        // স্টেট থেকে ফিল্টার করে প্রম্পটটি ইনস্ট্যান্ট রিমুভ করা হচ্ছে
+        setSavedPrompts(savedPrompts.filter((prompt) => prompt._id !== id));
+        toast.success("Bookmark removed successfully!");
+      } else {
+        toast.error(result.message || "Failed to remove bookmark");
+      }
+    } catch (error) {
+      console.error("Remove Bookmark Error:", error);
+      toast.error("Something went wrong!");
     }
   };
 
-  if (loading) {
+  if (isPending || loading) {
     return (
       <div className="p-6 md:p-10 w-full flex items-center justify-center min-h-[400px]">
         <div className="w-10 h-10 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
@@ -61,14 +104,24 @@ export default function SavedPromptsPage() {
     );
   }
 
+  if (!currentUser) {
+    return (
+      <div className="p-10 text-center text-red-500 font-medium">
+        Please login first to view your saved prompts.
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 md:p-10 max-w-[1200px] mx-auto w-full space-y-6">
+      <ToastContainer position="top-right" autoClose={2000} />
+
       {/* হেডার */}
       <div>
         <h1 className="text-2xl font-bold text-gray-800 dark:text-zinc-100 flex items-center gap-2">
           <FiBookmark className="text-purple-600" /> Saved Prompts
         </h1>
-        <p className="text-default-500 text-sm mt-1">
+        <p className="text-gray-500 text-sm mt-1">
           Quickly access or remove your favorite bookmarked AI prompts from the marketplace.
         </p>
       </div>
@@ -77,12 +130,12 @@ export default function SavedPromptsPage() {
         <motion.div 
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }}
-          className="text-center py-16 bg-white dark:bg-zinc-900 border border-default-200 rounded-2xl p-6 text-default-500"
+          className="text-center py-16 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 text-gray-500"
         >
           No saved prompts found. Explore the marketplace to bookmark your favorite items!
         </motion.div>
       ) : (
-        /* রিকোয়ারমেন্ট অনুযায়ী রেসপন্সিভ গ্রিড লেআউট */
+        /* রেসপন্সিভ গ্রিড লেআউট */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           <AnimatePresence>
             {savedPrompts.map((prompt) => (
@@ -93,15 +146,15 @@ export default function SavedPromptsPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white dark:bg-zinc-900 border border-default-200 rounded-2xl p-5 flex flex-col justify-between hover:shadow-md transition-all group"
+                className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-5 flex flex-col justify-between hover:shadow-md transition-all group"
               >
                 <div>
-                  {/* ক্যাটালগ ও এআই টুল ব্যাজ */}
+                  {/* ক্যাটাগরি ও এআইツール ব্যাজ */}
                   <div className="flex items-center justify-between gap-2 mb-3">
                     <span className="bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 px-2.5 py-1 rounded-md text-xs font-semibold">
                       {prompt.category}
                     </span>
-                    <span className="flex items-center gap-1 text-xs text-default-500">
+                    <span className="flex items-center gap-1 text-xs text-gray-500">
                       <FiCpu className="text-sm" /> {prompt.aiTool}
                     </span>
                   </div>
@@ -111,19 +164,19 @@ export default function SavedPromptsPage() {
                     {prompt.title}
                   </h3>
 
-                  {/* ক্রিয়েটরের নাম ও মেট্রিকেস */}
-                  <div className="mt-4 pt-4 border-t border-default-100 flex items-center justify-between text-xs text-default-500">
-                    <span className="flex items-center gap-1">
-                      <FiUser /> By {prompt.creatorName}
+                  {/* ক্রিয়েটরের মেইল বা ডিটেইলস */}
+                  <div className="mt-4 pt-4 border-t border-gray-100 dark:border-zinc-800 flex items-center justify-between text-xs text-gray-500">
+                    <span className="flex items-center gap-1 max-w-[150px] truncate" title={prompt.authorEmail}>
+                      <FiUser /> {prompt.authorEmail ? prompt.authorEmail.split("@")[0] : "Creator"}
                     </span>
                     <span>
-                      Copied: <strong className="text-gray-700 dark:text-zinc-300">{prompt.copyCount} times</strong>
+                      Copied: <strong className="text-gray-700 dark:text-zinc-300">{prompt.copyCount || 0} times</strong>
                     </span>
                   </div>
                 </div>
 
-                {/* ডক্স অনুযায়ী অ্যাকশন বাটনসমূহ (Remove Bookmark & View Details) */}
-                <div className="grid grid-cols-2 gap-3 mt-5 pt-3 border-t border-default-100">
+                {/* অ্যাকশন বাটনসমূহ */}
+                <div className="grid grid-cols-2 gap-3 mt-5 pt-3 border-t border-gray-100 dark:border-zinc-800">
                   <button
                     onClick={() => handleRemoveBookmark(prompt._id)}
                     className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900/30 dark:text-red-400 dark:hover:bg-red-950/20 transition-colors cursor-pointer"
@@ -134,7 +187,7 @@ export default function SavedPromptsPage() {
 
                   <button
                     onClick={() => router.push(`/prompts/${prompt._id}`)}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-purple-600 text-white hover:bg-purple-700 shadow-xs transition-colors cursor-pointer"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-purple-600 text-white hover:bg-purple-700 shadow-sm transition-colors cursor-pointer"
                     title="View Full Details"
                   >
                     <FiEye /> View Details
