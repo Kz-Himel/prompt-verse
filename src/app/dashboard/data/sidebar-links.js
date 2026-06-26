@@ -15,18 +15,13 @@ export const sidebarLinks = {
   // 👤 User Dashboard Routes
   user: [
     {
-      label: "Profile", // রিকোয়ারমেন্ট অনুযায়ী প্রোফাইল পেজ
-      href: "/dashboard/profile",
-      icon: RiUserLine,
-    },
-    {
       label: "Add Prompt", // ফ্রি ইউজার ৩টি এড করতে পারবে (ব্যাকএন্ড চেকসহ)
-      href: "/dashboard/user/addprompt",
+      href: "/dashboard/user/add-prompt",
       icon: RiAddCircleLine,
     },
     {
       label: "My Prompts", // ⚠️ আপনার এটা মিস হয়েছিল (ইউজারের নিজের প্রম্পট টেবিল)
-      href: "/dashboard/user/myprompts",
+      href: "/dashboard/user/my-prompts",
       icon: RiFileList3Line,
     },
     {
@@ -36,9 +31,14 @@ export const sidebarLinks = {
     },
     {
       label: "My Reviews", // ইউজারের দেওয়া রিভিউ লিস্ট
-      href: "/dashboard/my-reviews",
+      href: "/dashboard/user/my-reviews",
       icon: RiMessage3Line,
     },
+    {
+      label: "Profile", // রিকোয়ারমেন্ট অনুযায়ী প্রোফাইল পেজ
+      href: "/dashboard/user/my-profile",
+      icon: RiUserLine,
+    }
   ],
 
   // 🎨 Creator Dashboard Routes
