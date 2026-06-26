@@ -8,6 +8,7 @@ import {
   FiLayers, FiCpu, FiBookmark, FiCopy, FiAlertTriangle, FiLock, FiAward, FiTag 
 } from "react-icons/fi";
 import { RiSparklingFill } from "react-icons/ri";
+import { authClient } from "@/lib/auth-client";
 
 import ReportModal from "../../../components/ReportModal";
 import ReviewSection from "../../../components/ReviewSection";
@@ -16,8 +17,8 @@ export default function PromptDetailsPage() {
   const router = useRouter();
   const { id } = useParams(); 
 
-  // কারেন্ট ইউজার স্টেট (প্রয়োজন অনুযায়ী রিয়েল Auth স্টেট দিয়ে রিপ্লেস করে নিবেন)
-  const [currentUser, setCurrentUser] = useState({ name: "Ahsan Habib", email: "dev@gmail.com" }); 
+  const { data: session, isPending } = authClient.useSession();
+  const currentUser = session?.user;
 
   const [prompt, setPrompt] = useState(null);
   const [isPremiumUser, setIsPremiumUser] = useState(false);
@@ -25,13 +26,27 @@ export default function PromptDetailsPage() {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // হেডার জেনারেটর (Async ফেচিং-এ ব্যবহারের জন্য)
-  const getHeaders = () => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : "";
-    return {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+  // ─── ডাইনামিক হেডার জেনারেটর (টোকেনসহ) ───
+  const getHeaders = async () => {
+    const headers = {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
     };
+    
+    try {
+      // Better Auth থেকে কারেন্ট টোকেন নেওয়া হচ্ছে
+      const tokenRes = await authClient.token?.();
+      const token = tokenRes?.data?.token;
+      
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+    } catch (err) {
+      console.error("Failed to fetch auth token", err);
+    }
+    
+    return headers;
   };
 
   // ─── ডাটা ফেচিং ও সিঙ্ক ───
@@ -39,14 +54,16 @@ export default function PromptDetailsPage() {
     const fetchPromptDetails = async () => {
       try {
         setLoading(true);
-        const url = `http://localhost:5000/prompts/${id}${currentUser?.email ? `?email=${currentUser.email}` : ""}`;
-        
-        const res = await fetch(url, {
-          method: "GET",
-          headers: getHeaders()
-        });
+
+        const url =
+          `${API_URL}/prompts/${id}` +
+          (currentUser?.email
+            ? `?email=${encodeURIComponent(currentUser.email)}`
+            : "");
+
+        const res = await fetch(url);
         const result = await res.json();
-        
+
         if (result.success) {
           setPrompt(result.data);
           setIsPremiumUser(result.isPremiumUser);
@@ -55,36 +72,48 @@ export default function PromptDetailsPage() {
           toast.error(result.message || "Failed to load data");
         }
       } catch (error) {
-        console.error("Fetch error:", error);
+        console.error(error);
         toast.error("Network error occurred!");
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) fetchPromptDetails();
-  }, [id, currentUser?.email]);
+    if (id && !isPending) {
+      fetchPromptDetails();
+    }
+  }, [id, currentUser?.email, isPending]);
 
   if (loading) return <div className="text-center py-20 text-sm font-semibold text-slate-500">Loading Prompt Details...</div>;
   if (!prompt) return <div className="text-center py-20 text-red-500 font-medium">Prompt not found!</div>;
 
-  const hasAccess = prompt.visibility === "public" || isPremiumUser;
+  const hasAccess = prompt.content !== "LOCKED_PREMIUM";
 
   // ─── ১. বুকমার্ক টগল ───
   const handleBookmarkToggle = async () => {
-    if (!currentUser?.email) return toast.error("Please login first to bookmark!");
+    if (!currentUser) {
+      return toast.error("Please login first");
+    }
+
     try {
-      const res = await fetch(`http://localhost:5000/prompts/${prompt._id}/bookmark`, {
-        method: "POST",
-        headers: getHeaders(),
-        body: JSON.stringify({ email: currentUser.email })
-      });
+      const headers = await getHeaders(); // টোকেনসহ হেডার জেনারেট
+      const res = await fetch(
+        `${API_URL}/prompts/${prompt._id}/bookmark`,
+        {
+          method: "POST",
+          headers: headers,
+        }
+      );
+
       const data = await res.json();
+
       if (data.success) {
         setIsBookmarked(data.bookmarked);
         toast.success(data.message);
+      } else {
+        toast.error(data.message);
       }
-    } catch (err) {
+    } catch {
       toast.error("Bookmark request failed");
     }
   };
@@ -93,65 +122,98 @@ export default function PromptDetailsPage() {
   const handleCopyPrompt = async () => {
     try {
       await navigator.clipboard.writeText(prompt.content);
-      
-      const res = await fetch(`http://localhost:5000/prompts/${prompt._id}/copy`, {
-        method: "PATCH",
-        headers: getHeaders()
-      });
+
+      const res = await fetch(
+        `${API_URL}/prompts/${prompt._id}/copy`,
+        {
+          method: "PATCH",
+        }
+      );
+
       const data = await res.json();
-      
+
       if (data.success) {
-        setPrompt(prev => ({ ...prev, copyCount: (prev.copyCount || 0) + 1 }));
-        toast.success("Prompt copied to clipboard!");
+        setPrompt((prev) => ({
+          ...prev,
+          copyCount: (prev.copyCount || 0) + 1,
+        }));
+
+        toast.success("Prompt copied!");
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to process copy action");
     }
   };
 
   // ─── ৩. রিভিউ সাবমিট হ্যান্ডলার ───
   const handleReviewSubmit = async (reviewData) => {
-    if (!currentUser?.email) return toast.error("Please login to leave a review.");
+    if (!currentUser) {
+      return toast.error("Please login first");
+    }
+
     try {
-      const res = await fetch(`http://localhost:5000/prompts/${prompt._id}/reviews`, {
-        method: "POST",
-        headers: getHeaders(),
-        body: JSON.stringify({
-          ...reviewData,
-          name: currentUser.name,
-          email: currentUser.email
-        })
-      });
+      const headers = await getHeaders(); // টোকেনসহ হেডার জেনারেট
+      const res = await fetch(
+        `${API_URL}/prompts/${prompt._id}/reviews`,
+        {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({
+            rating: reviewData.rating,
+            comment: reviewData.comment,
+          }),
+        }
+      );
+
       const data = await res.json();
+
       if (data.success) {
-        setPrompt(prev => ({
+        setPrompt((prev) => ({
           ...prev,
-          reviews: [...(prev.reviews || []), data.review]
+          reviews: [
+            ...(prev.reviews || []),
+            data.review,
+          ],
         }));
+
         toast.success("Review posted successfully!");
+      } else {
+        toast.error(data.message);
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to submit review");
     }
   };
 
   // ─── ৪. রিপোর্ট সাবমিট হ্যান্ডলার ───
   const handleReportSubmit = async (reportData) => {
-    if (!currentUser?.email) return toast.error("Please login to report this prompt.");
+    if (!currentUser) {
+      return toast.error("Please login first");
+    }
+
     try {
-      const res = await fetch(`http://localhost:5000/prompts/${prompt._id}/report`, {
-        method: "POST",
-        headers: getHeaders(),
-        body: JSON.stringify({
-          ...reportData,
-          userEmail: currentUser.email
-        })
-      });
+      const headers = await getHeaders(); // টোকেনসহ হেডার জেনারেট
+      const res = await fetch(
+        `${API_URL}/prompts/${prompt._id}/report`,
+        {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({
+            reason: reportData.reason,
+            description: reportData.description,
+          }),
+        }
+      );
+
       const data = await res.json();
+
       if (data.success) {
-        toast.warning("Prompt reported successfully.");
+        toast.success("Prompt reported successfully");
+        setIsReportModalOpen(false); // মডালটি ক্লোজ করার জন্য
+      } else {
+        toast.error(data.message);
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to submit report");
     }
   };
@@ -162,7 +224,7 @@ export default function PromptDetailsPage() {
       
       <div className="max-w-5xl mx-auto space-y-6">
         
-        {/* ಟপ অ্যাকশন বার */}
+        {/* টপ অ্যাকশন বার */}
         <div className="flex justify-between items-center bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <button onClick={() => router.push("/prompts")} className="text-sm font-medium text-violet-600 hover:underline">
             ← All Prompts

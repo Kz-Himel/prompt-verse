@@ -28,6 +28,8 @@ import {
   SUGGESTED_TAGS,
 } from "../lib-dashboard/utils";
 import { useSession } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "react-toastify";
 
 const FREE_USER_LIMIT = 3;
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -63,19 +65,36 @@ export default function AddPromptPage() {
 
   // ── 
   useEffect(() => {
-    if (userEmail) {
-      fetch(`${BACKEND_URL}/prompts/count/${userEmail}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setCurrentCount(data.count || 0);
-          setLoadingCount(false);
-        })
-        .catch((err) => {
-          console.error("Error fetching count:", err);
-          setLoadingCount(false);
-        });
+  const getCount = async () => {
+    if (!userEmail) return;
+
+    try {
+      const tokenRes = await authClient.token?.();
+const token = tokenRes?.data?.token;
+
+      const res = await fetch(
+        `${BACKEND_URL}/prompts/count/${userEmail}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setCurrentCount(data.count || 0);
+      }
+    } catch (err) {
+      console.error("Count Error:", err);
+    } finally {
+      setLoadingCount(false);
     }
-  }, [userEmail, submitted]);
+  };
+
+  getCount();
+}, [userEmail, submitted]);
 
   const isLimitReached = isUser && currentCount >= FREE_USER_LIMIT;
 
@@ -110,44 +129,83 @@ export default function AddPromptPage() {
   };
 
   const handleSubmit = async () => {
-    const e = validate();
-    if (Object.keys(e).length) {
-      setErrors(e);
+  const e = validate();
+
+  if (Object.keys(e).length) {
+    setErrors(e);
+    return;
+  }
+
+  setErrors({});
+  setIsSubmitting(true);
+
+  try {
+    // Better Auth JWT
+    const tokenRes = await authClient.token?.();
+const token = tokenRes?.data?.token;
+
+if (!token) {
+  toast.error("Please login first!");
+  return;
+}
+
+    if (!token) {
+      toast.error("Please login first");
       return;
     }
-    setErrors({});
-    setIsSubmitting(true);
 
-    // বাস্তব প্রজেক্টে ইমেজ ফাইল ক্লাউডিনারি বা S3 তে আপলোড করে সেই URL ডাটাবেজে পাঠাতে হয়। 
-    // এখানে থাম্বনেইল হ্যান্ডলিং সিম্পল রাখার জন্য বেইজ ডেটার সাথে পাঠানো হচ্ছে।
     const payload = {
-      ...form,
-      authorEmail: userEmail,
-      authorRole: role,
-      status: "pending",
-      createdAt: new Date(),
+      title: form.title.trim(),
+      description: form.description.trim(),
+      content: form.content.trim(),
+      category: form.category,
+      aiTool: form.aiTool,
+      difficulty: form.difficulty,
+      visibility: form.visibility,
+      tags: form.tags,
     };
 
-    try {
-      const response = await fetch(`${BACKEND_URL}/prompts`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+    const res = await fetch(`${BACKEND_URL}/prompts`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+  body: JSON.stringify(payload),
+});
 
-      const data = await response.json();
-      if (data.success) {
-        setSubmitted(true);
-      } else {
-        alert(data.message || "Something went wrong!");
-      }
-    } catch (err) {
-      console.error("Submission error:", err);
-      alert("Failed to connect to the server.");
-    } finally {
-      setIsSubmitting(false);
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.message || "Failed to create prompt");
     }
-  };
+
+    toast.success("Prompt submitted successfully!");
+
+    setCurrentCount((prev) => prev + 1);
+    setSubmitted(true);
+
+    setForm({
+      title: "",
+      description: "",
+      content: "",
+      category: "",
+      aiTool: "",
+      difficulty: "",
+      visibility: "public",
+      tags: [],
+    });
+
+    setTagInput("");
+    setThumbnail(null);
+    setThumbnailPreview(null);
+  } catch (err) {
+    console.error(err);
+    toast.error(err.message || "Something went wrong");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   // ── loading screen ──
   if (status === "loading" || (userEmail && loadingCount)) {
