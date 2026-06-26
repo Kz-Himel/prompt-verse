@@ -31,7 +31,7 @@ export const sidebarLinks = {
     },
     {
       label: "Saved Prompts", // বুকমার্ক করা প্রম্পট
-      href: "/dashboard/saved-prompts",
+      href: "/dashboard/user/saved-prompts",
       icon: RiBookmarkLine,
     },
     {
