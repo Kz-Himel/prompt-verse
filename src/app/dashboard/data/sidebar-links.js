@@ -50,17 +50,17 @@ export const sidebarLinks = {
     },
     {
       label: "Add Prompt", // শেয়ার্ড রুট (ক্রিয়েটরের জন্য লিমিট নাই)
-      href: "/dashboard/creator/addprompt",
+      href: "/dashboard/creator/add-prompt",
       icon: RiAddCircleLine,
     },
     {
       label: "My Prompts", // শেয়ার্ড টেবিল (আপডেট/ডিলিট অ্যাকশনসহ)
-      href: "/dashboard/creator/myprompts",
+      href: "/dashboard/creator/my-prompts",
       icon: RiFileList3Line,
     },
     {
       label: "Profile", // কমন প্রোফাইল পেজ
-      href: "/dashboard/profile",
+      href: "/dashboard/creator/my-profile",
       icon: RiUserLine,
     },
   ],

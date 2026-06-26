@@ -3,29 +3,26 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiEdit2, FiTrash2, FiCheckCircle, FiClock, FiAlertCircle } from "react-icons/fi";
 
-export default function MyPromptsCard({ prompts, setPrompts, onDelete, onUpdate }) {
+export default function MyPromptsCard({ prompts = [], setPrompts, onDelete, onUpdate }) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedPrompt, setSelectedPrompt] = useState(null);
 
-  // এডিটের জন্য ফর্ম স্টেট
   const [editTitle, setEditTitle] = useState("");
   const [editCategory, setEditCategory] = useState("");
   const [editAiTool, setEditAiTool] = useState("");
   const [editDifficulty, setEditDifficulty] = useState("");
   const [editVisibility, setEditVisibility] = useState("");
 
-  // এডিট মোডাল ওপেন হ্যান্ডলার
   const openEditModal = (prompt) => {
     setSelectedPrompt(prompt);
-    setEditTitle(prompt.title);
-    setEditCategory(prompt.category);
-    setEditAiTool(prompt.aiTool);
-    setEditDifficulty(prompt.difficulty);
-    setEditVisibility(prompt.visibility);
+    setEditTitle(prompt.title || "");
+    setEditCategory(prompt.category || "");
+    setEditAiTool(prompt.aiTool || "");
+    setEditDifficulty(prompt.difficulty || "Beginner");
+    setEditVisibility(prompt.visibility || "Public");
     setIsEditModalOpen(true);
   };
 
-  // এডিট সাবমিট হ্যান্ডলার
   const handleUpdateSubmit = (e) => {
     e.preventDefault();
     const updatedData = {
@@ -39,14 +36,12 @@ export default function MyPromptsCard({ prompts, setPrompts, onDelete, onUpdate 
 
     if (onUpdate) {
       onUpdate(updatedData);
-    } else {
-      // লোকাল স্টেট আপডেট যদি প্যারেন্ট থেকে স্পেসিফিক হ্যান্ডলার না দেওয়া হয়
-      setPrompts(prompts.map((p) => (p._id === selectedPrompt._id ? updatedData : p)));
+    } else if (setPrompts) {
+      setPrompts(prompts.map((p) => ((p._id === selectedPrompt._id || p.id === selectedPrompt.id) ? updatedData : p)));
     }
     setIsEditModalOpen(false);
   };
 
-  // স্ট্যাটাস ব্যাজ রেন্ডারার
   const renderStatusBadge = (status) => {
     switch (status) {
       case "approved":
@@ -74,7 +69,6 @@ export default function MyPromptsCard({ prompts, setPrompts, onDelete, onUpdate 
 
   return (
     <div className="w-full space-y-6">
-      {/* কাস্টম মডার্ন টেবিল কন্টেইনার */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -93,55 +87,60 @@ export default function MyPromptsCard({ prompts, setPrompts, onDelete, onUpdate 
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 text-sm text-gray-700">
-              {prompts.map((prompt) => (
-                <tr key={prompt._id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="p-4 pl-6 max-w-[280px]">
-                    <div className="font-medium text-gray-800 truncate">{prompt.title}</div>
-                    <div className="text-xs text-gray-400 mt-0.5 flex gap-2">
-                      <span>{prompt.visibility}</span>
-                      <span>•</span>
-                      <span>{prompt.difficulty}</span>
-                    </div>
-                    {prompt.status === "rejected" && prompt.feedback && (
-                      <div className="text-xs text-red-500 mt-1 bg-red-50/50 p-1.5 rounded-lg border border-red-100">
-                        <strong>Feedback:</strong> {prompt.feedback}
+              {prompts.map((prompt, index) => {
+                // মক ডাটা বা রিয়েল ডাটার যেকোনো আইডি সাপোর্ট করার জন্য ইউনিক কি জেনারেট করা
+                const rowKey = prompt._id || prompt.id || `prompt-${index}`;
+                
+                return (
+                  <tr key={rowKey} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="p-4 pl-6 max-w-[280px]">
+                      <div className="font-medium text-gray-800 truncate">{prompt.title}</div>
+                      <div className="text-xs text-gray-400 mt-0.5 flex gap-2">
+                        <span>{prompt.visibility}</span>
+                        <span>•</span>
+                        <span>{prompt.difficulty}</span>
                       </div>
-                    )}
-                  </td>
-                  <td className="p-4">
-                    <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-md text-xs">
-                      {prompt.category}
-                    </span>
-                  </td>
-                  <td className="p-4 text-gray-600">{prompt.aiTool}</td>
-                  <td className="p-4 font-semibold text-gray-800">{prompt.copyCount}</td>
-                  <td className="p-4">{renderStatusBadge(prompt.status)}</td>
-                  <td className="p-4 pr-6 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => openEditModal(prompt)}
-                        className="p-2 rounded-lg text-gray-500 hover:text-purple-600 hover:bg-purple-50 transition-colors"
-                        title="Edit Prompt"
-                      >
-                        <FiEdit2 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => onDelete(prompt._id)}
-                        className="p-2 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
-                        title="Delete Prompt"
-                      >
-                        <FiTrash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                      {prompt.status === "rejected" && prompt.feedback && (
+                        <div className="text-xs text-red-500 mt-1 bg-red-50/50 p-1.5 rounded-lg border border-red-100">
+                          <strong>Feedback:</strong> {prompt.feedback}
+                        </div>
+                      )}
+                    </td>
+                    <td className="p-4">
+                      <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded-md text-xs">
+                        {prompt.category}
+                      </span>
+                    </td>
+                    <td className="p-4 text-gray-600">{prompt.aiTool}</td>
+                    <td className="p-4 font-semibold text-gray-800">{prompt.copyCount ?? 0}</td>
+                    <td className="p-4">{renderStatusBadge(prompt.status)}</td>
+                    <td className="p-4 pr-6 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => openEditModal(prompt)}
+                          className="p-2 rounded-lg text-gray-500 hover:text-purple-600 hover:bg-purple-50 transition-colors"
+                          title="Edit Prompt"
+                        >
+                          <FiEdit2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => onDelete && onDelete(prompt._id || prompt.id)}
+                          className="p-2 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
+                          title="Delete Prompt"
+                        >
+                          <FiTrash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </motion.div>
 
-      {/* এডিট করার জন্য অ্যানিমেটেড মোডাল পপআপ */}
+      {/* এডিট মোডাল পপআপ */}
       <AnimatePresence>
         {isEditModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
