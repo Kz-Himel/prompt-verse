@@ -221,37 +221,93 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 md:hidden">
-          <nav className="flex flex-col gap-2 p-4">
-            <Link href="/" className={navLinkClass("/")}>
-              Home
-            </Link>
+{mobileOpen && (
+  <div className="border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 md:hidden">
+    <nav className="flex flex-col gap-2 p-4">
+      <Link
+        href="/"
+        className={navLinkClass("/")}
+        onClick={() => setMobileOpen(false)}
+      >
+        Home
+      </Link>
 
-            <Link href="/prompts" className={navLinkClass("/prompts")}>
-              All Prompts
-            </Link>
+      <Link
+        href="/prompts"
+        className={navLinkClass("/prompts")}
+        onClick={() => setMobileOpen(false)}
+      >
+        All Prompts
+      </Link>
 
-            {!isPending && !session && (
-              <>
-                <Link
-                  href="/auth/login"
-                  className={navLinkClass("/auth/login")}
-                >
-                  Login
-                </Link>
+      {/* Logged In */}
+      {!isPending && session && (
+        <>
+          <div className="mt-3 flex items-center gap-3 rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800">
+            <Avatar
+              size="md"
+              src={session?.user?.image || undefined}
+              name={session?.user?.name || "User"}
+            />
 
-                <Link
-                  href="/auth/register"
-                  className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white"
-                >
-                  Register
-                </Link>
-              </>
-            )}
-          </nav>
-        </div>
+            <div className="min-w-0">
+              <p className="truncate font-semibold text-zinc-900 dark:text-zinc-100">
+                {session?.user?.name}
+              </p>
+
+              <p className="truncate text-xs text-zinc-500">
+                {session?.user?.email}
+              </p>
+
+              <p className="mt-1 text-xs font-medium capitalize text-indigo-600 dark:text-indigo-400">
+                {session?.user?.role}
+              </p>
+            </div>
+          </div>
+
+          <Link
+            href={dashboardHref}
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-900"
+          >
+            <HiOutlineSquares2X2 size={18} />
+            Dashboard
+          </Link>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium text-red-500 transition hover:bg-red-50 dark:hover:bg-red-950/30"
+          >
+            <HiOutlineArrowRightOnRectangle size={18} />
+            Logout
+          </button>
+        </>
       )}
+
+      {/* Logged Out */}
+      {!isPending && !session && (
+        <>
+          <Link
+            href="/auth/login"
+            onClick={() => setMobileOpen(false)}
+            className={navLinkClass("/auth/login")}
+          >
+            Login
+          </Link>
+
+          <Link
+            href="/auth/register"
+            onClick={() => setMobileOpen(false)}
+            className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white"
+          >
+            Register
+          </Link>
+        </>
+      )}
+    </nav>
+  </div>
+)}
     </header>
   );
 }
