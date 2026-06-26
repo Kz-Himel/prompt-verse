@@ -26,7 +26,7 @@ export const sidebarLinks = {
     },
     {
       label: "My Prompts", // ⚠️ আপনার এটা মিস হয়েছিল (ইউজারের নিজের প্রম্পট টেবিল)
-      href: "/dashboard/my-prompts",
+      href: "/dashboard/user/myprompts",
       icon: RiFileList3Line,
     },
     {
@@ -55,7 +55,7 @@ export const sidebarLinks = {
     },
     {
       label: "My Prompts", // শেয়ার্ড টেবিল (আপডেট/ডিলিট অ্যাকশনসহ)
-      href: "/dashboard/my-prompts",
+      href: "/dashboard/creator/myprompts",
       icon: RiFileList3Line,
     },
     {
