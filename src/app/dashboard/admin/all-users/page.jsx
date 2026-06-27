@@ -1,14 +1,19 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Table, Button, Spinner } from "@heroui/react";
+import { Table, Button, Spinner, AlertDialog } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 
 export default function AllUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const BACKEND_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  
+  // ─── ম্যানুয়াল স্টেট ম্যানেজমেন্ট ───
+  const [isModalOpen, setIsModalOpen] = useState(false); // পপআপ ওপেন/বন্ধের স্টেট
+  const [deleteId, setDeleteId] = useState(null);       // যে ইউজার ডিলিট হবে তার ID
+  const [deleteLoading, setDeleteLoading] = useState(false); // ডিলিট বাটনের লোডিং স্টেট
+
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
   const getHeaders = async () => {
     const headers = { "Content-Type": "application/json" };
@@ -30,6 +35,7 @@ export default function AllUsers() {
         method: "GET",
         headers: headers,
       });
+      
       const data = await res.json();
 
       if (Array.isArray(data)) {
@@ -70,23 +76,44 @@ export default function AllUsers() {
     }
   };
 
-  const handleDelete = async (userId) => {
+  // ডিলিট বাটন ক্লিক করলে আইডি সেট করে মডাল ওপেন করা
+  const openDeleteModal = (userId) => {
+    setDeleteId(userId);
+    setIsModalOpen(true);
+  };
+
+  // মডাল ক্লোজ করার ফাংশন
+  const closeDeleteModal = () => {
+    setIsModalOpen(false);
+    setDeleteId(null);
+  };
+
+  // পপআপ থেকে কনফার্ম করলে ডিলিট করার মেইন লজিক
+  const handleDeleteConfirm = async () => {
+    if (!deleteId) return;
+    
     try {
+      setDeleteLoading(true);
       const headers = await getHeaders();
-      const res = await fetch(`${BACKEND_URL}/users/${userId}`, {
+      const res = await fetch(`${BACKEND_URL}/users/${deleteId}`, {
         method: "DELETE",
         headers: headers,
       });
 
-      if (res.ok) {
+      const result = await res.json();
+
+      if (res.ok && result.success) {
         toast.success("User deleted successfully!");
-        fetchUsers();
+        closeDeleteModal(); // মডাল বন্ধ ও আইডি রিসেট
+        fetchUsers(); // লিস্ট রিফ্রেশ
       } else {
-        toast.error("Failed to delete user");
+        toast.error(result.message || "Failed to delete user");
       }
     } catch (error) {
       console.error("Delete Error:", error);
       toast.error("Something went wrong!");
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -101,6 +128,7 @@ export default function AllUsers() {
     <div>
       <h1 className="text-2xl font-bold mb-6">All Users ({users.length})</h1>
 
+      {/* আপনার দেওয়া অরিজিনাল টেবিল স্ট্রাকচার */}
       <Table>
         <Table.ScrollContainer>
           <Table.Content aria-label="Users management table" className="min-w-[700px]">
@@ -131,7 +159,7 @@ export default function AllUsers() {
                         onChange={(e) =>
                           handleRoleChange(user._id, e.target.value)
                         }
-                        className="w-32 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none dark:border-zinc-700 dark:bg-zinc-900"
+                        className="w-32 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none dark:border-zinc-700 dark:bg-zinc-900 text-foreground"
                       >
                         <option value="user">User</option>
                         <option value="creator">Creator</option>
@@ -144,7 +172,7 @@ export default function AllUsers() {
                         size="sm"
                         color="danger"
                         variant="flat"
-                        onPress={() => handleDelete(user._id)}
+                        onPress={() => openDeleteModal(user._id)}
                       >
                         Delete
                       </Button>
@@ -156,6 +184,43 @@ export default function AllUsers() {
           </Table.Content>
         </Table.ScrollContainer>
       </Table>
+
+      {/* ================= YOUR CUSTOM ALERT DIALOG (STATE MANAGED) ================= */}
+      <AlertDialog isOpen={isModalOpen} onOpenChange={setIsModalOpen}>
+        <AlertDialog.Backdrop>
+          <AlertDialog.Container>
+            <AlertDialog.Dialog className="sm:max-w-[400px]">
+              <AlertDialog.CloseTrigger onClick={closeDeleteModal} />
+              <AlertDialog.Header>
+                <AlertDialog.Icon status="danger" />
+                <AlertDialog.Heading>Delete user permanently?</AlertDialog.Heading>
+              </AlertDialog.Header>
+              <AlertDialog.Body>
+                <p>
+                  This will permanently delete the user account and all of their related
+                  data. <strong>This action cannot be undone.</strong>
+                </p>
+              </AlertDialog.Body>
+              <AlertDialog.Footer>
+                <Button 
+                  variant="tertiary" 
+                  onClick={closeDeleteModal}
+                  disabled={deleteLoading}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  variant="danger"
+                  isLoading={deleteLoading}
+                  onClick={handleDeleteConfirm}
+                >
+                  Delete User
+                </Button>
+              </AlertDialog.Footer>
+            </AlertDialog.Dialog>
+          </AlertDialog.Container>
+        </AlertDialog.Backdrop>
+      </AlertDialog>
     </div>
   );
 }

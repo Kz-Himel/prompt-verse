@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Card, CardBody, Spinner } from "@heroui/react";
+import { Card, Spinner } from "@heroui/react"; 
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 
@@ -47,30 +47,39 @@ export default function AdminAnalytics() {
     <div>
       <h1 className="text-2xl font-bold mb-6">Dashboard Analytics</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        {/* 1. Total Users */}
         <Card className="border-none bg-content1 shadow-sm">
-          <CardBody className="p-6">
+          <div className="p-6">
             <p className="text-sm text-foreground-500 font-medium">Total Users</p>
             <p className="text-3xl font-bold mt-2">{stats.totalUsers}</p>
-          </CardBody>
+          </div>
         </Card>
+
+        {/* 2. Total Prompts */}
         <Card className="border-none bg-content1 shadow-sm">
-          <CardBody className="p-6">
+          <div className="p-6">
             <p className="text-sm text-foreground-500 font-medium">Total Prompts</p>
             <p className="text-3xl font-bold mt-2">{stats.totalPrompts}</p>
-          </CardBody>
+          </div>
         </Card>
+
+        {/* 3. Total Reviews */}
         <Card className="border-none bg-content1 shadow-sm">
-          <CardBody className="p-6">
+          <div className="p-6">
             <p className="text-sm text-foreground-500 font-medium">Total Reviews</p>
             <p className="text-3xl font-bold mt-2">{stats.totalReviews}</p>
-          </CardBody>
+          </div>
         </Card>
+
+        {/* 4. Total Copies */}
         <Card className="border-none bg-content1 shadow-sm">
-          <CardBody className="p-6">
+          <div className="p-6">
             <p className="text-sm text-foreground-500 font-medium">Total Copies</p>
             <p className="text-3xl font-bold mt-2">{stats.totalCopies}</p>
-          </CardBody>
+          </div>
         </Card>
+        
       </div>
     </div>
   );

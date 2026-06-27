@@ -69,7 +69,7 @@ export const sidebarLinks = {
   admin: [
     {
       label: "Analytics", // রিকোয়ারমেন্টের নাম অনুযায়ী (Total Users, Prompts, etc.)
-      href: "/dashboard/admin-analytics",
+      href: "/dashboard/admin",
       icon: RiDashboardLine,
     },
     {
@@ -79,22 +79,22 @@ export const sidebarLinks = {
     },
     {
       label: "All Prompts", // Approve/Reject/Delete টেবিল
-      href: "/dashboard/all-prompts",
+      href: "/dashboard/admin/all-prompts",
       icon: RiFileList3Line,
     },
     {
       label: "All Payments", // সব পেমেন্ট ডেটা টেবিল
-      href: "/dashboard/all-payments",
+      href: "/dashboard/admin/all-payments",
       icon: RiBankCardLine,
     },
     {
       label: "Reported Prompts", // রিপোর্ট হ্যান্ডেল করার পেজ
-      href: "/dashboard/reported-prompts",
+      href: "/dashboard/admin/reported-prompts",
       icon: RiShieldLine,
     },
     {
       label: "Profile",
-      href: "/dashboard/profile",
+      href: "/dashboard/admin/profile",
       icon: RiUserLine,
     },
   ],
