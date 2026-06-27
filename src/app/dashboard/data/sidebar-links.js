@@ -74,7 +74,7 @@ export const sidebarLinks = {
     },
     {
       label: "All Users", // রোল চেঞ্জ ও ডিলিট টেবিল
-      href: "/dashboard/all-users",
+      href: "/dashboard/admin/all-users",
       icon: RiTeamLine,
     },
     {
