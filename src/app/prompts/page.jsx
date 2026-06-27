@@ -1,19 +1,24 @@
-import { FiLayers, FiCpu, FiUser } from "react-icons/fi";
 import { RiSparklingFill } from "react-icons/ri";
 import PromptCard from "../../components/PromptCard";
+import SearchInput from "../../components/SearchInput"; // পাথটি আপনার প্রোজেক্ট অনুযায়ী ঠিক করে নিয়েন
+import { Suspense } from "react";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-// ব্যাকএন্ড থেকে সরাসরি async/await দিয়ে ডাটা গেট করার ফাংশন
-async function getPrompts() {
+// ব্যাকএন্ড থেকে সরাসরি async/await দিয়ে ডাটা গেট করার ফাংশন (সার্চ কুয়েরিসহ)
+async function getPrompts(searchQuery = "") {
   try {
-    const res = await fetch(`${BACKEND_URL}/prompts`, {
+    // ইউআরএল-এ সার্চ প্যারামিটার যোগ করা হচ্ছে
+    const url = searchQuery 
+      ? `${BACKEND_URL}/prompts?search=${encodeURIComponent(searchQuery)}`
+      : `${BACKEND_URL}/prompts`;
+
+    const res = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        // আপনি চাইলে এখানে অথেন্টিকেশন টোকেন বা অন্য হেডারও পাস করতে পারেন
       },
-      // next: { revalidate: 10 } // প্রতি ১০ সেকেন্ড পর পর নতুন ডেটা চেক করবে (Optional)
+      cache: "no-store" // প্রতিবার নতুন সার্চের সঠিক ডাটা পাওয়ার জন্য ক্যাশিং অফ রাখা হলো
     });
 
     if (!res.ok) {
@@ -24,13 +29,18 @@ async function getPrompts() {
     return resData.success ? resData.data : [];
   } catch (error) {
     console.error("Error in getPrompts:", error);
-    return []; // এরর হলে খালি অ্যারে রিটার্ন করবে যাতে ক্র্যাশ না করে
+    return []; 
   }
 }
 
-export default async function AllPromptsPage() {
-  // সরাসরি সার্ভার সাইডেই ডেটা চলে আসবে
-  const prompts = await getPrompts();
+// Next.js সার্ভার কম্পোনেন্টে 'searchParams' প্রপ্স হিসেবে সরাসরি পাওয়া যায়
+export default async function AllPromptsPage({ searchParams }) {
+  // Next.js রুলস অনুযায়ী searchParams-কে await করে নিতে হবে
+  const resolvedSearchParams = await searchParams;
+  const search = resolvedSearchParams?.search || "";
+
+  // সার্চ কুয়েরি পাস করে ডেটা নিয়ে আসা হচ্ছে
+  const prompts = await getPrompts(search);
 
   return (
     <div className="min-h-screen bg-slate-50/50 py-10 px-4 sm:px-6 lg:px-8">
@@ -48,23 +58,18 @@ export default async function AllPromptsPage() {
             </p>
           </div>
           
-          {/* দ্রষ্টব্য: সার্ভার কম্পোনেন্টে ডিরেক্ট ক্লায়েন্ট স্টেট (useState) চলে না। 
-              তাই সার্চ ফিল্টারিং দরকার হলে এই ইনপুট বক্সটিকে আলাদা 'Client Component' করতে হবে। 
-              আপাতত সাধারণ ডিজাইনটা নিচে থাকলো */}
-          <div className="relative w-full md:w-80">
-            <input
-              type="text"
-              placeholder="Search prompts..."
-              className="w-full bg-white border border-slate-200 text-slate-800 placeholder:text-slate-400 rounded-xl px-4 py-2.5 text-sm outline-none shadow-sm"
-              disabled // ক্লায়েন্ট লজিক ছাড়া এটি কাজ করবে না, চাইলে রিমুভ করতে পারেন
-            />
-          </div>
+          {/* ফাংশনাল সার্চ ইনপুট (useSearchParams ব্যবহারের কারণে এটিকে Suspense এ রাখা সেফ) */}
+          <Suspense fallback={<div className="w-full md:w-80 h-10 bg-slate-100 rounded-xl animate-pulse" />}>
+            <SearchInput />
+          </Suspense>
         </div>
 
-        {/* ── মেইন কন্টেন্ট এরিয়া ── */}
+        {/* ── মেইন কন্টেন্ট এরিয়া ── */}
         {prompts.length === 0 ? (
           <div className="text-center py-20 bg-white border border-slate-200 rounded-2xl shadow-sm">
-            <p className="text-slate-500 text-base">No prompts available at the moment.</p>
+            <p className="text-slate-500 text-base">
+              {search ? `No prompts found for "${search}"` : "No prompts available at the moment."}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
