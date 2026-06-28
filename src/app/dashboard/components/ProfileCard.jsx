@@ -2,11 +2,12 @@
 import { Card } from "@heroui/react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { FiUser, FiMail, FiShield, FiCpu, FiAward, FiArrowRight } from "react-icons/fi";
+import { FiMail, FiShield, FiCpu, FiAward, FiArrowRight } from "react-icons/fi";
 
 export default function ProfileCard({ userProfile }) {
   const router = useRouter();
 
+  // প্যারেন্ট পেজ থেকে আসা ডাইনামিক ডেটা ডিস্ট্রাকচারিং
   const {
     name = "Anonymous",
     email = "",
@@ -17,8 +18,7 @@ export default function ProfileCard({ userProfile }) {
   } = userProfile || {};
 
   const handleUpgrade = () => {
-    // ক্রাইটেরিয়া অনুযায়ী পেমেন্ট পেজে রিডাইরেক্ট
-    router.push("/dashboard/payment");
+    router.push("/pricing");
   };
 
   return (
@@ -30,7 +30,7 @@ export default function ProfileCard({ userProfile }) {
     >
       <Card shadow="sm" className="border border-gray-100 bg-white rounded-2xl overflow-hidden p-6 md:p-8">
         
-        {/* প্রোফাইল হেডার (ছবি, নাম, রোল) */}
+        {/* প্রোফাইল হেডার */}
         <div className="flex flex-col md:flex-row items-center gap-6 pb-6 border-b border-gray-100">
           <div className="relative w-24 h-24 rounded-2xl overflow-hidden border-2 border-purple-100 shadow-xs bg-gray-50 flex-shrink-0">
             <img 
@@ -46,9 +46,11 @@ export default function ProfileCard({ userProfile }) {
             <h2 className="text-xl font-bold text-gray-800 flex items-center justify-center md:justify-start gap-2">
               {name}
             </h2>
-            <p className="text-sm text-gray-400 flex items-center justify-center md:justify-start gap-1.5">
-              <FiMail className="text-gray-400" /> {email}
-            </p>
+            {email && (
+              <p className="text-sm text-gray-400 flex items-center justify-center md:justify-start gap-1.5">
+                <FiMail className="text-gray-400" /> {email}
+              </p>
+            )}
             <div className="mt-2 flex flex-wrap items-center justify-center md:justify-start gap-2 pt-1">
               <span className="inline-flex items-center gap-1 bg-purple-50 text-purple-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-purple-100">
                 <FiShield className="text-xs" /> Role: {role}
@@ -64,7 +66,7 @@ export default function ProfileCard({ userProfile }) {
           </div>
         </div>
 
-        {/* প্রোফাইল স্ট্যাটস এবং মেট্রিকেস */}
+        {/* প্রোফাইল স্ট্যাটস */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6">
           <div className="p-4 bg-gray-50/60 border border-gray-100 rounded-xl flex items-center gap-4">
             <div className="p-3 bg-purple-100 text-purple-700 rounded-xl">
@@ -87,7 +89,7 @@ export default function ProfileCard({ userProfile }) {
           </div>
         </div>
 
-        {/* আপগ্রেড ব্যানার (যদি ইউজার Free মোডে থাকে) */}
+        {/* আপগ্রেড ব্যানার */}
         {subscription.toLowerCase() === "free" && (
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}

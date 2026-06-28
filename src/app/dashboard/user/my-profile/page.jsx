@@ -1,33 +1,78 @@
 "use client";
 import { useState, useEffect } from "react";
-import ProfileCard from "../../components/ProfileCard"; // পাথ প্রজেক্ট অনুযায়ী এডজাস্ট করবে
+import ProfileCard from "../../components/ProfileCard"; 
+// আপনার প্রজেক্টের সঠিক পাথ অনুযায়ী authClient ইমপোর্ট করুন
+import { authClient } from "@/lib/auth-client"; 
 
 export default function UserProfilePage() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // এখানে Better Auth অথবা তোমার MongoDB থেকে লগইন থাকা ইউজারের ডেটা আসবে
-    // আপাতত ক্রাইটেরিয়া টেস্টের জন্য নিখুঁত মক ডেটা
-    const timer = setTimeout(() => {
-      setProfile({
-        name: "Afsari Rahman",
-        email: "afsari@example.com",
-        photoURL: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-        role: "User", // অথবা "Creator"
-        totalPrompts: 2,
-        subscription: "Free" // "Free" টেস্ট করার জন্য, "Premium" দিলে ব্যানার হাইড হয়ে যাবে
-      });
-      setLoading(false);
-    }, 500);
+    const fetchUserProfile = async () => {
+      try {
+        setLoading(true);
 
-    return () => clearTimeout(timer);
+        // 🔑 Better Auth ক্লায়েন্ট থেকে ডাইনামিক টোকেন নেওয়া
+        const tokenRes = await authClient.token?.();
+        const token = tokenRes?.data?.token;
+
+        if (!token) {
+          throw new Error("Unauthorized: No token found. Please login again.");
+        }
+
+        // 🌐 ব্যাকএন্ড API এন্ডপয়েন্টে হিট করা
+        const response = await fetch("http://localhost:5000/user/profile", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, 
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user profile data");
+        }
+
+        const resData = await response.json();
+
+        if (resData.success) {
+          setProfile(resData.data);
+        } else {
+          throw new Error(resData.message || "Something went wrong");
+        }
+      } catch (err) {
+        console.error("Profile Fetch Error:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
   }, []);
 
+  // লোডিং স্টেট
   if (loading) {
     return (
       <div className="p-6 md:p-10 w-full flex items-center justify-center min-h-[300px]">
         <div className="w-8 h-8 border-3 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // এরর স্টেট
+  if (error) {
+    return (
+      <div className="p-6 md:p-10 w-full text-center text-red-500 space-y-3">
+        <p className="font-semibold">Error: {error}</p>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors"
+        >
+          Retry Fetching
+        </button>
       </div>
     );
   }
@@ -39,6 +84,7 @@ export default function UserProfilePage() {
         <p className="text-gray-500 text-sm mt-1">View your profile details and subscription status.</p>
       </div>
 
+      {/* ডাইনামিক প্রোফাইল ডাটা পাস করা হচ্ছে */}
       <ProfileCard userProfile={profile} />
     </div>
   );

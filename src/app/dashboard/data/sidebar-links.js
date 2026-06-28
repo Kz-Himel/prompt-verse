@@ -99,7 +99,7 @@ export const sidebarLinks = {
     },
     {
       label: "Profile",
-      href: "/dashboard/admin/profile",
+      href: "/dashboard/admin/my-profile",
       icon: RiUserLine,
     },
   ],

@@ -4,7 +4,7 @@ import ProfileCard from "../../components/ProfileCard";
 // আপনার প্রজেক্টের সঠিক পাথ অনুযায়ী authClient ইমপোর্ট করুন
 import { authClient } from "@/lib/auth-client"; 
 
-export default function CreatorProfilePage() {
+export default function AdminProfilePage() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
