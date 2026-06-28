@@ -6,6 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "@/components/CheckoutForm"; // পাথ মিলিয়ে নিন
 import { authClient } from "@/lib/auth-client";
+import { toast } from "react-toastify";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -24,7 +25,7 @@ function CheckoutContent() {
         // ১. শুধুমাত্র অ্যাপে লগইন থাকা ইউজারের JWT টোকেন রিড করা হচ্ছে
         const tokenRes = await authClient.token?.();
         const token = tokenRes?.data?.token;
-        if (!token) return alert("Please login first!");
+        if (!token) return toast.success("Please login first!");
         setAuthToken(token);
 
         // ২. এক্সপ্রেস ব্যাকএন্ডে হিট করে clientSecret জেনারেট করা
