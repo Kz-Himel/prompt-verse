@@ -56,7 +56,7 @@ export default function Sidebar({
       <Drawer>
         <Button
           isIconOnly
-          className="fixed left-4 top-4 z-50 lg:hidden"
+          className="fixed left-4 top-4 z-50 lg:hidden mt-12"
           variant="light"
         >
           <TbLayoutSidebar className="size-5" />

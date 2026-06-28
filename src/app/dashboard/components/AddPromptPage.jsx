@@ -34,17 +34,21 @@ import { toast } from "react-toastify";
 const FREE_USER_LIMIT = 3;
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-export default function AddPromptPage() {
+// ── FIXED: Added optional props so it doesn't break Creator/Admin pages ──
+export default function AddPromptPage({ currentCount: passedCount, role: passedRole }) {
   const { data: session, status } = useSession();
   
-  // সেশন থেকে রোল এবং ইমেইল ডিকনস্ট্রাক্ট করা (ডিফল্ট 'user' যদি রোল না থাকে)
+  // সেশন থেকে রোল এবং ইমেইল ডিকনструкট করা (ডিফল্ট 'user' যদি রোল না থাকে)
   const userEmail = session?.user?.email;
-  const role = session?.user?.role || "user"; 
+  
+  // ── FIXED: Fallback logic for Role ──
+  const role = passedRole || session?.user?.role || "user"; 
   const isUser = role === "user";
 
   // ── state management ──
-  const [currentCount, setCurrentCount] = useState(0);
-  const [loadingCount, setLoadingCount] = useState(true);
+  // ── FIXED: Set initial count based on whether passedCount is provided ──
+  const [currentCount, setCurrentCount] = useState(passedCount !== undefined ? passedCount : 0);
+  const [loadingCount, setLoadingCount] = useState(passedCount !== undefined ? false : true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
@@ -63,38 +67,50 @@ export default function AddPromptPage() {
     tags: [],
   });
 
-  // ── 
+  // ── FIXED: Sync state when parent passes count dynamically ──
   useEffect(() => {
-  const getCount = async () => {
-    if (!userEmail) return;
-
-    try {
-      const tokenRes = await authClient.token?.();
-const token = tokenRes?.data?.token;
-
-      const res = await fetch(
-        `${BACKEND_URL}/prompts/count/${userEmail}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setCurrentCount(data.count || 0);
-      }
-    } catch (err) {
-      console.error("Count Error:", err);
-    } finally {
+    if (passedCount !== undefined) {
+      setCurrentCount(passedCount);
       setLoadingCount(false);
     }
-  };
+  }, [passedCount]);
 
-  getCount();
-}, [userEmail, submitted]);
+  // ── Fetch Count internally (Only runs if parent DID NOT pass a count AND it's a free user) ──
+  useEffect(() => {
+    const getCount = async () => {
+      // If count is already provided by parent or user is not a regular 'user', skip the API fetch
+      if (passedCount !== undefined || !isUser || !userEmail) {
+        setLoadingCount(false);
+        return;
+      }
+
+      try {
+        const tokenRes = await authClient.token?.();
+        const token = tokenRes?.data?.token;
+
+        const res = await fetch(
+          `${BACKEND_URL}/prompts/count/${userEmail}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await res.json();
+
+        if (res.ok) {
+          setCurrentCount(data.count || 0);
+        }
+      } catch (err) {
+        console.error("Count Error:", err);
+      } finally {
+        setLoadingCount(false);
+      }
+    };
+
+    getCount();
+  }, [userEmail, submitted, passedCount, isUser]);
 
   const isLimitReached = isUser && currentCount >= FREE_USER_LIMIT;
 
@@ -129,83 +145,78 @@ const token = tokenRes?.data?.token;
   };
 
   const handleSubmit = async () => {
-  const e = validate();
+    const e = validate();
 
-  if (Object.keys(e).length) {
-    setErrors(e);
-    return;
-  }
-
-  setErrors({});
-  setIsSubmitting(true);
-
-  try {
-    // Better Auth JWT
-    const tokenRes = await authClient.token?.();
-const token = tokenRes?.data?.token;
-
-if (!token) {
-  toast.error("Please login first!");
-  return;
-}
-
-    if (!token) {
-      toast.error("Please login first");
+    if (Object.keys(e).length) {
+      setErrors(e);
       return;
     }
 
-    const payload = {
-      title: form.title.trim(),
-      description: form.description.trim(),
-      content: form.content.trim(),
-      category: form.category,
-      aiTool: form.aiTool,
-      difficulty: form.difficulty,
-      visibility: form.visibility,
-      tags: form.tags,
-    };
+    setErrors({});
+    setIsSubmitting(true);
 
-    const res = await fetch(`${BACKEND_URL}/prompts`, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-  body: JSON.stringify(payload),
-});
+    try {
+      // Better Auth JWT
+      const tokenRes = await authClient.token?.();
+      const token = tokenRes?.data?.token;
 
-    const result = await res.json();
+      if (!token) {
+        toast.error("Please login first!");
+        return;
+      }
 
-    if (!res.ok) {
-      throw new Error(result.message || "Failed to create prompt");
+      const payload = {
+        title: form.title.trim(),
+        description: form.description.trim(),
+        content: form.content.trim(),
+        category: form.category,
+        aiTool: form.aiTool,
+        difficulty: form.difficulty,
+        visibility: form.visibility,
+        tags: form.tags,
+      };
+
+      const res = await fetch(`${BACKEND_URL}/prompts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || "Failed to create prompt");
+      }
+
+      toast.success("Prompt submitted successfully!");
+
+      setCurrentCount((prev) => prev + 1);
+      setSubmitted(true);
+
+      setForm({
+        title: "",
+        description: "",
+        content: "",
+        category: "",
+        aiTool: "",
+        difficulty: "",
+        visibility: "public",
+        tags: [],
+      });
+
+      setTagInput("");
+      setThumbnail(null);
+      setThumbnailPreview(null);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || "Something went wrong");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    toast.success("Prompt submitted successfully!");
-
-    setCurrentCount((prev) => prev + 1);
-    setSubmitted(true);
-
-    setForm({
-      title: "",
-      description: "",
-      content: "",
-      category: "",
-      aiTool: "",
-      difficulty: "",
-      visibility: "public",
-      tags: [],
-    });
-
-    setTagInput("");
-    setThumbnail(null);
-    setThumbnailPreview(null);
-  } catch (err) {
-    console.error(err);
-    toast.error(err.message || "Something went wrong");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   // ── loading screen ──
   if (status === "loading" || (userEmail && loadingCount)) {

@@ -1,16 +1,63 @@
-// TODO: replace with real DB fetch
-// const { promptCount } = await getUserPromptCount(session.user.id);
-"use client"
+"use client";
 
+import { useEffect, useState } from "react";
 import AddPromptPage from "../../components/AddPromptPage";
-
-const DUMMY_USER_PROMPT_COUNT = 1; // user er already add kora prompt count
+import { authClient } from "@/lib/auth-client";
 
 const UserAddPromptPage = () => {
+  const [promptCount, setPromptCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserPromptCount = async () => {
+      try {
+        setLoading(true);
+        const tokenRes = await authClient.token?.();
+        const token = tokenRes?.data?.token;
+
+        if (!token) return;
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/user/dashboard-stats`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          const resData = await response.json();
+          if (resData.success && resData.stats) {
+            // ব্যাকএন্ড থেকে আসা রিয়াল প্রম্পট কাউন্ট সেট করা হচ্ছে
+            setPromptCount(resData.stats.promptCount || 0);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch user prompt count:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserPromptCount();
+  }, []);
+
+  // ডাটা লোড হওয়ার সময় একটি সিম্পল স্পিনার/লোডার (ডক রিকোয়ারমেন্ট)
+  if (loading) {
+    return (
+      <div className="p-6 w-full flex items-center justify-center min-h-[300px]">
+        <div className="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
     <AddPromptPage
       role="user"
-      currentCount={DUMMY_USER_PROMPT_COUNT}
+      currentCount={promptCount} // এখন এটা ১০০% ডাইনামিক এবং রিয়াল ডেটা!
     />
   );
 };

@@ -15,6 +15,11 @@ export const sidebarLinks = {
   // 👤 User Dashboard Routes
   user: [
     {
+      label: "Home", // ফ্রি ইউজার ৩টি এড করতে পারবে (ব্যাকএন্ড চেকসহ)
+      href: "/dashboard/user",
+      icon: RiAddCircleLine,
+    },
+    {
       label: "Add Prompt", // ফ্রি ইউজার ৩টি এড করতে পারবে (ব্যাকএন্ড চেকসহ)
       href: "/dashboard/user/add-prompt",
       icon: RiAddCircleLine,

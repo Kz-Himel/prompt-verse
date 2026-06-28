@@ -5,7 +5,12 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FiBookmark, FiMessageSquare, FiAward, FiArrowRight } from "react-icons/fi";
+import {
+  FiBookmark,
+  FiMessageSquare,
+  FiAward,
+  FiArrowRight,
+} from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
 
 // আপনার প্রজেক্টের কাস্টম কম্পোনেন্ট
@@ -25,7 +30,8 @@ export default function UserDashboardHome() {
   const { data: session, isPending } = authClient.useSession();
   const currentUser = session?.user;
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const BACKEND_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
   // ─── ডাইনামিক হেডার জেনারেটর (টোকেনসহ) ───
   const getHeaders = async () => {
@@ -46,32 +52,45 @@ export default function UserDashboardHome() {
 
   // ─── ড্যাশবোর্ড ডাটা ফেচিং ───
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
-        const headers = await getHeaders();
+   const fetchDashboardData = async () => {
+  try {
+    setLoading(true);
+    const headers = await getHeaders();
 
-        const res = await fetch(`${BACKEND_URL}/user/dashboard-stats`, {
-          method: "GET",
-          headers: headers,
-        });
+    console.log("Fetching from:", `${BACKEND_URL}/user/dashboard-stats`); // ডিবাগিং লগ
 
-        const result = await res.json();
+    const res = await fetch(`${BACKEND_URL}/user/dashboard-stats`, {
+      method: "GET",
+      headers: headers,
+    });
 
-        if (result.success) {
-          setUserStats(result.stats);
-          setActivities(result.activities || []);
-        } else {
-          toast.error("Failed to load dashboard statistics");
-        }
-      } catch (error) {
-        console.error("Dashboard Fetch Error:", error);
-        toast.error("Network error occurred!");
-      } finally {
-        setLoading(false);
-      }
-    };
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      console.error("Backend directly failed. Status:", res.status);
+      toast.error("Backend server is not returning JSON!");
+      setLoading(false);
+      return;
+    }
 
+    const result = await res.json();
+    console.log("Backend response result:", result); // এখানে দেখতে পারবে ব্যাকএন্ড কী পাঠাচ্ছে
+
+    if (result.success) {
+      setUserStats(
+        result.stats || { savedCount: 0, reviewCount: 0, subscription: "Free" }
+      );
+      setActivities(result.activities || []);
+    } else {
+      // ব্যাকএন্ড থেকে আসা আসল এরর মেসেজটি টোস্টে দেখাবে
+      toast.error(result.message || "Failed to load dashboard statistics");
+    }
+  } catch (error) {
+    console.error("Dashboard Fetch Error:", error);
+    toast.error("Network error occurred!");
+  } finally {
+    setLoading(false);
+  }
+};
     if (currentUser?.email && !isPending) {
       fetchDashboardData();
     } else if (!isPending && !currentUser) {
@@ -113,7 +132,8 @@ export default function UserDashboardHome() {
       label: "Account Plan",
       value: userStats.subscription,
       icon: FiAward,
-      color: "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400",
+      color:
+        "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400",
     },
   ];
 
@@ -127,7 +147,8 @@ export default function UserDashboardHome() {
           Welcome back, {currentUser.name || "Explorer"}! 🚀
         </h1>
         <p className="text-gray-500 text-sm mt-1">
-          Here is an overview of your saved items, interaction metrics, and activity history.
+          Here is an overview of your saved items, interaction metrics, and
+          activity history.
         </p>
       </div>
 
@@ -154,9 +175,14 @@ export default function UserDashboardHome() {
           className="p-6 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm"
         >
           <div className="space-y-1 text-center md:text-left">
-            <h3 className="text-lg font-bold">Upgrade to Premium for Unlimited Assets! 💎</h3>
+            <h3 className="text-lg font-bold">
+              Upgrade to Premium for Unlimited Assets! 💎
+            </h3>
             <p className="text-sm text-purple-100 max-w-2xl">
-              You are currently on a <strong>Free Account</strong>. Pay a one-time fee of <strong>$5 via Stripe</strong> to instantly unlock blur-hidden private prompts, copy elite contents, and publish unlimited assets!
+              You are currently on a <strong>Free Account</strong>. Pay a
+              one-time fee of <strong>$5 via Stripe</strong> to instantly unlock
+              blur-hidden private prompts, copy elite contents, and publish
+              unlimited assets!
             </p>
           </div>
           <button
