@@ -1,46 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Card } from "@heroui/react";
 import { motion } from "framer-motion";
 import { FiCpu, FiCopy, FiBookmark } from "react-icons/fi";
-import { authClient } from "@/lib/auth-client"; // আপনার better-auth ক্লায়েন্ট পাথ অনুযায়ী পরিবর্তন করে নিবেন
 
-export default function AnalyticsCards() {
-  const [stats, setStats] = useState({ totalPrompts: 0, totalCopies: 0, totalBookmarks: 0 });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true);
-        const tokenObj = await authClient.jwt.getToken();
-        const token = tokenObj?.token;
-
-        if (!token) return;
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/creator/analytics`, {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          const resData = await response.json();
-          if (resData.success && resData.stats) {
-            setStats(resData.stats);
-          }
-        }
-      } catch (err) {
-        console.error("Cards Fetch Error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-  }, []);
+export default function AnalyticsCards({ data }) {
+  // ডাটাবেজে ডেটা না থাকলে বা লোড হতে দেরি হলে ক্র্যাশ এড়াতে ডিফল্ট স্টেট
+  const stats = data || { totalPrompts: 0, totalCopies: 0, totalBookmarks: 0 };
 
   const cards = [
     {
@@ -62,17 +28,6 @@ export default function AnalyticsCards() {
       bg: "bg-pink-50",
     },
   ];
-
-  // ─── LOADING SKELETON FOR CARDS ───
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-28 bg-gray-100 rounded-2xl border border-gray-100"></div>
-        ))}
-      </div>
-    );
-  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

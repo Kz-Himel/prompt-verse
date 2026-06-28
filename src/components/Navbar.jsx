@@ -100,10 +100,6 @@ export default function Navbar() {
 
           <div>
             <h1 className="text-lg font-bold tracking-tight">PromptVerse</h1>
-
-            <p className="hidden text-[11px] text-zinc-500 sm:block">
-              AI Prompt Marketplace
-            </p>
           </div>
         </Link>
 
@@ -115,6 +111,10 @@ export default function Navbar() {
 
           <Link href="/prompts" className={navLinkClass("/prompts")}>
             All Prompts
+          </Link>
+
+          <Link href="/pricing" className={navLinkClass("/pricing")}>
+            Pricing
           </Link>
         </nav>
 
@@ -238,6 +238,10 @@ export default function Navbar() {
         onClick={() => setMobileOpen(false)}
       >
         All Prompts
+      </Link>
+
+      <Link href="/pricing" className={navLinkClass("/pricing")}>
+            Pricing
       </Link>
 
       {/* Logged In */}

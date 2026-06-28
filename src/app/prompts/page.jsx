@@ -1,29 +1,27 @@
 import { RiSparklingFill } from "react-icons/ri";
 import PromptCard from "../../components/PromptCard";
-import SearchInput from "../../components/SearchInput"; // পাথটি আপনার প্রোজেক্ট অনুযায়ী ঠিক করে নিয়েন
+import SearchInput from "../../components/SearchInput"; 
 import { Suspense } from "react";
+
+export const dynamic = "force-dynamic"; // ক্যাশিং ফিক্স করার জন্য ডায়নামিক ফোর্স করা হলো
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-// ব্যাকএন্ড থেকে সরাসরি async/await দিয়ে ডাটা গেট করার ফাংশন (সার্চ কুয়েরিসহ)
-async function getPrompts(searchQuery = "") {
+// ব্যাকএন্ড থেকে ডেটা আনার ফাংশন (সার্চ এবং ইউজার ইমেইলসহ)
+async function getPrompts(searchQuery = "", userEmail = "") {
   try {
-    // ইউআরএল-এ সার্চ প্যারামিটার যোগ করা হচ্ছে
-    const url = searchQuery 
-      ? `${BACKEND_URL}/prompts?search=${encodeURIComponent(searchQuery)}`
-      : `${BACKEND_URL}/prompts`;
+    let url = `${BACKEND_URL}/prompts?`;
+    
+    if (searchQuery) url += `search=${encodeURIComponent(searchQuery)}&`;
+    if (userEmail) url += `email=${encodeURIComponent(userEmail)}`;
 
     const res = await fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      cache: "no-store" // প্রতিবার নতুন সার্চের সঠিক ডাটা পাওয়ার জন্য ক্যাশিং অফ রাখা হলো
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store" 
     });
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch data: ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`Failed to fetch data: ${res.status}`);
 
     const resData = await res.json();
     return resData.success ? resData.data : [];
@@ -33,14 +31,15 @@ async function getPrompts(searchQuery = "") {
   }
 }
 
-// Next.js সার্ভার কম্পোনেন্টে 'searchParams' প্রপ্স হিসেবে সরাসরি পাওয়া যায়
 export default async function AllPromptsPage({ searchParams }) {
-  // Next.js রুলস অনুযায়ী searchParams-কে await করে নিতে হবে
   const resolvedSearchParams = await searchParams;
   const search = resolvedSearchParams?.search || "";
+  
+  // 💡 আপনার Auth প্রোভাইডার (যেমন NextAuth/Better Auth) থেকে কারেন্ট ইউজারের ইমেইল নিন
+  // উদাহরণ স্বরূপ নিচে ডামি বা প্রোভাইডার ইমেইল ডিক্লেয়ার করা হলো:
+  const currentUserEmail = resolvedSearchParams?.userEmail || ""; 
 
-  // সার্চ কুয়েরি পাস করে ডেটা নিয়ে আসা হচ্ছে
-  const prompts = await getPrompts(search);
+  const prompts = await getPrompts(search, currentUserEmail);
 
   return (
     <div className="min-h-screen bg-slate-50/50 py-10 px-4 sm:px-6 lg:px-8">
@@ -58,7 +57,6 @@ export default async function AllPromptsPage({ searchParams }) {
             </p>
           </div>
           
-          {/* ফাংশনাল সার্চ ইনপুট (useSearchParams ব্যবহারের কারণে এটিকে Suspense এ রাখা সেফ) */}
           <Suspense fallback={<div className="w-full md:w-80 h-10 bg-slate-100 rounded-xl animate-pulse" />}>
             <SearchInput />
           </Suspense>

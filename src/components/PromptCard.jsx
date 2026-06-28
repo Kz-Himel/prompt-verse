@@ -1,82 +1,82 @@
 "use client";
-
-import Link from "next/link";
-import { motion } from "framer-motion";
-import {
-  FiLayers,
-  FiCpu,
-  FiUser,
-  FiCopy,
-  FiArrowRight,
-} from "react-icons/fi";
+import { useRouter } from "next/navigation";
+import { RiLockPasswordLine } from "react-icons/ri";
+import { toast } from "react-toastify";
 
 export default function PromptCard({ prompt, index }) {
+  const router = useRouter();
+  
+  // ব্যাকএন্ড থেকে private প্রম্পটের জন্য promptContent === "LOCKED_PREMIUM" পাঠানো হচ্ছে
+  const isLocked = prompt.promptContent === "LOCKED_PREMIUM";
+
+  const handleAction = (e) => {
+    e.preventDefault();
+    if (isLocked) {
+      // ইউজারকে মেসেজ দেখানো এবং প্রিমিয়াম পেজে রিডাইরেক্ট করা
+      toast.error("🔒 This is a Premium Prompt! Please get a premium package to view the full details.");
+      router.push("/pricing"); // আপনার সাবস্ক্রিপশন বা প্রাইসিং পেজের রুট এখানে দিবেন
+    } else {
+      // নরমাল ইউজার বা পাবলিক প্রম্পট হলে ডিটেইলস পেজে যাবে
+      router.push(`/prompts/${prompt._id}`);
+    }
+  };
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
-      className="group flex flex-col justify-between bg-white border border-slate-200 rounded-3xl p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
-    >
-      {/* Top */}
-      <div className="space-y-4">
-        {/* Badges */}
-        <div className="flex flex-wrap gap-2">
-          <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700">
-            <FiLayers size={12} />
-            {prompt.category}
-          </span>
-
-          <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-            <FiCpu size={12} />
-            {prompt.aiTool}
+    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-all duration-300">
+      <div className="p-5">
+        
+        {/* টাইটেল এবং ব্যাজ */}
+        <div className="flex justify-between items-start gap-2 mb-3">
+          <h3 className="text-slate-800 font-bold text-lg line-clamp-1">{prompt.title}</h3>
+          <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+            isLocked ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-slate-100 text-slate-600'
+          }`}>
+            {isLocked ? "Premium" : "Public"}
           </span>
         </div>
 
-        {/* Title */}
-        <h3 className="text-lg font-bold text-slate-800 line-clamp-2 min-h-[56px]">
-          {prompt.title}
-        </h3>
+        {/* এআই টুল ক্যাটাগরি */}
+        <p className="text-xs font-semibold uppercase tracking-wider text-violet-600 mb-4">
+          {prompt.aiTool || "AI Tool"}
+        </p>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl bg-slate-50 border border-slate-100 p-3">
-            <p className="text-[11px] text-slate-500 mb-1">
-              Total Copies
+        {/* ── প্রম্পট এরিয়া (সম্পূর্ণ ব্লার ও লকড) ── */}
+        <div className="relative p-4 bg-slate-50 border border-slate-100 rounded-xl overflow-hidden min-h-[110px] flex items-center">
+          {isLocked ? (
+            <>
+              {/* এই টেক্সটটি জাস্ট দেখানোর জন্য, ব্লার থাকার কারণে ইউজার পড়তে পারবে না */}
+              <p className="text-slate-400 text-xs blur-[6px] select-none pointer-events-none line-clamp-3">
+                Act as a senior full-stack developer and write a complete authentication system using Next.js middleware and Jose JWT library with secure cookie management...
+              </p>
+
+              {/* ওপরে ওভারলে লক আইকন */}
+              <div className="absolute inset-0 bg-white/30 flex flex-col items-center justify-center backdrop-blur-[3px]">
+                <RiLockPasswordLine className="text-amber-500 text-2xl animate-pulse" />
+                <span className="text-[11px] font-bold text-slate-600 mt-1">Premium Pack Required</span>
+              </div>
+            </>
+          ) : (
+            /* পাবলিক প্রম্পট হলে নরমাল টেক্সট দেখা যাবে */
+            <p className="text-slate-600 text-sm line-clamp-3 font-mono">
+              {prompt.promptContent || "No content available."}
             </p>
-
-            <div className="flex items-center gap-2 font-semibold text-slate-800">
-              <FiCopy />
-              {prompt.copyCount}
-            </div>
-          </div>
-
-          <div className="rounded-2xl bg-slate-50 border border-slate-100 p-3">
-            <p className="text-[11px] text-slate-500 mb-1">
-              Creator
-            </p>
-
-            <div className="flex items-center gap-2 font-semibold text-slate-800 truncate">
-              <FiUser />
-              <span className="truncate">
-                {prompt.creatorName ||
-                  prompt.authorEmail?.split("@")[0]}
-              </span>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* Bottom */}
-      <div className="pt-5 mt-5 border-t border-slate-100">
-        <Link
-          href={`/prompts/${prompt._id}`}
-          className="flex items-center justify-center gap-2 w-full rounded-2xl bg-slate-900 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-violet-600"
+      {/* ── কার্ড ফুটার বাটন ── */}
+      <div className="px-5 py-4 bg-slate-50/50 border-t border-slate-100">
+        <button
+          onClick={handleAction}
+          className={`w-full text-center py-2.5 text-xs font-bold rounded-xl transition-all ${
+            isLocked 
+              ? "bg-amber-500 hover:bg-amber-600 text-white shadow-sm" 
+              : "bg-slate-800 hover:bg-slate-900 text-white"
+          }`}
         >
-          View Details
-          <FiArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-        </Link>
+          {isLocked ? "🔒 Get Premium Pack" : "View Details"}
+        </button>
       </div>
-    </motion.div>
+    </div>
   );
 }

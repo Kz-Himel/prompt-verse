@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Card } from "@heroui/react";
 import { motion } from "framer-motion";
-import { authClient } from "@/lib/auth-client"; // আপনার better-auth ক্লায়েন্ট পাথ অনুযায়ী পরিবর্তন করে নিবেন
 import {
   AreaChart,
   Area,
@@ -12,95 +10,73 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
 } from "recharts";
 
-export default function AnalyticsCharts() {
-  const [chartData, setChartData] = useState([]);
-  const [loading, setLoading] = useState(true);
-
+export default function AnalyticsCharts({ chartData = [] }) {
   const defaultMonths = [
-    { name: "Jan", copies: 0 }, { name: "Feb", copies: 0 }, { name: "Mar", copies: 0 },
-    { name: "Apr", copies: 0 }, { name: "May", copies: 0 }, { name: "Jun", copies: 0 },
-    { name: "Jul", copies: 0 }, { name: "Aug", copies: 0 }, { name: "Sep", copies: 0 },
-    { name: "Oct", copies: 0 }, { name: "Nov", copies: 0 }, { name: "Dec", copies: 0 },
+    { name: "Jan", copies: 0, prompts: 0 },
+    { name: "Feb", copies: 0, prompts: 0 },
+    { name: "Mar", copies: 0, prompts: 0 },
+    { name: "Apr", copies: 0, prompts: 0 },
+    { name: "May", copies: 0, prompts: 0 },
+    { name: "Jun", copies: 0, prompts: 0 },
+    { name: "Jul", copies: 0, prompts: 0 },
+    { name: "Aug", copies: 0, prompts: 0 },
+    { name: "Sep", copies: 0, prompts: 0 },
+    { name: "Oct", copies: 0, prompts: 0 },
+    { name: "Nov", copies: 0, prompts: 0 },
+    { name: "Dec", copies: 0, prompts: 0 },
   ];
 
-  useEffect(() => {
-    const fetchChartData = async () => {
-      try {
-        setLoading(true);
-        const tokenObj = await authClient.jwt.getToken();
-        const token = tokenObj?.token;
-
-        if (!token) return;
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/creator/analytics`, {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          const resData = await response.json();
-          if (resData.success && resData.chartData) {
-            // ব্যাকএন্ডের ডেটা ১২ মাসের সাথে ম্যাপ করা হচ্ছে
-            const finalizedData = defaultMonths.map((month) => {
-              const match = resData.chartData.find(
-                (item) => item.name?.toLowerCase() === month.name.toLowerCase()
-              );
-              return { name: month.name, copies: match ? match.copies : 0 };
-            });
-            setChartData(finalizedData);
-          }
-        }
-      } catch (err) {
-        console.error("Charts Fetch Error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchChartData();
-  }, []);
-
-  // ─── LOADING SKELETON FOR CHART ───
-  if (loading) {
-    return (
-      <div className="mt-8 animate-pulse">
-        <div className="h-[450px] bg-gray-100 rounded-2xl border border-gray-100"></div>
-      </div>
+  // ব্যাকএন্ড থেকে আসা ডেটা ১২ মাসের সাথে নিখুঁতভাবে মার্জ করা হচ্ছে
+  const finalizedData = defaultMonths.map((month) => {
+    const match = chartData.find(
+      (item) => item.name?.toLowerCase() === month.name.toLowerCase()
     );
-  }
+    return {
+      name: month.name,
+      copies: match ? match.copies : 0,
+      prompts: match ? match.prompts : 0, // ডক রিকোয়ারমেন্ট: Prompt Growth
+    };
+  });
+
+  const isDataEmpty = finalizedData.every(item => item.copies === 0 && item.prompts === 0);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
-      className="mt-8"
+      className="w-full"
     >
       <Card shadow="sm" className="border border-gray-100 p-6 bg-white rounded-2xl">
         <div className="flex flex-col items-start pb-4">
-          <h4 className="text-lg font-bold text-gray-800">Prompt Growth Overview</h4>
-          <p className="text-sm text-gray-400">View your prompt performance over time</p>
+          <h4 className="text-lg font-bold text-gray-800">Performance & Growth Overview</h4>
+          <p className="text-sm text-gray-400">Track your prompt copies and creation growth</p>
         </div>
         
         <div className="pt-4 h-[350px] w-full">
-          {chartData.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-gray-400">
+          {isDataEmpty ? (
+            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
               No analytics data available yet
             </div>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
-                data={chartData}
-                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                data={finalizedData}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
                 <defs>
+                  {/* Total Copies এর জন্য গ্রাডিয়েন্ট */}
                   <linearGradient id="colorCopies" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#9333ea" stopOpacity={0.2} />
-                    <stop offset="95%" stopColor="#9333ea" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                  </linearGradient>
+                  {/* Prompt Growth এর জন্য গ্রাডিয়েন্ট */}
+                  <linearGradient id="colorPrompts" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
@@ -113,13 +89,28 @@ export default function AnalyticsCharts() {
                     borderRadius: "8px",
                   }}
                 />
+                <Legend verticalAlign="top" height={36} iconType="circle" />
+                
+                {/* ১. টোটাল কপি এরিয়া লাইন */}
                 <Area
                   type="monotone"
                   dataKey="copies"
-                  stroke="#9333ea"
-                  strokeWidth={3}
+                  name="Total Copies"
+                  stroke="#3b82f6"
+                  strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#colorCopies)"
+                />
+
+                {/* ২. প্রম্পট গ্রোথ এরিয়া লাইন */}
+                <Area
+                  type="monotone"
+                  dataKey="prompts"
+                  name="Prompt Growth"
+                  stroke="#10b981"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorPrompts)"
                 />
               </AreaChart>
             </ResponsiveContainer>
