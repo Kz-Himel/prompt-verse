@@ -6,8 +6,12 @@ import { useRouter } from "next/navigation";
 export default function PricingPage() {
   const router = useRouter();
 
-  const handleUpgrade = () => {
-    router.push("/checkout");
+  const handleUpgrade = (e) => {
+    e.preventDefault();
+    console.log("Button Clicked! Redirecting with dynamic parameters..."); 
+    
+    // ⚡ Next.js Router ব্যবহার করে কুয়েরি প্যারামিটারসহ নিখুঁত রিডাইরেকশন
+    router.push("/checkout?plan=pro&price=5");
   };
 
   return (
@@ -26,7 +30,7 @@ export default function PricingPage() {
         </p>
       </div>
 
-      {/* প্রাইসিং কার্ড গ্রিড */}
+      {/* প্রাইসিং CARD গ্রিড */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto items-stretch">
         
         {/* ১. ফ্রি প্ল্যান */}
@@ -41,7 +45,6 @@ export default function PricingPage() {
               </div>
             </div>
             
-            {/* Divider line */}
             <hr className="my-6 border-zinc-200 dark:border-zinc-800" />
             
             <div className="space-y-3.5 text-sm text-zinc-600 dark:text-zinc-400">
@@ -51,15 +54,11 @@ export default function PricingPage() {
               </div>
               <div className="flex items-center gap-2">
                 <HiCheck className="text-emerald-500 text-lg shrink-0" />
-                <span>Submit up to 3 prompts/month</span>
+                <span>Submit up to 3 prompts</span>
               </div>
               <div className="flex items-center gap-2 text-zinc-400 dark:text-zinc-600">
                 <HiX className="text-rose-500 text-lg shrink-0" />
                 <span className="line-through">No Private/Locked Prompts</span>
-              </div>
-              <div className="flex items-center gap-2 text-zinc-400 dark:text-zinc-600">
-                <HiX className="text-rose-500 text-lg shrink-0" />
-                <span className="line-through">No Premium Profile Badge</span>
               </div>
             </div>
           </div>
@@ -76,7 +75,6 @@ export default function PricingPage() {
 
         {/* ২. প্রিমিয়াম প্ল্যান */}
         <div className="p-6 rounded-2xl border-2 border-blue-600 bg-white dark:bg-zinc-900 relative flex flex-col justify-between shadow-md">
-          {/* মোস্ট পপুলার ব্যাজ */}
           <span className="absolute -top-3 right-6 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm z-10">
             POPULAR
           </span>
@@ -86,12 +84,11 @@ export default function PricingPage() {
               <h3 className="text-xl font-bold text-blue-600 dark:text-blue-400">PromptVerse Pro</h3>
               <p className="text-zinc-400 text-xs">For power users and creative pros</p>
               <div className="mt-4 flex items-baseline">
-                <span className="text-4xl font-black text-zinc-900 dark:text-zinc-50">$19.99</span>
-                <span className="text-zinc-400 text-sm ml-1">/month</span>
+                <span className="text-4xl font-black text-zinc-900 dark:text-zinc-50">$5.00</span>
+                <span className="text-zinc-400 text-sm ml-1">/one-time</span>
               </div>
             </div>
             
-            {/* Divider line */}
             <hr className="my-6 border-zinc-200 dark:border-zinc-800" />
             
             <div className="space-y-3.5 text-sm text-zinc-600 dark:text-zinc-400">
@@ -105,11 +102,7 @@ export default function PricingPage() {
               </div>
               <div className="flex items-center gap-2">
                 <HiCheck className="text-emerald-500 text-lg shrink-0" />
-                <span>Fast AI Prompt Testing Tools</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <HiCheck className="text-emerald-500 text-lg shrink-0" />
-                <span>Premium Golden Badge on Profile</span>
+                <span>Premium Access Lifetime</span>
               </div>
             </div>
           </div>
@@ -117,7 +110,7 @@ export default function PricingPage() {
           <div className="pt-6">
             <button
               onClick={handleUpgrade}
-              className="w-full font-bold py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98]"
+              className="w-full font-bold py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm transition-all text-center"
             >
               Upgrade Now
             </button>

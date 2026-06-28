@@ -9,12 +9,12 @@ export default function ProfileCard({ userProfile }) {
 
   // প্যারেন্ট পেজ থেকে আসা ডাইনামিক ডেটা ডিস্ট্রাকচারিং
   const {
-    name = "Anonymous",
+    name = "",
     email = "",
-    photoURL = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-    role = "User",
+    photoURL = "",
+    role = "",
     totalPrompts = 0,
-    subscription = "Free",
+    subscription = "",
   } = userProfile || {};
 
   const handleUpgrade = () => {
