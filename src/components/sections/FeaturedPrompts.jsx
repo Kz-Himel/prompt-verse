@@ -17,14 +17,14 @@ export default function FeaturedPrompts() {
     const fetchFeaturedPrompts = async () => {
       try {
         setLoading(true);
-        const backendUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const Backend_url =
+          process.env.NEXT_PUBLIC_API_URL
         const token =
           typeof window !== "undefined"
             ? localStorage.getItem("access-token")
             : null;
 
-        const response = await fetch(`${backendUrl}/prompts`, {
+        const response = await fetch(`${Backend_url}/prompts`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

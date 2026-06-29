@@ -32,7 +32,7 @@ import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 
 const FREE_USER_LIMIT = 3;
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
 // ── FIXED: Added optional props so it doesn't break Creator/Admin pages ──
 export default function AddPromptPage({ currentCount: passedCount, role: passedRole }) {

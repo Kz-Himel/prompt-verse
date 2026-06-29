@@ -8,7 +8,7 @@ export default function TopCreators() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL
     
     fetch(`${backendUrl}/top-creators`)
       .then((res) => res.json())
