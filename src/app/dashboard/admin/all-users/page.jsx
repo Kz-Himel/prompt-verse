@@ -89,32 +89,40 @@ export default function AllUsers() {
 
   // 
   const handleDeleteConfirm = async () => {
-    if (!deleteId) return;
+  // 1. Debugging er jonno check korun id ashtese kina
+  console.log("Deleting User ID:", deleteId); 
+  
+  if (!deleteId) {
+    toast.error("User ID missing!");
+    return;
+  }
+  
+  try {
+    setDeleteLoading(true);
+    const headers = await getHeaders();
     
-    try {
-      setDeleteLoading(true);
-      const headers = await getHeaders();
-      const res = await fetch(`${BACKEND_URL}/users/${deleteId}`, {
-        method: "DELETE",
-        headers: headers,
-      });
+    // 2. Fixed URL path (Added '/admin')
+    const res = await fetch(`${BACKEND_URL}/admin/users/${deleteId}`, {
+      method: "DELETE",
+      headers: headers,
+    });
 
-      const result = await res.json();
+    const result = await res.json();
 
-      if (res.ok && result.success) {
-        toast.success("User deleted successfully!");
-        closeDeleteModal();
-        fetchUsers();
-      } else {
-        toast.error(result.message || "Failed to delete user");
-      }
-    } catch (error) {
-      console.error("Delete Error:", error);
-      toast.error("Something went wrong!");
-    } finally {
-      setDeleteLoading(false);
+    if (res.ok && result.success) {
+      toast.success("User deleted successfully!");
+      closeDeleteModal();
+      fetchUsers(); // render list refresh korar jonno
+    } else {
+      toast.error(result.message || "Failed to delete user");
     }
-  };
+  } catch (error) {
+    console.error("Delete Error:", error);
+    toast.error("Something went wrong!");
+  } finally {
+    setDeleteLoading(false);
+  }
+};
 
   if (loading)
     return (
