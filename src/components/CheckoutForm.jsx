@@ -4,8 +4,9 @@ import { useState } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { authClient } from "@/lib/auth-client"; // নিশ্চিত করুন পাথ ঠিক আছে
 
-export default function CheckoutForm({ price, clientSecret, token }) {
+export default function CheckoutForm({ price, clientSecret }) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
@@ -19,63 +20,74 @@ export default function CheckoutForm({ price, clientSecret, token }) {
     setLoading(true);
     setMsg("");
 
-    // ১. পেমেন্ট কনফার্মেশন (কোনো এক্সট্রা বিলিং ডাটা/অটোফিল পাস করা হয়নি)
-    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: elements.getElement(CardElement),
-      },
-    });
+    try {
+      // ১. আপনার দেওয়া কোড ব্লক ব্যবহার করে টোকেন নেওয়া হলো
+      const tokenRes = await authClient.token?.();
+      const token = tokenRes?.data?.token;
 
-    if (error) {
-      setMsg(error.message);
-      setLoading(false);
-      return;
-    }
+      if (!token) {
+        setMsg("Authentication token not found. Please log in again.");
+        setLoading(false);
+        return;
+      }
 
-    if (paymentIntent.status === "succeeded") {
-  setMsg("Payment Success! Updating account...");
+      // ২. স্ট্রাইপ পেমেন্ট কনফার্মেশন
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+        },
+      });
 
-  try {
-    const res = await fetch("http://localhost:5000/payments/success", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        transactionId: paymentIntent.id,
-        amount: Number(price),
-      }),
-    });
+      if (error) {
+        setMsg(error.message);
+        setLoading(false);
+        return;
+      }
 
-    const data = await res.json();
-    
-    if (data.success) {
-      setMsg("Account upgraded successfully!");
+      if (paymentIntent.status === "succeeded") {
+        setMsg("Payment Success! Updating account...");
 
-      // 🎯 ইউজারের রোল অনুযায়ী সঠিক ড্যাশবোর্ডে পাঠানো হচ্ছে
-      // (আপনার ব্যাকএন্ড রেসপন্সে যদি আপডেটেড ইউজার বা রোল পাঠায়, যেমন: data.role বা data.user.role)
-      const userRole = data.role || data.user?.role || "user"; 
+        // ৩. টোকেন সহ ব্যাকএন্ডে সাকসেস হিট করা
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments/success`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // এখানে টোকেনটি ডাইনামিকালি বসে যাবে
+          },
+          body: JSON.stringify({
+            transactionId: paymentIntent.id,
+            amount: Number(price),
+          }),
+        });
 
-      setTimeout(() => {
-        if (userRole === "admin") {
-          router.push("/dashboard/admin"); // আপনার অ্যাডমিন ড্যাশবোর্ড রাউট
-        } else if (userRole === "creator") {
-          router.push("/dashboard/creator"); // আপনার ক্রিয়েটর ড্যাশবোর্ড রাউট
+        const data = await res.json();
+        
+        if (data.success) {
+          setMsg("Account upgraded successfully!");
+          toast.success("Upgrade Successful!");
+
+          const userRole = data.role || data.user?.role || "user"; 
+
+          setTimeout(() => {
+            if (userRole === "admin") {
+              router.push("/dashboard/admin");
+            } else if (userRole === "creator") {
+              router.push("/dashboard/creator");
+            } else {
+              router.push("/dashboard/user");
+            }
+          }, 1500);
+
         } else {
-          router.push("/dashboard/user"); // নরমাল ইউজার ড্যাশবোর্ড রাউট
+          setMsg("Payment done, but database update failed.");
         }
-      }, 1500);
-
-    } else {
-      setMsg("Payment done, but database update failed.");
+      }
+    } catch (err) {
+      console.error(err);
+      setMsg("An error occurred during authentication or payment.");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    setMsg("Database connection timeout.");
-  } finally {
-    setLoading(false);
-  }
-}
   };
 
   return (
@@ -84,7 +96,6 @@ export default function CheckoutForm({ price, clientSecret, token }) {
         <CardElement 
           options={{ 
             style: { base: { fontSize: "16px" } },
-            // অটোফিল ও বাড়তি ব্রাউজার পপআপ অফ করার জন্য
             autofill: "off" 
           }} 
         />
