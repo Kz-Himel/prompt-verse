@@ -6,11 +6,11 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**', // এটি যেকোনো HTTPS ডোমেনের ইমেজ দেখানোর অনুমতি দেবে
+        hostname: '**',
       },
       {
         protocol: 'http',
-        hostname: '**', // এটি যেকোনো HTTP ডোমেনের ইমেজ দেখানোর অনুমতি দেবে (ঐচ্ছিক)
+        hostname: '**',
       },
     ],
   },

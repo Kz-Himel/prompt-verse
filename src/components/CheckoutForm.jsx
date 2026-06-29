@@ -21,7 +21,6 @@ export default function CheckoutForm({ price, clientSecret }) {
     setMsg("");
 
     try {
-      // ১. আপনার দেওয়া কোড ব্লক ব্যবহার করে টোকেন নেওয়া হলো
       const tokenRes = await authClient.token?.();
       const token = tokenRes?.data?.token;
 
@@ -31,7 +30,6 @@ export default function CheckoutForm({ price, clientSecret }) {
         return;
       }
 
-      // ২. স্ট্রাইপ পেমেন্ট কনফার্মেশন
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
@@ -47,12 +45,11 @@ export default function CheckoutForm({ price, clientSecret }) {
       if (paymentIntent.status === "succeeded") {
         setMsg("Payment Success! Updating account...");
 
-        // ৩. টোকেন সহ ব্যাকএন্ডে সাকসেস হিট করা
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/payments/success`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // এখানে টোকেনটি ডাইনামিকালি বসে যাবে
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             transactionId: paymentIntent.id,

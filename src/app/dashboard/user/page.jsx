@@ -12,8 +12,6 @@ import {
   FiArrowRight,
 } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
-
-// আপনার প্রজেক্টের কাস্টম কম্পোনেন্ট
 import StatsCard from "../components/StatsCard";
 import RecentActivityCard from "../components/RecentActivityCard";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -34,7 +32,6 @@ export default function UserDashboardHome() {
   const BACKEND_URL =
     process.env.NEXT_PUBLIC_API_URL
 
-  // ─── ডাইনামিক হেডার জেনারেটর (টোকেনসহ) ───
   const getHeaders = async () => {
     const headers = {
       "Content-Type": "application/json",
@@ -51,14 +48,14 @@ export default function UserDashboardHome() {
     return headers;
   };
 
-  // ─── ড্যাশবোর্ড ডাটা ফেচিং ───
+  // dashboard data fetching
   useEffect(() => {
    const fetchDashboardData = async () => {
   try {
     setLoading(true);
     const headers = await getHeaders();
 
-    console.log("Fetching from:", `${BACKEND_URL}/user/dashboard-stats`); // ডিবাগিং লগ
+    // console.log("Fetching from:", `${BACKEND_URL}/user/dashboard-stats`);
 
     const res = await fetch(`${BACKEND_URL}/user/dashboard-stats`, {
       method: "GET",
@@ -74,7 +71,7 @@ export default function UserDashboardHome() {
     }
 
     const result = await res.json();
-    console.log("Backend response result:", result); // এখানে দেখতে পারবে ব্যাকএন্ড কী পাঠাচ্ছে
+    console.log("Backend response result:", result);
 
     if (result.success) {
       setUserStats(
@@ -82,7 +79,6 @@ export default function UserDashboardHome() {
       );
       setActivities(result.activities || []);
     } else {
-      // ব্যাকএন্ড থেকে আসা আসল এরর মেসেজটি টোস্টে দেখাবে
       toast.error(result.message || "Failed to load dashboard statistics");
     }
   } catch (error) {
@@ -115,7 +111,6 @@ export default function UserDashboardHome() {
     );
   }
 
-  // StatCard কম্পোনেন্টের জন্য ডাইনামিক ডাটা অ্যারে প্রিপারেশন
   const statsData = [
     {
       label: "Saved Prompts",
@@ -142,7 +137,6 @@ export default function UserDashboardHome() {
     <div className="p-6 md:p-10 max-w-[1200px] mx-auto w-full space-y-8">
       <ToastContainer position="top-right" autoClose={2000} />
 
-      {/* হেডার সেকশন */}
       <div>
         <h1 className="text-2xl font-bold text-gray-800 dark:text-zinc-100">
           Welcome back, {currentUser.name || "Explorer"}! 🚀
@@ -153,7 +147,6 @@ export default function UserDashboardHome() {
         </p>
       </div>
 
-      {/* গ্রিড লেআউটে কাস্টম StatCard সমূহ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {statsData.map((stat, index) => (
           <motion.div
@@ -167,7 +160,6 @@ export default function UserDashboardHome() {
         ))}
       </div>
 
-      {/* Premium Upgrade ব্যানার (ইউজার Free হলে দেখাবে) */}
       {userStats.subscription.toLowerCase() === "free" && (
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}

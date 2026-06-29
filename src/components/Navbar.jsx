@@ -22,7 +22,7 @@ export default function Navbar() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [mounted, setMounted] = useState(false); // হাইড্রেশন মিসম্যাচ রোধ করার জন্য স্টেট
+  const [mounted, setMounted] = useState(false);
 
   const dropdownRef = useRef(null);
 
@@ -32,7 +32,7 @@ export default function Navbar() {
       : "/dashboard/user";
 
   useEffect(() => {
-    setMounted(true); // ব্রাউজারে কম্পোনেন্ট পুরোপুরি লোড হলে এটি true হবে
+    setMounted(true);
 
     function handleOutsideClick(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -120,7 +120,7 @@ export default function Navbar() {
 
         {/* Desktop Right */}
         <div className="hidden items-center gap-3 md:flex">
-          {/* লগড-আউট ভিউ (শুধুমাত্র ক্লায়েন্টে মাউন্ট হওয়ার পর রেন্ডার হবে) */}
+          {/* loged out view */}
           {mounted && !isPending && !session && (
             <>
               <Link href="/auth/login" className={navLinkClass("/auth/login")}>
@@ -136,7 +136,7 @@ export default function Navbar() {
             </>
           )}
 
-          {/* লগড-ইন ভিউ (শুধুমাত্র ক্লায়েন্টে মাউন্ট হওয়ার পর রেন্ডার হবে) */}
+          {/* logged in view*/}
           {mounted && !isPending && session && (
             <div ref={dropdownRef} className="relative">
               <button

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Table, Button, Chip, AlertDialog, Spinner } from "@heroui/react";
+import { Table, Button, Chip, AlertDialog } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -8,18 +8,13 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 export default function AdminPrompts() {
   const [promptsList, setPromptsList] = useState([]); 
   const [tableLoading, setTableLoading] = useState(true); 
-  
-  // ডিলিট মডাল স্টেট (আইডির বদলে এখন আমরা ইমেইল দিয়ে ডিলিট করব)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); 
   const [deleteEmail, setDeleteEmail] = useState(null);       
   const [deleteLoading, setDeleteLoading] = useState(false); 
-
-  // রিজেক্ট মডাল স্টেট
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [rejectTargetId, setRejectTargetId] = useState(null);
   const [rejectFeedback, setRejectFeedback] = useState("");
 
-  // ডাইনামিক অ্যাকশন লোডিং
   const [actionLoadingId, setActionLoadingId] = useState(null);
 
   const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
@@ -141,7 +136,6 @@ export default function AdminPrompts() {
     }
   };
 
-  // ডিলিট মডাল ওপেন (এখন ইমেইল ট্র্যাক করবে)
   const openDeleteModal = (item) => {
     const email = item.authorEmail;
     
@@ -159,7 +153,7 @@ export default function AdminPrompts() {
     setDeleteEmail(null);
   };
 
-  // ইমেইল দিয়ে ইউজার ডিলিট করার কনফার্মেশন হ্যান্ডলার
+  // User confirmation handler
   const handleDeleteConfirm = async () => {
     if (!deleteEmail) return;
 
@@ -167,7 +161,7 @@ export default function AdminPrompts() {
       setDeleteLoading(true);
       const headers = await getHeaders();
       
-      // ডিলিট ইউআরএল এ আইডির জায়গায় সরাসরি ইমেইলটি প্যারামস হিসেবে পাঠিয়ে দেওয়া হচ্ছে
+      // delete user
       const res = await fetch(`${BACKEND_URL}/admin/users/${deleteEmail}`, { 
         method: "DELETE",
         headers: headers,
@@ -177,7 +171,7 @@ export default function AdminPrompts() {
       if (res.ok && result.success) {
         toast.success("User deleted successfully!");
         closeDeleteModal();
-        fetchPrompts(); // টেবিল ডাটা রিফ্রেশ
+        fetchPrompts();
       } else {
         toast.error(result.message || "Failed to delete user");
       }
@@ -225,7 +219,6 @@ export default function AdminPrompts() {
                   const isRejected = item.status?.toLowerCase() === "rejected";
                   const isCurrentActionLoading = actionLoadingId === itemId;
 
-                  // ডাটাতে authorEmail থাকলে বাটন একটিভ থাকবে
                   const hasEmail = !!item.authorEmail;
 
                   return (
@@ -286,7 +279,7 @@ export default function AdminPrompts() {
         </Table.ScrollContainer>
       </Table>
 
-      {/* ================= রিজেক্ট ফিডব্যাক মডাল ================= */}
+      {/* ================= Reject Feedback Modal ================= */}
       <AlertDialog isOpen={isRejectModalOpen} onOpenChange={setIsRejectModalOpen}>
         <AlertDialog.Backdrop>
           <AlertDialog.Container>
@@ -318,7 +311,7 @@ export default function AdminPrompts() {
         </AlertDialog.Backdrop>
       </AlertDialog>
 
-      {/* ================= ইউজার ডিলিট অ্যালার্ট ডায়ালগ ================= */}
+      {/* ================= Delete User Dialouge ================= */}
       <AlertDialog isOpen={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <AlertDialog.Backdrop>
           <AlertDialog.Container>

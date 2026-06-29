@@ -29,7 +29,6 @@ export default function AnalyticsCharts({ chartData = [] }) {
     { name: "Dec", copies: 0, prompts: 0 },
   ];
 
-  // ব্যাকএন্ড থেকে আসা ডেটা ১২ মাসের সাথে নিখুঁতভাবে মার্জ করা হচ্ছে
   const finalizedData = defaultMonths.map((month) => {
     const match = chartData.find(
       (item) => item.name?.toLowerCase() === month.name.toLowerCase()
@@ -37,7 +36,7 @@ export default function AnalyticsCharts({ chartData = [] }) {
     return {
       name: month.name,
       copies: match ? match.copies : 0,
-      prompts: match ? match.prompts : 0, // ডক রিকোয়ারমেন্ট: Prompt Growth
+      prompts: match ? match.prompts : 0,
     };
   });
 
@@ -68,12 +67,12 @@ export default function AnalyticsCharts({ chartData = [] }) {
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
                 <defs>
-                  {/* Total Copies এর জন্য গ্রাডিয়েন্ট */}
+                  {/* Total Copies */}
                   <linearGradient id="colorCopies" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
                     <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                   </linearGradient>
-                  {/* Prompt Growth এর জন্য গ্রাডিয়েন্ট */}
+                  {/* Prompt Growth */}
                   <linearGradient id="colorPrompts" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
@@ -91,7 +90,7 @@ export default function AnalyticsCharts({ chartData = [] }) {
                 />
                 <Legend verticalAlign="top" height={36} iconType="circle" />
                 
-                {/* ১. টোটাল কপি এরিয়া লাইন */}
+                {/* Total copy line */}
                 <Area
                   type="monotone"
                   dataKey="copies"
@@ -102,7 +101,7 @@ export default function AnalyticsCharts({ chartData = [] }) {
                   fill="url(#colorCopies)"
                 />
 
-                {/* ২. প্রম্পট গ্রোথ এরিয়া লাইন */}
+                {/* 2. Prompt growth area*/}
                 <Area
                   type="monotone"
                   dataKey="prompts"

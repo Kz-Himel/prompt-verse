@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { authClient } from "@/lib/auth-client";
-import MyPromptsCard from "../../components/MyPromptsCard"; // পাথ প্রজেক্ট অনুযায়ী মিলাবেন
+import MyPromptsCard from "../../components/MyPromptsCard";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function MyPromptsPage() {
@@ -16,7 +16,6 @@ export default function MyPromptsPage() {
 
   const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
-  // ─── ডাইনামিক হেডার জেনারেটর (টোকেনসহ) ───
   const getHeaders = async () => {
     const headers = {
       "Content-Type": "application/json",
@@ -33,7 +32,7 @@ export default function MyPromptsPage() {
     return headers;
   };
 
-  // ─── কারেন্ট ইউজারের প্রম্পট ফেচ করা ───
+  // Current user prompt fetch
   useEffect(() => {
     const fetchMyPrompts = async () => {
       try {
@@ -67,7 +66,7 @@ export default function MyPromptsPage() {
     }
   }, [currentUser?.email, isPending]);
 
-  // ─── প্রম্পট ডিলিট হ্যান্ডলার ───
+  //prompt delete handler
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this prompt?")) return;
 
@@ -92,7 +91,7 @@ export default function MyPromptsPage() {
     }
   };
 
-  // ─── প্রম্পট আপডেট হ্যান্ডলার ───
+  // prompt update handler
   const handleUpdate = (updatedPrompt) => {
     setPrompts(
       prompts.map((p) => (p._id === updatedPrompt._id ? updatedPrompt : p))
@@ -124,10 +123,9 @@ export default function MyPromptsPage() {
 
       {prompts.length === 0 ? (
         <div className="bg-white border rounded-2xl p-10 text-center text-gray-500 shadow-sm">
-          You haven't created any prompts yet.
+          You havent created any prompts yet.
         </div>
       ) : (
-        /* শেয়ারড কম্পোনেন্ট কল */
         <MyPromptsCard 
           prompts={prompts} 
           setPrompts={setPrompts} 

@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { FiCpu, FiCopy, FiBookmark } from "react-icons/fi";
 
 export default function AnalyticsCards({ data }) {
-  // ডাটাবেজে ডেটা না থাকলে বা লোড হতে দেরি হলে ক্র্যাশ এড়াতে ডিফল্ট স্টেট
   const stats = data || { totalPrompts: 0, totalCopies: 0, totalBookmarks: 0 };
 
   const cards = [

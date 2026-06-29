@@ -22,7 +22,7 @@ import {
 } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client"; // 🎯 সরাসরি authClient ইমপোর্ট করা হলো যেন কোনো টাইপো না হয়
+import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 
 export default function RegisterPage() {
@@ -83,11 +83,10 @@ export default function RegisterPage() {
     }
   };
 
-  // 🛠️ Google Signup ফিক্সড মেthod
+  // Google signup
   const handleGoogleSignup = async () => {
     setGoogleLoading(true);
     try {
-      // 🎯 ফিক্সড: authClient.signIn ব্যবহার করা হয়েছে
       await authClient.signIn.social({
         provider: "google",
         callbackURL: "/dashboard/user", 

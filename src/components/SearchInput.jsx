@@ -8,10 +8,8 @@ export default function SearchInput() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  // URL-এ আগে থেকে কোনো সার্চ কুয়েরি থাকলে তা ইনিশিয়াল স্টেট হিসেবে বসবে
   const [text, setText] = useState(searchParams.get("search") || "");
 
-  // ইউজার টাইপ করা বন্ধ করার ৫০০ মিলিগ্রাম (debounce) পর স্বয়ংক্রিয়ভাবে সার্চ হবে
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
@@ -21,7 +19,6 @@ export default function SearchInput() {
         params.delete("search");
       }
       
-      // নতুন কুয়েরি প্যারামিটারসহ ইউআরএল আপডেট হবে
       router.push(`?${params.toString()}`);
     }, 500); // 500ms Debounce Time
 

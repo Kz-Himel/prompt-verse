@@ -20,7 +20,6 @@ import {
   RiImageLine,
 } from "react-icons/ri";
 
-// আপনার নির্দেশনামতো utils ফাইল থেকে কনস্ট্যান্টগুলো ইমপোর্ট করা হলো
 import {
   AI_TOOLS,
   CATEGORIES,
@@ -38,7 +37,6 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 export default function AddPromptPage({ currentCount: passedCount, role: passedRole }) {
   const { data: session, status } = useSession();
   
-  // সেশন থেকে রোল এবং ইমেইল ডিকনструкট করা (ডিফল্ট 'user' যদি রোল না থাকে)
   const userEmail = session?.user?.email;
   
   // ── FIXED: Fallback logic for Role ──

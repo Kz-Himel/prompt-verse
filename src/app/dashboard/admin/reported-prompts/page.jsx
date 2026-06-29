@@ -14,7 +14,7 @@ export default function ReportedPrompts() {
   
   const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
-  // ─── ১. FETCH ALL REPORTED PROMPTS ───
+  // 1. FETCH ALL REPORTED PROMPTS ───
   const fetchReports = async () => {
     try {
       setLoading(true);
@@ -47,7 +47,7 @@ export default function ReportedPrompts() {
     fetchReports();
   }, []);
 
-  // ─── ২. ACTION: REMOVE PROMPT (EXECUTION) ───
+  // 2. ACTION: REMOVE PROMPT (EXECUTION) ───
   const handleRemovePrompt = async () => {
     if (!selectedReportId) return;
     try {
@@ -77,7 +77,7 @@ export default function ReportedPrompts() {
     }
   };
 
-  // ─── ৩. ACTION: WARN CREATOR ───
+  // 3. ACTION: WARN CREATOR ───
   const handleWarnCreator = async (reportId, creatorEmail) => {
     try {
       const tokenRes = await authClient.token?.();
@@ -104,7 +104,7 @@ export default function ReportedPrompts() {
     }
   };
 
-  // ─── ৪. ACTION: DISMISS REPORT ───
+  // 4. ACTION: DISMISS REPORT ───
   const handleDismissReport = async (reportId) => {
     try {
       const tokenRes = await authClient.token?.();

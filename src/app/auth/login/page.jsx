@@ -11,7 +11,7 @@ import {
 } from 'react-icons/fa6';
 import { FcGoogle } from 'react-icons/fc'; 
 import { useRouter } from 'next/navigation';
-import { authClient } from '@/lib/auth-client'; // 🎯 ফিক্সড: টাইপো এড়াতে সরাসরি authClient ইমপোর্ট করা হলো
+import { authClient } from '@/lib/auth-client';
 import { toast } from 'react-toastify';
 
 export default function LoginPage() {
@@ -19,7 +19,7 @@ export default function LoginPage() {
 
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false); // 🎯 গুগলের জন্য আলাদা লোডিং স্টেট
+  const [googleLoading, setGoogleLoading] = useState(false);
   
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
@@ -29,7 +29,6 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // 🎯 ফিক্সড: authClient.signIn ব্যবহার করা হয়েছে
       const { data, error: authError } = await authClient.signIn.email({
         email: credentials.email,
         password: credentials.password,
@@ -40,7 +39,6 @@ export default function LoginPage() {
       } else {
         toast.success('Successfully logged in!');
         
-        // ⭐️ আপনার অথ ক্লায়েন্ট যেভাবে রোল (role) রিটার্ন করে সেই অনুযায়ী ডাটা চেক
         const userRole = data?.user?.role || "user"; 
 
         if (userRole === "admin") {
@@ -62,10 +60,10 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     try {
-      // 🎯 ফিক্সড: authClient.signIn এবং সাথে callbackURL যুক্ত করা হয়েছে
+      // authClient.signIn  callbackURL 
       await authClient.signIn.social({ 
         provider: 'google',
-        callbackURL: '/dashboard/user' // 👈 গুগল লগইন শেষে ইউজার ডিফল্টভাবে এই ড্যাশবোর্ডে যাবে (আপনার প্রক্সি স্ক্রিপ্ট বাকিটা হ্যান্ডেল করবে)
+        callbackURL: '/dashboard/user'
       });
       toast.info('Connecting with Google...');
     } catch (err) {

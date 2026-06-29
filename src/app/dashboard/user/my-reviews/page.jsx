@@ -19,7 +19,6 @@ export default function MyReviewsPage() {
 
   const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
-  // ─── ডাইনামিক হেডার জেনারেটর (টোকেনসহ) ───
   const getHeaders = async () => {
     const headers = {
       "Content-Type": "application/json",
@@ -36,7 +35,7 @@ export default function MyReviewsPage() {
     return headers;
   };
 
-  // ─── ইউজারের রিভিউসমূহ ফেচ করা ───
+  // Ftech user review
   useEffect(() => {
     const fetchMyReviews = async () => {
       try {
@@ -70,7 +69,7 @@ export default function MyReviewsPage() {
     }
   }, [currentUser?.email, isPending]);
 
-  // রেটিং স্টার রেন্ডার করার হেল্পার ফাংশন
+  // rating user handler
   const renderStars = (rating) => {
     return Array.from({ length: 5 }).map((_, index) => (
       <FiStar
@@ -135,12 +134,10 @@ export default function MyReviewsPage() {
                 className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-5 md:p-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4 group hover:border-purple-200 dark:hover:border-purple-900/40 transition-all"
               >
                 <div className="space-y-2.5 flex-1">
-                  {/* প্রম্পট টাইটেল */}
                   <h3 className="text-base font-bold text-gray-800 dark:text-zinc-100">
                     {review.promptTitle}
                   </h3>
                   
-                  {/* স্টার রেটিং ও ডেট */}
                   <div className="flex flex-wrap items-center gap-3 text-xs">
                     <div className="flex items-center gap-0.5">
                       {renderStars(review.rating)}
@@ -151,13 +148,11 @@ export default function MyReviewsPage() {
                     </span>
                   </div>
 
-                  {/* ইউজারের কমেন্ট */}
                   <p className="text-sm text-gray-600 dark:text-zinc-400 leading-relaxed bg-gray-50/50 dark:bg-zinc-800/40 p-3 rounded-xl border border-gray-100 dark:border-zinc-800">
                     {review.comment}
                   </p>
                 </div>
 
-                {/* অ্যাকশন বাটন (View Prompt) */}
                 <div className="flex sm:flex-col justify-end pt-2 sm:pt-0">
                   <button
                     onClick={() => router.push(`/prompts/${review.promptId}`)}

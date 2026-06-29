@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { FiDollarSign, FiCalendar, FiMail, FiHash, FiCheckCircle, FiLoader } from "react-icons/fi";
-import { authClient } from "@/lib/auth-client"; // 🎯 আপনার প্রজেক্টের authClient পাথ অনুযায়ী মিলিয়ে নিবেন
+import { authClient } from "@/lib/auth-client";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function AllPaymentsPage() {
@@ -17,7 +17,6 @@ export default function AllPaymentsPage() {
       try {
         setLoading(true);
         
-        // 🎯 আপনার দেওয়া লজিক অনুযায়ী Better Auth ক্লায়েন্ট থেকে টোকেন নেওয়া হলো
         const tokenRes = await authClient.token?.();
         const token = tokenRes?.data?.token;
 
@@ -25,7 +24,6 @@ export default function AllPaymentsPage() {
           "Content-Type": "application/json",
         };
 
-        // টোকেন থাকলে Authorization হেডারে পাস করা হলো
         if (token) {
           headers["Authorization"] = `Bearer ${token}`;
         }
@@ -53,10 +51,9 @@ export default function AllPaymentsPage() {
     fetchPaymentsData();
   }, [BACKEND_URL]);
 
-  // মোট রেভিনিউ ক্যালকুলেট করার লজিক
+  // All reveneu
   const totalRevenue = payments.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
 
-  // ─── ১. লোডিং স্টেট (Skeleton/Spinner) ───
   if (loading) {
     return (
       <div className="min-h-[60vh] w-full flex flex-col items-center justify-center text-slate-500 gap-3">
@@ -65,7 +62,7 @@ export default function AllPaymentsPage() {
     );
   }
 
-  // ─── ২. এরর স্টেট ───
+  // Error state
   if (error) {
     return (
       <div className="p-6 max-w-xl mx-auto my-10 bg-rose-50 border border-rose-200 rounded-2xl text-rose-800 space-y-2">
@@ -78,7 +75,7 @@ export default function AllPaymentsPage() {
   return (
     <div className="p-6 space-y-6 w-full text-slate-800">
       
-      {/* ── হেডার ও টোটাল আর্নিং কার্ড সেকশন ── */}
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b pb-5 border-slate-200">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">All Payments</h1>
@@ -87,7 +84,7 @@ export default function AllPaymentsPage() {
           </p>
         </div>
         
-        {/* মোট রেভিনিউ সামারি বক্স */}
+        {/* Reveneu summary */}
         <div className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-5 py-3 rounded-2xl shadow-sm flex items-center gap-3 shrink-0">
           <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg">
             <FiDollarSign />
@@ -99,7 +96,7 @@ export default function AllPaymentsPage() {
         </div>
       </div>
 
-      {/* ── কন্টেন্ট এরিয়া / টেবিল ── */}
+      {/* Content Area or Table */}
       {payments.length === 0 ? (
         <div className="text-center py-20 bg-white border border-slate-200 rounded-2xl shadow-xs">
           <p className="text-slate-400 text-sm italic">No payment transactions found in the system.</p>
@@ -109,7 +106,7 @@ export default function AllPaymentsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               
-              {/* টেবিল হেডার */}
+              {/* Tabe Haed */}
               <thead>
                 <tr className="bg-slate-50/70 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                   <th className="py-4 px-6"><span className="flex items-center gap-1.5"><FiHash /> Transaction ID</span></th>
@@ -120,10 +117,9 @@ export default function AllPaymentsPage() {
                 </tr>
               </thead>
 
-              {/* টেবিল বডি */}
+              {/* Table Body */}
               <tbody className="divide-y divide-slate-100 text-xs font-medium text-slate-600">
                 {payments.map((payment, index) => {
-                  // ডেট ফরম্যাটিং সেফটি চেক
                   const paymentDate = payment.date 
                     ? new Date(payment.date).toLocaleDateString("en-US", {
                         year: "numeric",
@@ -134,27 +130,27 @@ export default function AllPaymentsPage() {
 
                   return (
                     <tr key={payment._id || index} className="hover:bg-slate-50/40 transition-colors">
-                      {/* ট্রানজেকশন আইডি */}
+                      {/* Transaction ID */}
                       <td className="py-4 px-6 font-mono text-slate-700 font-semibold select-all">
                         {payment.transactionId || "tx_live_unavail"}
                       </td>
                       
-                      {/* ইউজারের ইমেইল */}
+                      {/* User email */}
                       <td className="py-4 px-6 text-slate-800 font-normal">
                         {payment.email}
                       </td>
                       
-                      {/* পেমেন্ট অ্যামাউন্ট */}
+                      {/* Amount */}
                       <td className="py-4 px-6 font-bold text-slate-900">
                         ${Number(payment.amount).toFixed(2)}
                       </td>
                       
-                      {/* পেমেন্টের তারিখ */}
+                      {/* Date */}
                       <td className="py-4 px-6 text-slate-500 font-normal">
                         {paymentDate}
                       </td>
                       
-                      {/* স্ট্যাটাস ব্যাজ */}
+                      {/* Bad Status */}
                       <td className="py-4 px-6">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                           <FiCheckCircle className="text-emerald-500 w-3 h-3" />
@@ -169,7 +165,7 @@ export default function AllPaymentsPage() {
             </table>
           </div>
           
-          {/* টেবিল ফুটার মেট্রিক্স */}
+          {/* table footer matrix */}
           <div className="bg-slate-50/50 border-t border-slate-200 px-6 py-3.5 text-[11px] text-slate-400 font-bold uppercase tracking-wider flex justify-between items-center">
             <span>Showing All Verified Records</span>
             <span>Total Records: {payments.length}</span>

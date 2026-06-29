@@ -7,7 +7,6 @@ import { FiMail, FiShield, FiCpu, FiAward, FiArrowRight } from "react-icons/fi";
 export default function ProfileCard({ userProfile }) {
   const router = useRouter();
 
-  // প্যারেন্ট পেজ থেকে আসা ডাইনামিক ডেটা ডিস্ট্রাকচারিং
   const {
     name = "",
     email = "",
@@ -30,7 +29,7 @@ export default function ProfileCard({ userProfile }) {
     >
       <Card shadow="sm" className="border border-gray-100 bg-white rounded-2xl overflow-hidden p-6 md:p-8">
         
-        {/* প্রোফাইল হেডার */}
+        {/* Header */}
         <div className="flex flex-col md:flex-row items-center gap-6 pb-6 border-b border-gray-100">
           <div className="relative w-24 h-24 rounded-2xl overflow-hidden border-2 border-purple-100 shadow-xs bg-gray-50 flex-shrink-0">
             <img 
@@ -66,7 +65,7 @@ export default function ProfileCard({ userProfile }) {
           </div>
         </div>
 
-        {/* প্রোফাইল স্ট্যাটস */}
+        {/* Status */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6">
           <div className="p-4 bg-gray-50/60 border border-gray-100 rounded-xl flex items-center gap-4">
             <div className="p-3 bg-purple-100 text-purple-700 rounded-xl">
@@ -89,7 +88,7 @@ export default function ProfileCard({ userProfile }) {
           </div>
         </div>
 
-        {/* আপগ্রেড ব্যানার */}
+        {/* Banner */}
         {subscription.toLowerCase() === "free" && (
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}

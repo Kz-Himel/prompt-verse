@@ -88,7 +88,6 @@ export default function MyPromptsCard({ prompts = [], setPrompts, onDelete, onUp
             </thead>
             <tbody className="divide-y divide-gray-50 text-sm text-gray-700">
               {prompts.map((prompt, index) => {
-                // মক ডাটা বা রিয়েল ডাটার যেকোনো আইডি সাপোর্ট করার জন্য ইউনিক কি জেনারেট করা
                 const rowKey = prompt._id || prompt.id || `prompt-${index}`;
                 
                 return (
@@ -140,7 +139,7 @@ export default function MyPromptsCard({ prompts = [], setPrompts, onDelete, onUp
         </div>
       </motion.div>
 
-      {/* এডিট মোডাল পপআপ */}
+      {/* Edit modal popup*/}
       <AnimatePresence>
         {isEditModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

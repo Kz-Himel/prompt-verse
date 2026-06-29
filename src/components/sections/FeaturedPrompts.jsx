@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button, Spinner } from "@heroui/react";
 import { ArrowUpRight } from "@gravity-ui/icons";
-// আপনার প্রজেক্ট স্ট্রাকচার অনুযায়ী PromptCard কম্পোনেন্টটি ইমপোর্ট করুন
 import PromptCard from "../PromptCard";
 import Link from "next/link";
 
@@ -39,8 +38,6 @@ export default function FeaturedPrompts() {
         const jsonResult = await response.json();
 
         if (jsonResult.success) {
-          // রিকোয়ারমেন্ট অনুযায়ী হোম পেজে সর্বোচ্চ ৬টি ফিচারড প্রম্পট ফিল্টার/স্লাইস করা হলো
-          // যদি আপনার ব্যাকএন্ড থেকে সর্ট করা না থাকে, তাহলে এখানে .slice(0, 6) করে নিতে পারেন
           setPrompts(jsonResult.data.slice(0, 6));
         } else {
           throw new Error(jsonResult.message || "Something went wrong");
@@ -128,7 +125,6 @@ export default function FeaturedPrompts() {
                   scale: 1.02,
                 }}
               >
-                {/* আপনার PromptCard কম্পোনেন্টে প্রম্পটের ডাটা অবজেক্ট পাস করা হলো */}
                 <PromptCard prompt={prompt} />
               </motion.div>
             ))}

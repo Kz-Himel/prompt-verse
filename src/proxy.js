@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import { auth } from './lib/auth'; // আপনার Better Auth সার্ভার কনফিগ পাথ
+import { auth } from './lib/auth';
 
 export async function proxy(request) {
     const { pathname } = request.nextUrl;
 
-    // ১. স্ট্যাটিক এবং ইন্টারনাল ফাইল ইগনোর
     if (
       pathname.startsWith('/_next') || 
       pathname.startsWith('/api') ||
@@ -13,7 +12,6 @@ export async function proxy(request) {
       return NextResponse.next();
     }
 
-    // 🎯 ম্যাজিক লজিক: যদি শুধু '/prompts' বা '/prompts/' হয় (ডিটেইলস পেজ না), তবে লগইন চেক ছাড়াই ছেড়ে দাও
     if (pathname === '/prompts' || pathname === '/prompts/') {
       return NextResponse.next();
     }
@@ -51,6 +49,6 @@ export const config = {
     "/dashboard/user/:path*",
     "/pricing", 
     "/checkout",
-    "/prompts/:path*" // 👈 এটা থাকবে, কিন্তু ভেতরের কন্ডিশন শুধু মেইন পেজটাকে ছাড় দেবে
+    "/prompts/:path*"
   ],
 };

@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import ProfileCard from "../../components/ProfileCard"; 
-// আপনার প্রজেক্টের সঠিক পাথ অনুযায়ী authClient ইমপোর্ট করুন
 import { authClient } from "@/lib/auth-client"; 
 import LoadingSpinner from "@/components/LoadingSpinner";
 
@@ -15,7 +14,6 @@ export default function CreatorProfilePage() {
       try {
         setLoading(true);
 
-        // 🔑 Better Auth ক্লায়েন্ট থেকে ডাইনামিক টোকেন নেওয়া
         const tokenRes = await authClient.token?.();
         const token = tokenRes?.data?.token;
 
@@ -23,7 +21,6 @@ export default function CreatorProfilePage() {
           throw new Error("Unauthorized: No token found. Please login again.");
         }
 
-        // 🌐 ব্যাকএন্ড API এন্ডপয়েন্টে হিট করা
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
           method: "GET",
           headers: {
@@ -54,7 +51,6 @@ export default function CreatorProfilePage() {
     fetchUserProfile();
   }, []);
 
-  // লোডিং স্টেট
   if (loading) {
     return (
       <div className="p-6 md:p-10 w-full flex items-center justify-center min-h-[300px]">
@@ -63,7 +59,6 @@ export default function CreatorProfilePage() {
     );
   }
 
-  // এরর স্টেট
   if (error) {
     return (
       <div className="p-6 md:p-10 w-full text-center text-red-500 space-y-3">
@@ -85,7 +80,6 @@ export default function CreatorProfilePage() {
         <p className="text-gray-500 text-sm mt-1">View your profile details and subscription status.</p>
       </div>
 
-      {/* ডাইনামিক প্রোফাইল ডাটা পাস করা হচ্ছে */}
       <ProfileCard userProfile={profile} />
     </div>
   );

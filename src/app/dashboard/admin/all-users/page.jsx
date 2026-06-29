@@ -8,11 +8,9 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 export default function AllUsers() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // ─── ম্যানুয়াল স্টেট ম্যানেজমেন্ট ───
-  const [isModalOpen, setIsModalOpen] = useState(false); // পপআপ ওপেন/বন্ধের স্টেট
-  const [deleteId, setDeleteId] = useState(null);       // যে ইউজার ডিলিট হবে তার ID
-  const [deleteLoading, setDeleteLoading] = useState(false); // ডিলিট বাটনের লোডিং স্টেট
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
@@ -77,19 +75,19 @@ export default function AllUsers() {
     }
   };
 
-  // ডিলিট বাটন ক্লিক করলে আইডি সেট করে মডাল ওপেন করা
+  // 
   const openDeleteModal = (userId) => {
     setDeleteId(userId);
     setIsModalOpen(true);
   };
 
-  // মডাল ক্লোজ করার ফাংশন
+  // 
   const closeDeleteModal = () => {
     setIsModalOpen(false);
     setDeleteId(null);
   };
 
-  // পপআপ থেকে কনফার্ম করলে ডিলিট করার মেইন লজিক
+  // 
   const handleDeleteConfirm = async () => {
     if (!deleteId) return;
     
@@ -105,8 +103,8 @@ export default function AllUsers() {
 
       if (res.ok && result.success) {
         toast.success("User deleted successfully!");
-        closeDeleteModal(); // মডাল বন্ধ ও আইডি রিসেট
-        fetchUsers(); // লিস্ট রিফ্রেশ
+        closeDeleteModal();
+        fetchUsers();
       } else {
         toast.error(result.message || "Failed to delete user");
       }
@@ -129,7 +127,7 @@ export default function AllUsers() {
     <div>
       <h1 className="text-2xl font-bold mb-6">All Users ({users.length})</h1>
 
-      {/* আপনার দেওয়া অরিজিনাল টেবিল স্ট্রাকচার */}
+      {/* Table structure */}
       <Table>
         <Table.ScrollContainer>
           <Table.Content aria-label="Users management table" className="min-w-[700px]">

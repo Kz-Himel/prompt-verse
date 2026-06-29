@@ -18,7 +18,7 @@ const UserAddPromptPage = () => {
         if (!token) return;
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/user/dashboard-stats`,
+          `${process.env.NEXT_PUBLIC_API_URL}/user/dashboard-stats`,
           {
             method: "GET",
             headers: {
@@ -31,7 +31,6 @@ const UserAddPromptPage = () => {
         if (response.ok) {
           const resData = await response.json();
           if (resData.success && resData.stats) {
-            // ব্যাকএন্ড থেকে আসা রিয়াল প্রম্পট কাউন্ট সেট করা হচ্ছে
             setPromptCount(resData.stats.promptCount || 0);
           }
         }
@@ -45,7 +44,6 @@ const UserAddPromptPage = () => {
     fetchUserPromptCount();
   }, []);
 
-  // ডাটা লোড হওয়ার সময় একটি সিম্পল স্পিনার/লোডার (ডক রিকোয়ারমেন্ট)
   if (loading) {
     return (
       <div className="p-6 w-full flex items-center justify-center min-h-[300px]">
@@ -57,7 +55,7 @@ const UserAddPromptPage = () => {
   return (
     <AddPromptPage
       role="user"
-      currentCount={promptCount} // এখন এটা ১০০% ডাইনামিক এবং রিয়াল ডেটা!
+      currentCount={promptCount}
     />
   );
 };

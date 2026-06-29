@@ -2,23 +2,20 @@
 
 import { HiCheck, HiX } from "react-icons/hi";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client"; // 🎯 আপনার প্রজেক্টের authClient পাথ অনুযায়ী মিলিয়ে নিবেন
+import { authClient } from "@/lib/auth-client"; 
 import { FiAward, FiCheckCircle } from "react-icons/fi";
 
 export default function PricingPage() {
   const router = useRouter();
   
-  // 🎯 Better Auth এর ক্লায়েন্ট সেশন হুক ব্যবহার করে কারেন্ট ইউজারের ডেটা রিড করা
   const { data: session, isPending } = authClient.useSession();
   
-  // ইউজার প্রিমিয়াম কিনা চেক করার কড়া লজিক (ডাটাবেজ স্ট্যাটাস অনুযায়ী)
   const isPremiumUser = session?.user?.status === "Premium";
 
   const handleUpgrade = (e) => {
     e.preventDefault();
-    if (isPremiumUser) return; // অলরেডি প্রিমিয়াম হলে পেমেন্ট পেজে যাওয়ার দরকার নেই
+    if (isPremiumUser) return; 
     
-    // ⚡ Next.js Router ব্যবহার করে কুয়েরি প্যারামিটারসহ রিডাইরেকশন
     router.push("/checkout?plan=pro&price=5");
   };
 
@@ -38,13 +35,13 @@ export default function PricingPage() {
         </p>
       </div>
 
-      {/* ── প্রাইসিং CARD গ্রিড ── */}
+      {/* ── Pricing card grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto items-stretch">
         
-        {/* =================== ১. ফ্রি প্ল্যান =================== */}
+        {/* =================== Free plan =================== */}
         <div className={`p-6 rounded-2xl border bg-white dark:bg-zinc-900 flex flex-col justify-between shadow-sm transition-all ${
           isPremiumUser 
-            ? "border-zinc-200 dark:border-zinc-800 opacity-60" // প্রিমিয়াম ইউজার হলে ফ্রি প্ল্যানটি একটু আবছা দেখাবে
+            ? "border-zinc-200 dark:border-zinc-800 opacity-60" //(if user is premium)
             : "border-zinc-300 dark:border-zinc-700 ring-2 ring-zinc-100 dark:ring-zinc-800"
         }`}>
           <div>
@@ -89,14 +86,13 @@ export default function PricingPage() {
           </div>
         </div>
 
-        {/* =================== ২. প্রিমিয়াম প্ল্যান =================== */}
+        {/* =================== Premium plan=================== */}
         <div className={`p-6 rounded-2xl relative flex flex-col justify-between shadow-lg transition-all border-2 ${
           isPremiumUser 
             ? "border-amber-500 bg-amber-50/5 shadow-amber-100/10 scale-[1.02]" // 🎯 প্রিমিয়াম ইউজারের জন্য গোল্ডেন লাইটিং ও হাইলাইট
             : "border-blue-600 bg-white dark:bg-zinc-900"
         }`}>
           
-          {/* ব্যাজ পরিবর্তন: প্রিমিয়াম হলে 'ACTIVE PRO' দেখাবে, নাহলে 'POPULAR' */}
           <span className={`absolute -top-3 right-6 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm z-10 flex items-center gap-1 ${
             isPremiumUser ? "bg-gradient-to-r from-amber-500 to-orange-600" : "bg-blue-600"
           }`}>
@@ -145,12 +141,10 @@ export default function PricingPage() {
                 Checking Account Status...
               </button>
             ) : isPremiumUser ? (
-              // 🎯 প্রিমিয়াম ইউজারের জন্য সুন্দর সাকসেস বাটন
               <div className="w-full font-bold py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-white text-sm flex items-center justify-center gap-2 shadow-md">
                 <FiCheckCircle className="text-lg" /> You Are Already Pro!
               </div>
             ) : (
-              // নরমাল ফ্রি ইউজারের জন্য আপগ্রেড বাটন
               <button
                 onClick={handleUpgrade}
                 className="w-full font-bold py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm transition-all text-center shadow-md active:scale-95"

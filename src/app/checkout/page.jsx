@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-import CheckoutForm from "@/components/CheckoutForm"; // পাথ মিলিয়ে নিন
+import CheckoutForm from "@/components/CheckoutForm";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 
@@ -12,7 +12,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
-  // অ্যাসাইনমেন্টের নিয়ম অনুযায়ী ফিক্সড $5 পেমেন্ট (ইউআরএল এ যা-ই থাকুক না কেন)
+  // Fixed Payment
   const plan = searchParams.get("plan") || "Premium Subscription";
   const price = "5"; 
 
@@ -22,13 +22,11 @@ function CheckoutContent() {
   useEffect(() => {
     const getPaymentData = async () => {
       try {
-        // ১. শুধুমাত্র অ্যাপে লগইন থাকা ইউজারের JWT টোকেন রিড করা হচ্ছে
         const tokenRes = await authClient.token?.();
         const token = tokenRes?.data?.token;
         if (!token) return toast.success("Please login first!");
         setAuthToken(token);
 
-        // ২. এক্সপ্রেস ব্যাকএন্ডে হিট করে clientSecret জেনারেট করা
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/create-payment-intent`, {
           method: "POST",
           headers: {

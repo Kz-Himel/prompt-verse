@@ -19,7 +19,6 @@ export default function SavedPromptsPage() {
 
   const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
-  // ─── ডাইনামিক হেডার জেনারেটর (টোকেনসহ) ───
   const getHeaders = async () => {
     const headers = {
       "Content-Type": "application/json",
@@ -36,7 +35,7 @@ export default function SavedPromptsPage() {
     return headers;
   };
 
-  // ─── বুকমার্ক করা প্রম্পট ফেচ করা ───
+  // Fetch bookmark data
   useEffect(() => {
     const fetchSavedPrompts = async () => {
       try {
@@ -70,13 +69,12 @@ export default function SavedPromptsPage() {
     }
   }, [currentUser?.email, isPending]);
 
-  // ─── বুকমার্ক রিমুভ হ্যান্ডলার ───
+  // Bookmark remove handler
   const handleRemoveBookmark = async (id) => {
     if (!confirm("Are you sure you want to remove this prompt from your bookmarks?")) return;
 
     try {
       const headers = await getHeaders();
-      // আপনার এক্সিস্টিং ৫ নম্বর এপিআই এন্ডপয়েন্টটি ব্যবহার করা হয়েছে যা টগল (Add/Remove) করে
       const res = await fetch(`${BACKEND_URL}/prompts/${id}/bookmark`, {
         method: "POST",
         headers: headers,
@@ -85,7 +83,6 @@ export default function SavedPromptsPage() {
       const result = await res.json();
 
       if (result.success && !result.bookmarked) {
-        // স্টেট থেকে ফিল্টার করে প্রম্পটটি ইনস্ট্যান্ট রিমুভ করা হচ্ছে
         setSavedPrompts(savedPrompts.filter((prompt) => prompt._id !== id));
         toast.success("Bookmark removed successfully!");
       } else {
@@ -150,7 +147,6 @@ export default function SavedPromptsPage() {
                 className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-5 flex flex-col justify-between hover:shadow-md transition-all group"
               >
                 <div>
-                  {/* ক্যাটাগরি ও এআইツール ব্যাজ */}
                   <div className="flex items-center justify-between gap-2 mb-3">
                     <span className="bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 px-2.5 py-1 rounded-md text-xs font-semibold">
                       {prompt.category}
@@ -160,12 +156,10 @@ export default function SavedPromptsPage() {
                     </span>
                   </div>
 
-                  {/* প্রম্পট টাইটেল */}
                   <h3 className="text-base font-bold text-gray-800 dark:text-zinc-100 group-hover:text-purple-600 transition-colors line-clamp-2">
                     {prompt.title}
                   </h3>
 
-                  {/* ক্রিয়েটরের মেইল বা ডিটেইলস */}
                   <div className="mt-4 pt-4 border-t border-gray-100 dark:border-zinc-800 flex items-center justify-between text-xs text-gray-500">
                     <span className="flex items-center gap-1 max-w-[150px] truncate" title={prompt.authorEmail}>
                       <FiUser /> {prompt.authorEmail ? prompt.authorEmail.split("@")[0] : "Creator"}
@@ -176,7 +170,6 @@ export default function SavedPromptsPage() {
                   </div>
                 </div>
 
-                {/* অ্যাকশন বাটনসমূহ */}
                 <div className="grid grid-cols-2 gap-3 mt-5 pt-3 border-t border-gray-100 dark:border-zinc-800">
                   <button
                     onClick={() => handleRemoveBookmark(prompt._id)}

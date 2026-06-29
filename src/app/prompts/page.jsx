@@ -8,7 +8,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 
 export const dynamic = "force-dynamic";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
 async function getPromptsData(queryParams = {}, userEmail = "") {
   try {
@@ -24,7 +24,6 @@ async function getPromptsData(queryParams = {}, userEmail = "") {
     if (!res.ok) throw new Error("Failed to fetch");
     const resData = await res.json();
     
-    // 🎯 ব্যাকএন্ডের পাঠানো রেসপন্স থেকে ডেটা ও প্রিমিয়াম ফ্ল্যাগ রিসিভ করা হলো
     return {
       prompts: resData.success ? resData.data : [],
       isPremiumUser: resData.isPremiumUser || false
@@ -86,7 +85,7 @@ export default async function AllPromptsPage({ searchParams }) {
                 prompt={prompt} 
                 index={idx}
                 isPremiumUser={isPremiumUser}
-                currentUserEmail={currentUserEmail} // 🎯 ওনারশিপ চেকিং এর জন্য কারেন্ট ইমেইল পাঠানো হলো
+                currentUserEmail={currentUserEmail}
               />
             ))}
           </div>

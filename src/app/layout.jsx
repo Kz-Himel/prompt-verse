@@ -1,5 +1,5 @@
 import { ToastContainer } from 'react-toastify';
-import "@/app/globals.css"; // Ensure Tailwind v4 is imported here
+import "@/app/globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 

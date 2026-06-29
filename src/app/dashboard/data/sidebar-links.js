@@ -15,32 +15,32 @@ export const sidebarLinks = {
   // 👤 User Dashboard Routes
   user: [
     {
-      label: "Home", // ফ্রি ইউজার ৩টি এড করতে পারবে (ব্যাকএন্ড চেকসহ)
+      label: "Home",
       href: "/dashboard/user",
       icon: RiAddCircleLine,
     },
     {
-      label: "Add Prompt", // ফ্রি ইউজার ৩টি এড করতে পারবে (ব্যাকএন্ড চেকসহ)
+      label: "Add Prompt",
       href: "/dashboard/user/add-prompt",
       icon: RiAddCircleLine,
     },
     {
-      label: "My Prompts", // ⚠️ আপনার এটা মিস হয়েছিল (ইউজারের নিজের প্রম্পট টেবিল)
+      label: "My Prompts",
       href: "/dashboard/user/my-prompts",
       icon: RiFileList3Line,
     },
     {
-      label: "Saved Prompts", // বুকমার্ক করা প্রম্পট
+      label: "Saved Prompts",
       href: "/dashboard/user/saved-prompts",
       icon: RiBookmarkLine,
     },
     {
-      label: "My Reviews", // ইউজারের দেওয়া রিভিউ লিস্ট
+      label: "My Reviews",
       href: "/dashboard/user/my-reviews",
       icon: RiMessage3Line,
     },
     {
-      label: "Profile", // রিকোয়ারমেন্ট অনুযায়ী প্রোফাইল পেজ
+      label: "Profile",
       href: "/dashboard/user/my-profile",
       icon: RiUserLine,
     }
@@ -49,22 +49,22 @@ export const sidebarLinks = {
   // 🎨 Creator Dashboard Routes
   creator: [
     {
-      label: "Dashboard Home", // Creator Dashboard Home (Analytics with Recharts)
+      label: "Dashboard Home",
       href: "/dashboard/creator",
       icon: RiBarChartBoxLine,
     },
     {
-      label: "Add Prompt", // শেয়ার্ড রুট (ক্রিয়েটরের জন্য লিমিট নাই)
+      label: "Add Prompt",
       href: "/dashboard/creator/add-prompt",
       icon: RiAddCircleLine,
     },
     {
-      label: "My Prompts", // শেয়ার্ড টেবিল (আপডেট/ডিলিট অ্যাকশনসহ)
+      label: "My Prompts",
       href: "/dashboard/creator/my-prompts",
       icon: RiFileList3Line,
     },
     {
-      label: "Profile", // কমন প্রোফাইল পেজ
+      label: "Profile",
       href: "/dashboard/creator/my-profile",
       icon: RiUserLine,
     },
@@ -73,27 +73,27 @@ export const sidebarLinks = {
   // 👑 Admin Dashboard Routes
   admin: [
     {
-      label: "Analytics", // রিকোয়ারমেন্টের নাম অনুযায়ী (Total Users, Prompts, etc.)
+      label: "Analytics",
       href: "/dashboard/admin",
       icon: RiDashboardLine,
     },
     {
-      label: "All Users", // রোল চেঞ্জ ও ডিলিট টেবিল
+      label: "All Users",
       href: "/dashboard/admin/all-users",
       icon: RiTeamLine,
     },
     {
-      label: "All Prompts", // Approve/Reject/Delete টেবিল
+      label: "All Prompts",
       href: "/dashboard/admin/all-prompts",
       icon: RiFileList3Line,
     },
     {
-      label: "All Payments", // সব পেমেন্ট ডেটা টেবিল
+      label: "All Payments",
       href: "/dashboard/admin/all-payments",
       icon: RiBankCardLine,
     },
     {
-      label: "Reported Prompts", // রিপোর্ট হ্যান্ডেল করার পেজ
+      label: "Reported Prompts",
       href: "/dashboard/admin/reported-prompts",
       icon: RiShieldLine,
     },

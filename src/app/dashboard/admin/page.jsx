@@ -52,7 +52,7 @@ export default function AdminAnalytics() {
         console.error("Fetch Analytics Error:", error);
         toast.error("Network error or authorization failed!");
       } finally {
-        setLoading(false); // ✅ Fix: setLoading method correctly used
+        setLoading(false);
       }
     };
 

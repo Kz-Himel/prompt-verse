@@ -29,14 +29,12 @@ export default function PromptDetailsPage() {
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-  // ─── ডাইনামিক হেডার জেনারেটর (টোকেনসহ) ───
   const getHeaders = async () => {
     const headers = {
       "Content-Type": "application/json",
     };
     
     try {
-      // Better Auth থেকে কারেন্ট টোকেন নেওয়া হচ্ছে
       const tokenRes = await authClient.token?.();
       const token = tokenRes?.data?.token;
       
@@ -50,7 +48,7 @@ export default function PromptDetailsPage() {
     return headers;
   };
 
-  // ─── ডাটা ফেচিং ও সিঙ্ক ───
+  // Data fetching ans sync
   useEffect(() => {
     const fetchPromptDetails = async () => {
       try {
@@ -94,14 +92,14 @@ export default function PromptDetailsPage() {
 
   const hasAccess = prompt.content !== "LOCKED_PREMIUM";
 
-  // ─── ১. বুকমার্ক টগল ───
+  // Bookmark toggle
   const handleBookmarkToggle = async () => {
     if (!currentUser) {
       return toast.error("Please login first");
     }
 
     try {
-      const headers = await getHeaders(); // টোকেনসহ হেডার জেনারেট
+      const headers = await getHeaders();
       const res = await fetch(
         `${API_URL}/prompts/${prompt._id}/bookmark`,
         {
@@ -123,7 +121,7 @@ export default function PromptDetailsPage() {
     }
   };
 
-  // ─── ২. কপি প্রম্পট এবং কাউন্ট ট্র্যাকিং ───
+  // Copy prompt and count
   const handleCopyPrompt = async () => {
     try {
       await navigator.clipboard.writeText(prompt.content);
@@ -150,14 +148,14 @@ export default function PromptDetailsPage() {
     }
   };
 
-  // ─── ৩. রিভিউ সাবমিট হ্যান্ডলার ───
+  // Review submit handler
   const handleReviewSubmit = async (reviewData) => {
     if (!currentUser) {
       return toast.error("Please login first");
     }
 
     try {
-      const headers = await getHeaders(); // টোকেনসহ হেডার জেনারেট
+      const headers = await getHeaders();
       const res = await fetch(
         `${API_URL}/prompts/${prompt._id}/reviews`,
         {
@@ -190,14 +188,14 @@ export default function PromptDetailsPage() {
     }
   };
 
-  // ─── ৪. রিপোর্ট সাবমিট হ্যান্ডলার ───
+  // Report submit handler
   const handleReportSubmit = async (reportData) => {
     if (!currentUser) {
       return toast.error("Please login first");
     }
 
     try {
-      const headers = await getHeaders(); // টোকেনসহ হেডার জেনারেট
+      const headers = await getHeaders();
       const res = await fetch(
         `${API_URL}/prompts/${prompt._id}/report`,
         {
@@ -214,7 +212,7 @@ export default function PromptDetailsPage() {
 
       if (data.success) {
         toast.success("Prompt reported successfully");
-        setIsReportModalOpen(false); // মডালটি ক্লোজ করার জন্য
+        setIsReportModalOpen(false);
       } else {
         toast.error(data.message);
       }
@@ -229,7 +227,7 @@ export default function PromptDetailsPage() {
       
       <div className="max-w-5xl mx-auto space-y-6">
         
-        {/* টপ অ্যাকশন বার */}
+        {/* Top action bar */}
         <div className="flex justify-between items-center bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <button onClick={() => router.push("/prompts")} className="text-sm font-medium text-violet-600 hover:underline">
             ← All Prompts
@@ -250,7 +248,7 @@ export default function PromptDetailsPage() {
           </div>
         </div>
 
-        {/* মেইন লেআউট গ্রিড */}
+        {/* Main layout grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
@@ -274,7 +272,7 @@ export default function PromptDetailsPage() {
                 <p className="text-xs text-slate-600 leading-relaxed">{prompt.instructions || "No custom usage instructions provided."}</p>
               </div>
 
-              {/* প্রম্পট টেক্সট বক্স এলাকা */}
+              {/* Prompt text box */}
               <div className="space-y-2 pt-2">
                 <div className="flex justify-between items-center">
                   <h3 className="text-slate-700 text-sm font-semibold">Prompt Template</h3>
@@ -308,11 +306,11 @@ export default function PromptDetailsPage() {
               </div>
             </div>
 
-            {/* রিভিউ সেকশন কম্পোনেন্ট */}
+            {/* Review section */}
             <ReviewSection reviews={prompt.reviews} hasAccess={hasAccess} onReviewSubmit={handleReviewSubmit} />
           </div>
 
-          {/* রাইট সাইডবার (মেটাডাটা) */}
+          {/* Right sidebar */}
           <div className="space-y-6">
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4 text-xs">
               <h3 className="font-bold text-sm border-b pb-2 text-slate-700 uppercase tracking-wider">Metadata</h3>
@@ -342,7 +340,7 @@ export default function PromptDetailsPage() {
               </div>
             </div>
 
-            {/* ট্যাগস ক্লাউড */}
+            {/* Tags claude */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-2 text-xs">
               <p className="font-semibold text-slate-500 flex items-center gap-1"><FiTag /> Related Tags</p>
               <div className="flex flex-wrap gap-1.5 pt-1">
@@ -356,7 +354,7 @@ export default function PromptDetailsPage() {
         </div>
       </div>
 
-      {/* রিপোর্ট মডাল */}
+      {/* report modal */}
       <ReportModal isOpen={isReportModalOpen} onClose={() => setIsReportModalOpen(false)} onSubmit={handleReportSubmit} />
     </div>
   );
