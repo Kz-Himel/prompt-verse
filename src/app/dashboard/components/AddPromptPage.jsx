@@ -33,18 +33,19 @@ import { toast } from "react-toastify";
 const FREE_USER_LIMIT = 3;
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
-// ── FIXED: Added optional props so it doesn't break Creator/Admin pages ──
-export default function AddPromptPage({ currentCount: passedCount, role: passedRole }) {
+// ── FIXED: Added isPremium prop ──
+export default function AddPromptPage({ currentCount: passedCount, role: passedRole, isPremium = false }) {
   const { data: session, status } = useSession();
   
   const userEmail = session?.user?.email;
   
   // ── FIXED: Fallback logic for Role ──
   const role = passedRole || session?.user?.role || "user"; 
-  const isUser = role === "user";
+  
+  // যদি রোল 'user' হয় এবং সে premium না হয়, তবেই সে রেগুলার/ফ্রি ইউজার
+  const isFreeUser = role === "user" && !isPremium;
 
   // ── state management ──
-  // ── FIXED: Set initial count based on whether passedCount is provided ──
   const [currentCount, setCurrentCount] = useState(passedCount !== undefined ? passedCount : 0);
   const [loadingCount, setLoadingCount] = useState(passedCount !== undefined ? false : true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,7 +66,7 @@ export default function AddPromptPage({ currentCount: passedCount, role: passedR
     tags: [],
   });
 
-  // ── FIXED: Sync state when parent passes count dynamically ──
+  // ── Sync state when parent passes count dynamically ──
   useEffect(() => {
     if (passedCount !== undefined) {
       setCurrentCount(passedCount);
@@ -76,8 +77,7 @@ export default function AddPromptPage({ currentCount: passedCount, role: passedR
   // ── Fetch Count internally (Only runs if parent DID NOT pass a count AND it's a free user) ──
   useEffect(() => {
     const getCount = async () => {
-      // If count is already provided by parent or user is not a regular 'user', skip the API fetch
-      if (passedCount !== undefined || !isUser || !userEmail) {
+      if (passedCount !== undefined || !isFreeUser || !userEmail) {
         setLoadingCount(false);
         return;
       }
@@ -108,9 +108,10 @@ export default function AddPromptPage({ currentCount: passedCount, role: passedR
     };
 
     getCount();
-  }, [userEmail, submitted, passedCount, isUser]);
+  }, [userEmail, submitted, passedCount, isFreeUser]);
 
-  const isLimitReached = isUser && currentCount >= FREE_USER_LIMIT;
+  // ── FIXED: Limit check based on free user status ──
+  const isLimitReached = isFreeUser && currentCount >= FREE_USER_LIMIT;
 
   // ── helpers ──
   const set = (key, val) => setForm((p) => ({ ...p, [key]: val }));
@@ -154,7 +155,6 @@ export default function AddPromptPage({ currentCount: passedCount, role: passedR
     setIsSubmitting(true);
 
     try {
-      // Better Auth JWT
       const tokenRes = await authClient.token?.();
       const token = tokenRes?.data?.token;
 
