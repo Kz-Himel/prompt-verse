@@ -22,13 +22,13 @@ import {
 } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
-import { signUp } from "@/lib/auth-client";
+import { signIn } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 
 export default function RegisterPage() {
   const router = useRouter();
 
-  // ⭐️ useState-এ ডিফল্টভাবে "user" সিলেক্ট থাকবে
+  // state initialization
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -59,13 +59,12 @@ export default function RegisterPage() {
     }
 
     try {
-      // ⭐️ সরাসরি এই অবজেক্টের ভেতরে role পাস করা হয়েছে
       const { error: authError } = await signUp.email({
         email: formData.email,
         password: formData.password,
         name: formData.name,
         image: formData.photoURL || undefined,
-        role: formData.role, // "user" সিলেক্ট থাকলে user যাবে, "creator" সিলেক্ট থাকলে creator যাবে
+        role: formData.role, 
       });
 
       if (authError) {
@@ -83,14 +82,17 @@ export default function RegisterPage() {
     }
   };
 
+  // 🛠️ Google Signup ফিক্সড মেথড
   const handleGoogleSignup = async () => {
     setGoogleLoading(true);
     try {
-      await signUp.social({
+      await signIn.social({
         provider: "google",
+        callbackURL: "/dashboard/user", // 👈 সফল লগইনের পর ইউজারকে যেখানে পাঠাতে চান (যেমন: /dashboard বা /)
       });
     } catch (err) {
       console.error(err);
+      toast.error("Google signup failed. Please try again.");
       setGoogleLoading(false);
     }
   };
@@ -117,13 +119,20 @@ export default function RegisterPage() {
               </p>
             </div>
 
-            <form onSubmit={handleRegister} className="space-y-4">
+            {/* 🛠️ autoComplete="off" যুক্ত করা হয়েছে যেন আগের ডেটা শো না করে */}
+            <form onSubmit={handleRegister} autoComplete="off" className="space-y-4">
               {/* Full Name */}
               <TextField isRequired className="space-y-1.5 w-full">
                 <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Full Name</Label>
                 <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
                   <FaUser className="text-slate-400" />
-                  <Input placeholder="John Doe" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full bg-transparent outline-none text-sm py-1.5" />
+                  <Input 
+                    placeholder="John Doe" 
+                    autoComplete="new-name"
+                    value={formData.name} 
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
+                    className="w-full bg-transparent outline-none text-sm py-1.5" 
+                  />
                 </InputGroup>
               </TextField>
 
@@ -132,7 +141,14 @@ export default function RegisterPage() {
                 <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Email Address</Label>
                 <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
                   <FaEnvelope className="text-slate-400" />
-                  <Input type="email" placeholder="name@example.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full bg-transparent outline-none text-sm py-1.5" />
+                  <Input 
+                    type="email" 
+                    placeholder="name@example.com" 
+                    autoComplete="new-email"
+                    value={formData.email} 
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
+                    className="w-full bg-transparent outline-none text-sm py-1.5" 
+                  />
                 </InputGroup>
               </TextField>
 
@@ -141,15 +157,21 @@ export default function RegisterPage() {
                 <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Photo URL (Optional)</Label>
                 <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
                   <FaLink className="text-slate-400" />
-                  <Input type="url" placeholder="https://example.com/avatar.jpg" value={formData.photoURL} onChange={(e) => setFormData({ ...formData, photoURL: e.target.value })} className="w-full bg-transparent outline-none text-sm py-1.5" />
+                  <Input 
+                    type="url" 
+                    placeholder="" 
+                    autoComplete="off"
+                    value={formData.photoURL} 
+                    onChange={(e) => setFormData({ ...formData, photoURL: e.target.value })} 
+                    className="w-full bg-transparent outline-none text-sm py-1.5" 
+                  />
                 </InputGroup>
               </TextField>
 
-              {/* Account Type (Role Selection via State) */}
+              {/* Account Type */}
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Account Type</label>
                 <div className="grid grid-cols-2 gap-2.5">
-                  {/* User Option */}
                   <div 
                     onClick={() => setFormData(prev => ({ ...prev, role: "user" }))}
                     className={`group relative flex cursor-pointer items-center gap-3 rounded-xl border p-2.5 transition-all duration-200 ${formData.role === "user" ? "border-indigo-600 bg-indigo-50/40 ring-1 ring-indigo-600" : "border-slate-200 bg-white hover:border-slate-300"}`}
@@ -163,7 +185,6 @@ export default function RegisterPage() {
                     </div>
                   </div>
 
-                  {/* Creator Option */}
                   <div 
                     onClick={() => setFormData(prev => ({ ...prev, role: "creator" }))}
                     className={`group relative flex cursor-pointer items-center gap-3 rounded-xl border p-2.5 transition-all duration-200 ${formData.role === "creator" ? "border-indigo-600 bg-indigo-50/40 ring-1 ring-indigo-600" : "border-slate-200 bg-white hover:border-slate-300"}`}
@@ -184,7 +205,14 @@ export default function RegisterPage() {
                 <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Password</Label>
                 <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
                   <FaLock className="text-slate-400" />
-                  <Input type={showPassword ? "text" : "password"} placeholder="••••••••" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="w-full bg-transparent outline-none text-sm py-1.5" />
+                  <Input 
+                    type={showPassword ? "text" : "password"} 
+                    placeholder="••••••••" 
+                    autoComplete="new-password"
+                    value={formData.password} 
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })} 
+                    className="w-full bg-transparent outline-none text-sm py-1.5" 
+                  />
                   <button className="focus:outline-none ml-auto" type="button" onClick={togglePasswordVisibility}>
                     {showPassword ? <FaEyeSlash className="text-lg text-slate-400" /> : <FaEye className="text-lg text-slate-400" />}
                   </button>
@@ -196,7 +224,14 @@ export default function RegisterPage() {
                 <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Confirm Password</Label>
                 <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
                   <FaLock className="text-slate-400" />
-                  <Input type={showConfirmPassword ? "text" : "password"} placeholder="••••••••" value={formData.confirmPassword} onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} className="w-full bg-transparent outline-none text-sm py-1.5" />
+                  <Input 
+                    type={showConfirmPassword ? "text" : "password"} 
+                    placeholder="••••••••" 
+                    autoComplete="new-password"
+                    value={formData.confirmPassword} 
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} 
+                    className="w-full bg-transparent outline-none text-sm py-1.5" 
+                  />
                   <button className="focus:outline-none ml-auto" type="button" onClick={toggleConfirmPasswordVisibility}>
                     {showConfirmPassword ? <FaEyeSlash className="text-lg text-slate-400" /> : <FaEye className="text-lg text-slate-400" />}
                   </button>
