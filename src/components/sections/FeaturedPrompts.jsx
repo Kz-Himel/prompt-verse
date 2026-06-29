@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Button, Spinner } from '@heroui/react';
-import { ArrowUpRight } from '@gravity-ui/icons';
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { Button, Spinner } from "@heroui/react";
+import { ArrowUpRight } from "@gravity-ui/icons";
 // আপনার প্রজেক্ট স্ট্রাকচার অনুযায়ী PromptCard কম্পোনেন্টটি ইমপোর্ট করুন
-import PromptCard from '../PromptCard'; 
+import PromptCard from "../PromptCard";
+import Link from "next/link";
 
 export default function FeaturedPrompts() {
   const [prompts, setPrompts] = useState([]);
@@ -16,32 +17,36 @@ export default function FeaturedPrompts() {
     const fetchFeaturedPrompts = async () => {
       try {
         setLoading(true);
-        const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-        const token = typeof window !== 'undefined' ? localStorage.getItem('access-token') : null;
+        const backendUrl =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const token =
+          typeof window !== "undefined"
+            ? localStorage.getItem("access-token")
+            : null;
 
         const response = await fetch(`${backendUrl}/prompts`, {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            ...(token && { 'Authorization': `Bearer ${token}` })
-          }
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
         });
 
         if (!response.ok) {
-          throw new Error('Failed to fetch prompts from server');
+          throw new Error("Failed to fetch prompts from server");
         }
 
         const jsonResult = await response.json();
-        
+
         if (jsonResult.success) {
           // রিকোয়ারমেন্ট অনুযায়ী হোম পেজে সর্বোচ্চ ৬টি ফিচারড প্রম্পট ফিল্টার/স্লাইস করা হলো
           // যদি আপনার ব্যাকএন্ড থেকে সর্ট করা না থাকে, তাহলে এখানে .slice(0, 6) করে নিতে পারেন
           setPrompts(jsonResult.data.slice(0, 6));
         } else {
-          throw new Error(jsonResult.message || 'Something went wrong');
+          throw new Error(jsonResult.message || "Something went wrong");
         }
       } catch (err) {
-        console.error('Error fetching featured prompts:', err);
+        console.error("Error fetching featured prompts:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -71,23 +76,31 @@ export default function FeaturedPrompts() {
 
           <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-500">
             Handpicked high-converting prompt scripts vetted by our team.
-            Discover premium prompts built to save time and maximize productivity.
+            Discover premium prompts built to save time and maximize
+            productivity.
           </p>
 
-          <Button
-            radius="full"
-            variant="bordered"
-            className="mt-8 border-slate-200 bg-white font-semibold text-slate-700 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+          <Link
+            href="/prompts"
+            className="group mt-8 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 hover:shadow-xl"
           >
-            View All
-            <ArrowUpRight size={16} />
-          </Button>
+            <span>View All</span>
+
+            <ArrowUpRight
+              size={18}
+              className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+            />
+          </Link>
         </div>
 
         {/* Loading & Error Handles */}
         {loading && (
           <div className="flex justify-center items-center py-20">
-            <Spinner size="lg" color="violet" label="Loading Featured Prompts..." />
+            <Spinner
+              size="lg"
+              color="violet"
+              label="Loading Featured Prompts..."
+            />
           </div>
         )}
 

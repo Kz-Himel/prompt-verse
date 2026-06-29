@@ -1,60 +1,135 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
-const REVIEWS = [
-  { name: 'John D.', role: 'Marketer', text: 'PromptVault completely transformed how I use ChatGPT. I went from 2 hours of content writing to 20 minutes. The quality difference is night and day.', rating: 5, initials: 'JD', color: '#7C3AED' },
-  { name: 'Sarah M.', role: 'Designer', text: "As a creator, I've earned more than I expected. The platform is beautifully designed and the community support is phenomenal. Highly recommended.", rating: 5, initials: 'SM', color: '#06B6D4' },
-  { name: 'David R.', role: 'Developer', text: 'Best marketplace for AI prompts, period. I found coding prompts that saved my team dozens of engineering hours every single week.', rating: 5, initials: 'DR', color: '#10B981' },
-  { name: 'Priya K.', role: 'Startup Founder', text: "We use PromptVault for everything — pitch decks, emails, product copy. It's like having a genius copywriter on call 24/7.", rating: 5, initials: 'PK', color: '#F59E0B' },
-  { name: 'Marco T.', role: 'YouTuber', text: 'The Midjourney prompts here are absolutely stunning. My thumbnail engagement went up 40% in one month. Worth every penny.', rating: 5, initials: 'MT', color: '#EF4444' },
-  { name: 'Yuna L.', role: 'Copywriter', text: "I used to struggle with writer's block daily. Now I have hundreds of proven prompts at my fingertips. PromptVault is a game-changer.", rating: 4, initials: 'YL', color: '#8B5CF6' },
-];
-
 const StarRating = ({ rating }) => (
-  <div style={{ display: 'flex', gap: '2px' }}>
-    {[1,2,3,4,5].map(s => (
-      <span key={s} style={{ fontSize: '14px', color: s <= rating ? '#F59E0B' : '#374151' }}>★</span>
+  <div className="flex gap-0.5">
+    {[1, 2, 3, 4, 5].map((s) => (
+      <span
+        key={s}
+        className={`text-sm ${s <= rating ? 'text-amber-500' : 'text-slate-200'}`}
+      >
+        ★
+      </span>
     ))}
   </div>
 );
 
 export default function CustomerReviews() {
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
+    fetch(`${backendUrl}/customer-reviews`)
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.success) {
+          setReviews(resData.data);
+        }
+      })
+      .catch((err) => console.error('Error fetching reviews:', err))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
-    <section style={{ padding: '100px 24px', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', bottom: '-100px', left: '-200px', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(124,58,237,0.06), transparent 70%)', pointerEvents: 'none' }} />
-      <div style={{ maxWidth: '1280px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <span style={{ display: 'inline-block', padding: '5px 14px', borderRadius: '100px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#EF4444', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>❤️ Community Love</span>
-          <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 800, color: '#F8FAFC', margin: '0 0 16px', letterSpacing: '-0.8px' }}>What Our Users Say</h2>
-          <p style={{ fontSize: '16px', color: '#64748B', maxWidth: '480px', margin: '0 auto' }}>Over 12,500 creators and buyers trust PromptVault to supercharge their workflow.</p>
+    <section className="relative overflow-hidden px-6 py-28 bg-white">
+      {/* Premium Subtle Grid & Soft Radial Glow */}
+      <div 
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.015)_1px,transparent_1px)] bg-[size:32px_32px]"
+        style={{
+          maskImage: 'radial-gradient(circle at center, black 60%, transparent 100%)',
+          WebkitMaskImage: 'radial-gradient(circle at center, black 60%, transparent 100%)'
+        }}
+      />
+      <div className="pointer-events-none absolute -top-40 -right-40 h-[600px] w-[600px] bg-[radial-gradient(circle,rgba(239,68,68,0.03),transparent_70%)]" />
+      <div className="pointer-events-none absolute -bottom-40 -left-40 h-[600px] w-[600px] bg-[radial-gradient(circle,rgba(124,58,237,0.04),transparent_70%)]" />
+
+      <div className="relative z-10 mx-auto max-w-7xl">
+        {/* Heading Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-20 text-center"
+        >
+          <span className="mb-4 inline-block rounded-full border border-rose-500/12 bg-rose-500/6 px-4 py-1.5 text-xs font-bold tracking-wider text-rose-500 uppercase">
+            ❤️ Community Love
+          </span>
+          <h2 className="font-['Syne'] text-4xl font-black tracking-tight text-slate-900 sm:text-5xl md:text-6xl mb-5">
+            What Our Users Say
+          </h2>
+          <p className="mx-auto max-w-xl text-lg leading-relaxed text-slate-500">
+            Over 12,500 creators and buyers trust PromptVault to supercharge their workflow.
+          </p>
         </motion.div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
-          {REVIEWS.map((r, i) => (
-            <motion.div
-              key={r.name}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.5 }}
-              style={{ background: 'rgba(26,32,53,0.7)', border: '1px solid rgba(148,163,184,0.08)', borderRadius: '18px', padding: '26px', backdropFilter: 'blur(10px)', position: 'relative', overflow: 'hidden' }}
-            >
-              <div style={{ position: 'absolute', top: '12px', right: '16px', fontSize: '64px', fontFamily: 'Georgia, serif', color: 'rgba(124,58,237,0.08)', lineHeight: 1, userSelect: 'none' }}>"</div>
-              <StarRating rating={r.rating} />
-              <p style={{ margin: '16px 0 20px', fontSize: '14px', color: '#CBD5E1', lineHeight: 1.7, position: 'relative', zIndex: 1 }}>"{r.text}"</p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingTop: '16px', borderTop: '1px solid rgba(148,163,184,0.08)' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: `linear-gradient(135deg, ${r.color}30, ${r.color}10)`, border: `1.5px solid ${r.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '13px', color: r.color, fontFamily: 'Syne, sans-serif' }}>
-                  {r.initials}
+        {/* Loading State */}
+        {loading ? (
+          <div className="flex justify-center items-center min-h-[200px]">
+            <div className="text-center text-base font-semibold text-slate-400 animate-pulse tracking-wide">
+              Loading community reviews...
+            </div>
+          </div>
+        ) : (
+          /* Reviews Grid */
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {reviews.map((r, i) => (
+              <motion.div
+                key={r.name + i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.06, duration: 0.5 }}
+                whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                className="relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-100 bg-white p-8 shadow-xl shadow-slate-200/40 transition-shadow duration-300 hover:shadow-2xl hover:shadow-slate-200/60"
+              >
+                {/* Decorative Premium Quote Mark */}
+                <div className="pointer-events-none absolute top-4 right-6 select-none font-serif text-7xl font-black text-slate-100 leading-none">
+                  “
                 </div>
-                <div>
-                  <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#F8FAFC' }}>{r.name}</p>
-                  <p style={{ margin: 0, fontSize: '12px', color: '#64748B' }}>{r.role}</p>
+
+                <div className="relative z-10">
+                  {/* Rating */}
+                  <div className="mb-5">
+                    <StarRating rating={r.rating} />
+                  </div>
+
+                  {/* Review Text */}
+                  <p className="text-[15px] leading-relaxed text-slate-600 font-medium">
+                    "{r.text}"
+                  </p>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+
+                {/* Reviewer Profile */}
+                <div className="flex items-center gap-3.5 border-t border-slate-50/80 pt-5 mt-6">
+                  {/* Premium Gradient Avatar */}
+                  <div
+                    className="font-['Syne'] flex h-11 w-11 shrink-0 items-center justify-center rounded-full border text-xs font-extrabold"
+                    style={{
+                      background: `linear-gradient(135deg, ${r.color}18, ${r.color}05)`,
+                      borderColor: `${r.color}25`,
+                      color: r.color,
+                    }}
+                  >
+                    {r.initials}
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-900 tracking-tight">
+                      {r.name}
+                    </h4>
+                    <p className="text-xs font-semibold text-slate-400">
+                      {r.role}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
