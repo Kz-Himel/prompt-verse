@@ -7,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FiMessageSquare, FiStar, FiEye, FiCalendar } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function MyReviewsPage() {
   const router = useRouter();
@@ -86,7 +87,7 @@ export default function MyReviewsPage() {
   if (isPending || loading) {
     return (
       <div className="p-6 md:p-10 w-full flex items-center justify-center min-h-[400px]">
-        <div className="w-10 h-10 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+        <LoadingSpinner />
       </div>
     );
   }

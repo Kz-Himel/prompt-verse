@@ -22,12 +22,16 @@ export const auth = betterAuth({
   },
 
   user: {
-    additionalFields: {
-      role: {
-        defaultValue: "user",
-      }
+  additionalFields: {
+    role: {
+      defaultValue: "user",
+    },
+    status: {
+      type: "string",
+      defaultValue: "Free", 
     }
-  },
+  }
+},
 
   session: {
     cookieCache: {

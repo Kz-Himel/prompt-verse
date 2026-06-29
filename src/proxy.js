@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from './lib/auth'; // আপনার Better Auth সার্ভার কনফিগ পাথ
-import { headers } from 'next/headers';
 
-// 🎯 Next.js 16 এ মেইন ফাংশনের নাম এখন 'proxy'
 export async function proxy(request) {
     const { pathname } = request.nextUrl;
 
@@ -15,33 +13,44 @@ export async function proxy(request) {
       return NextResponse.next();
     }
 
+    // 🎯 ম্যাজিক লজিক: যদি শুধু '/prompts' বা '/prompts/' হয় (ডিটেইলস পেজ না), তবে লগইন চেক ছাড়াই ছেড়ে দাও
+    if (pathname === '/prompts' || pathname === '/prompts/') {
+      return NextResponse.next();
+    }
+
     try {
-      // 🎯 সেশন চেক করার একদম সেফ ও আধুনিক উপায়
+      // Better Auth-এ সেশন চেক করা
       const session = await auth.api.getSession({
-          headers: await headers()
+          headers: request.headers
       });
 
       // ২. সেশন না থাকলে সোজা লগইন পেজে রিডাইরেক্ট
       if (!session) {
-          return NextResponse.redirect(new URL('/auth/login', request.url));
+          const loginUrl = new URL('/auth/login', request.url);
+          loginUrl.searchParams.set('callbackUrl', pathname);
+
+          return NextResponse.redirect(loginUrl);
       }
     } catch (err) {
       console.error("Auth proxy error:", err);
-      // কোনো কারণে ইন্টারনাল ফেইল করলে সেফটির জন্য রিকোয়েস্ট পাস করে দেওয়া
       return NextResponse.next();
     }
 
     return NextResponse.next();
 }
 
-// 🎯 কোন কোন রাউটে পাহারা বসবে (ম্যাচার আগের মতোই থাকবে)
+export async function middleware(request) {
+    return proxy(request);
+}
+
+// 🎯 ম্যাচার আগের মতোই থাকবে
 export const config = {
   matcher: [
     "/dashboard/admin/:path*",
     "/dashboard/creator/:path*",
     "/dashboard/user/:path*",
-    "/pricing",
+    "/pricing", 
     "/checkout",
-    "/prompts/:id" 
+    "/prompts/:path*" // 👈 এটা থাকবে, কিন্তু ভেতরের কন্ডিশন শুধু মেইন পেজটাকে ছাড় দেবে
   ],
 };

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Table, Button, Chip, AlertDialog, Spinner } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function AdminPrompts() {
   const [promptsList, setPromptsList] = useState([]); 
@@ -210,12 +211,13 @@ export default function AdminPrompts() {
             </Table.Header>
             <Table.Body emptyContent={!tableLoading && "No prompts found in database"}>
               {tableLoading ? (
-                <Table.Row>
-                  <Table.Cell><Spinner size="sm" /></Table.Cell>
-                  <Table.Cell>Loading...</Table.Cell>
-                  <Table.Cell>-</Table.Cell>
-                  <Table.Cell>-</Table.Cell>
-                </Table.Row>
+                // <Table.Row>
+                //   <Table.Cell><Spinner size="sm" /></Table.Cell>
+                //   <Table.Cell>Loading...</Table.Cell>
+                //   <Table.Cell>-</Table.Cell>
+                //   <Table.Cell>-</Table.Cell>
+                // </Table.Row>
+                <LoadingSpinner />
               ) : (
                 promptsList.map((item) => {
                   const itemId = item._id || item.id;

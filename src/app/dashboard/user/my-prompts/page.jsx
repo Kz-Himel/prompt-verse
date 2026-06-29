@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { authClient } from "@/lib/auth-client";
 import MyPromptsCard from "../../components/MyPromptsCard"; // পাথ প্রজেক্ট অনুযায়ী মিলাবেন
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function MyPromptsPage() {
   const [prompts, setPrompts] = useState([]);
@@ -99,7 +100,9 @@ export default function MyPromptsPage() {
   };
 
   if (isPending || loading) {
-    return <div className="p-10 text-center text-sm font-semibold text-slate-500">Loading your prompts...</div>;
+    return <div className="p-10 text-center text-sm font-semibold text-slate-500">
+      <LoadingSpinner />
+    </div>;
   }
 
   if (!currentUser) {

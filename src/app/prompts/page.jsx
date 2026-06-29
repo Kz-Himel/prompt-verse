@@ -4,6 +4,7 @@ import SearchInput from "../../components/SearchInput";
 import { Suspense } from "react";
 import { headers } from "next/headers"; 
 import { auth } from "@/lib/auth"; 
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export const dynamic = "force-dynamic";
 
@@ -68,7 +69,7 @@ export default async function AllPromptsPage({ searchParams }) {
               Prompt Marketplace
             </h1>
           </div>
-          <Suspense fallback={<div className="w-full md:w-80 h-10 bg-slate-100 rounded-xl animate-pulse" />}>
+          <Suspense fallback={<LoadingSpinner />}>
             <SearchInput />
           </Suspense>
         </div>

@@ -12,6 +12,7 @@ import { authClient } from "@/lib/auth-client";
 
 import ReportModal from "../../../components/ReportModal";
 import ReviewSection from "../../../components/ReviewSection";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function PromptDetailsPage() {
   const router = useRouter();
@@ -84,8 +85,12 @@ export default function PromptDetailsPage() {
     }
   }, [id, currentUser?.email, isPending]);
 
-  if (loading) return <div className="text-center py-20 text-sm font-semibold text-slate-500">Loading Prompt Details...</div>;
-  if (!prompt) return <div className="text-center py-20 text-red-500 font-medium">Prompt not found!</div>;
+  if (loading) return <div className="text-center py-20 text-sm font-semibold text-slate-500">
+    <LoadingSpinner />
+    </div>;
+  if (!prompt) return <div className="text-center py-20 text-red-500 font-medium">
+    Prompt not found!
+    </div>;
 
   const hasAccess = prompt.content !== "LOCKED_PREMIUM";
 

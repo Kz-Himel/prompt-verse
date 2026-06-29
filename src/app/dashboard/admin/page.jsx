@@ -4,6 +4,7 @@ import { Card, Spinner } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 import { FiUsers, FiFileText, FiStar, FiCopy, FiArrowUpRight } from "react-icons/fi";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function AdminAnalytics() {
   const [stats, setStats] = useState({ totalUsers: 0, totalPrompts: 0, totalReviews: 0, totalCopies: 0 });
@@ -66,7 +67,7 @@ export default function AdminAnalytics() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <Spinner size="lg" color="primary" />
+        <LoadingSpinner />
       </div>
     );
   }

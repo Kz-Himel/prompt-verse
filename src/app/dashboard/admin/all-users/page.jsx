@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Table, Button, Spinner, AlertDialog } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function AllUsers() {
   const [users, setUsers] = useState([]);
@@ -120,7 +121,7 @@ export default function AllUsers() {
   if (loading)
     return (
       <div className="flex justify-center p-10">
-        <Spinner size="lg" />
+        <LoadingSpinner />
       </div>
     );
 

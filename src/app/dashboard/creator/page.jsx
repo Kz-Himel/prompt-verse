@@ -12,6 +12,7 @@ import AnalyticsCharts from "./components/AnalyticsCharts";
 // আপাততো লেআউট ঠিক রাখার জন্য এগুলো ইমপোর্ট করা হলো।
 import MyPromptsCard from "../components/MyPromptsCard";
 import SalesHistoryCard from "../components/SalesHistoryCard";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function CreatorDashboardHome() {
   const [analyticsData, setAnalyticsData] = useState(null);
@@ -66,19 +67,7 @@ export default function CreatorDashboardHome() {
   if (loading) {
     return (
       <div className="p-6 max-w-[1400px] mx-auto animate-pulse space-y-6">
-        <div className="h-12 bg-gray-200 rounded-lg w-1/3"></div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="h-32 bg-gray-200 rounded-xl"></div>
-          <div className="h-32 bg-gray-200 rounded-xl"></div>
-          <div className="h-32 bg-gray-200 rounded-xl"></div>
-        </div>
-        <div className="grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <div className="h-64 bg-gray-200 rounded-xl"></div>
-            <div className="h-64 bg-gray-200 rounded-xl"></div>
-          </div>
-          <div className="h-96 bg-gray-200 rounded-xl"></div>
-        </div>
+        <LoadingSpinner />
       </div>
     );
   }

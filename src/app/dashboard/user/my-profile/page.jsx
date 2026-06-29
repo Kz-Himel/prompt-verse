@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import ProfileCard from "../../components/ProfileCard"; 
 // আপনার প্রজেক্টের সঠিক পাথ অনুযায়ী authClient ইমপোর্ট করুন
 import { authClient } from "@/lib/auth-client"; 
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function UserProfilePage() {
   const [profile, setProfile] = useState(null);
@@ -57,7 +58,7 @@ export default function UserProfilePage() {
   if (loading) {
     return (
       <div className="p-6 md:p-10 w-full flex items-center justify-center min-h-[300px]">
-        <div className="w-8 h-8 border-3 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+        <LoadingSpinner />
       </div>
     );
   }

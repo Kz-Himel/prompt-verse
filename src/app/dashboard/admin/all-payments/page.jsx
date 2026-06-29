@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { FiDollarSign, FiCalendar, FiMail, FiHash, FiCheckCircle, FiLoader } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client"; // 🎯 আপনার প্রজেক্টের authClient পাথ অনুযায়ী মিলিয়ে নিবেন
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function AllPaymentsPage() {
   const [payments, setPayments] = useState([]);
@@ -59,8 +60,7 @@ export default function AllPaymentsPage() {
   if (loading) {
     return (
       <div className="min-h-[60vh] w-full flex flex-col items-center justify-center text-slate-500 gap-3">
-        <FiLoader className="w-8 h-8 animate-spin text-violet-600" />
-        <p className="text-sm font-medium">Loading payment transactions securely...</p>
+        <LoadingSpinner />
       </div>
     );
   }

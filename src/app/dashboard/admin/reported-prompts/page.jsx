@@ -4,6 +4,7 @@ import { Card, Spinner, Button, Chip, AlertDialog } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
 import { FiAlertTriangle, FiTrash2, FiUserCheck, FiEyeOff } from "react-icons/fi";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function ReportedPrompts() {
   const [reports, setReports] = useState([]);
@@ -131,7 +132,7 @@ export default function ReportedPrompts() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <Spinner size="lg" color="primary" />
+        <LoadingSpinner />
       </div>
     );
   }

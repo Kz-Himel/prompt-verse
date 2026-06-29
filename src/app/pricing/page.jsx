@@ -12,7 +12,7 @@ export default function PricingPage() {
   const { data: session, isPending } = authClient.useSession();
   
   // ইউজার প্রিমিয়াম কিনা চেক করার কড়া লজিক (ডাটাবেজ স্ট্যাটাস অনুযায়ী)
-  const isPremiumUser = session?.user?.status === "Premium" || session?.user?.role === "admin";
+  const isPremiumUser = session?.user?.status === "Premium";
 
   const handleUpgrade = (e) => {
     e.preventDefault();
