@@ -169,14 +169,25 @@ export default function AdminPrompts() {
     try {
       setDeleteLoading(true);
       const headers = await getHeaders();
-
-      // Email ke encodeURIComponent kore deya safe
       const encodedEmail = encodeURIComponent(deleteEmail);
 
-      const res = await fetch(`${BACKEND_URL}/admin/users/${encodedEmail}`, {
-        method: "DELETE",
-        headers: headers,
-      });
+      // CHANGED: পাথের বদলে কুয়েরি প্যারামিটার (?identifier=...) হিসেবে পাঠানো হচ্ছে
+      // এটি Vercel-এর .com জনিত 404 এরর পুরোপুরি সমাধান করবে
+      const res = await fetch(
+        `${BACKEND_URL}/admin/users?identifier=${encodedEmail}`,
+        {
+          method: "DELETE",
+          headers: headers,
+        },
+      );
+
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error(
+          `Server returned non-JSON response (Status: ${res.status})`,
+        );
+      }
+
       const result = await res.json();
 
       if (res.ok && result.success) {
@@ -188,7 +199,7 @@ export default function AdminPrompts() {
       }
     } catch (error) {
       console.error("Delete Error:", error);
-      toast.error("Something went wrong with the network!");
+      toast.error(error.message || "Something went wrong with the network!");
     } finally {
       setDeleteLoading(false);
     }

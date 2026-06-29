@@ -12,7 +12,7 @@ export default function AllUsers() {
   const [deleteId, setDeleteId] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const getHeaders = async () => {
     const headers = { "Content-Type": "application/json" };
@@ -34,7 +34,7 @@ export default function AllUsers() {
         method: "GET",
         headers: headers,
       });
-      
+
       const data = await res.json();
 
       if (Array.isArray(data)) {
@@ -75,54 +75,58 @@ export default function AllUsers() {
     }
   };
 
-  // 
+  //
   const openDeleteModal = (userId) => {
     setDeleteId(userId);
     setIsModalOpen(true);
   };
 
-  // 
+  //
   const closeDeleteModal = () => {
     setIsModalOpen(false);
     setDeleteId(null);
   };
 
-  // 
+  //
   const handleDeleteConfirm = async () => {
-  // 1. Debugging er jonno check korun id ashtese kina
-  console.log("Deleting User ID:", deleteId); 
-  
-  if (!deleteId) {
-    toast.error("User ID missing!");
-    return;
-  }
-  
-  try {
-    setDeleteLoading(true);
-    const headers = await getHeaders();
-    
-    // 2. Fixed URL path (Added '/admin')
-    const res = await fetch(`${BACKEND_URL}/admin/users/${deleteId}`, {
-      method: "DELETE",
-      headers: headers,
-    });
-
-    const result = await res.json();
-
-    if (res.ok && result.success) {
-      toast.success("User deleted successfully!");
-      closeDeleteModal();
-      fetchUsers(); // render list refresh korar jonno
-    } else {
-      toast.error(result.message || "Failed to delete user");
+    if (!deleteId) {
+      toast.error("User ID missing!");
+      return;
     }
-  } catch (error) {
-    console.error("Delete Error:", error);
-    toast.error("Something went wrong!");
-  } finally {
-    setDeleteLoading(false);
-  }
-};
+
+    try {
+      setDeleteLoading(true);
+      const headers = await getHeaders();
+
+      // এটি সরাসরি আপনার /admin/users/:identifier রাউটে হিট করবে এবং আইডি হওয়ায় কোনো এরর আসবে না
+      const res = await fetch(`${BACKEND_URL}/admin/users/${deleteId}`, {
+        method: "DELETE",
+        headers: headers,
+      });
+
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error(
+          `Server returned non-JSON response (Status: ${res.status})`,
+        );
+      }
+
+      const result = await res.json();
+
+      if (res.ok && result.success) {
+        toast.success("User deleted successfully!");
+        closeDeleteModal();
+        fetchUsers();
+      } else {
+        toast.error(result.message || "Failed to delete user");
+      }
+    } catch (error) {
+      console.error("Delete Error:", error);
+      toast.error(error.message || "Something went wrong!");
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   if (loading)
     return (
@@ -138,7 +142,10 @@ export default function AllUsers() {
       {/* Table structure */}
       <Table>
         <Table.ScrollContainer>
-          <Table.Content aria-label="Users management table" className="min-w-[700px]">
+          <Table.Content
+            aria-label="Users management table"
+            className="min-w-[700px]"
+          >
             <Table.Header>
               <Table.Column isRowHeader>NAME</Table.Column>
               <Table.Column>EMAIL</Table.Column>
@@ -149,7 +156,10 @@ export default function AllUsers() {
             <Table.Body>
               {users.length === 0 ? (
                 <Table.Row>
-                  <Table.Cell colSpan={4} className="text-center text-default-400 py-6">
+                  <Table.Cell
+                    colSpan={4}
+                    className="text-center text-default-400 py-6"
+                  >
                     No users found
                   </Table.Cell>
                 </Table.Row>
@@ -200,23 +210,25 @@ export default function AllUsers() {
               <AlertDialog.CloseTrigger onClick={closeDeleteModal} />
               <AlertDialog.Header>
                 <AlertDialog.Icon status="danger" />
-                <AlertDialog.Heading>Delete user permanently?</AlertDialog.Heading>
+                <AlertDialog.Heading>
+                  Delete user permanently?
+                </AlertDialog.Heading>
               </AlertDialog.Header>
               <AlertDialog.Body>
                 <p>
-                  This will permanently delete the user account and all of their related
-                  data. <strong>This action cannot be undone.</strong>
+                  This will permanently delete the user account and all of their
+                  related data. <strong>This action cannot be undone.</strong>
                 </p>
               </AlertDialog.Body>
               <AlertDialog.Footer>
-                <Button 
-                  variant="tertiary" 
+                <Button
+                  variant="tertiary"
                   onClick={closeDeleteModal}
                   disabled={deleteLoading}
                 >
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   variant="danger"
                   isLoading={deleteLoading}
                   onClick={handleDeleteConfirm}

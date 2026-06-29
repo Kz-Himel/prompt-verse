@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Card, Spinner, Button, Chip, AlertDialog } from "@heroui/react";
+import { Card, Button, Chip, AlertDialog } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-toastify";
-import { FiAlertTriangle, FiTrash2, FiUserCheck, FiEyeOff } from "react-icons/fi";
+import { FiTrash2, FiUserCheck, FiEyeOff } from "react-icons/fi";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function ReportedPrompts() {
@@ -11,21 +11,32 @@ export default function ReportedPrompts() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [selectedReportId, setSelectedReportId] = useState(null);
-  
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
+  const [selectedReportTitle, setSelectedReportTitle] = useState("");
 
-  // 1. FETCH ALL REPORTED PROMPTS ───
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
+
+  // হেল্পার ফাংশন: অথ টোকেন গেট করা
+  const getAuthHeader = async () => {
+    try {
+      const tokenRes = await authClient.token?.();
+      const token = tokenRes?.data?.token;
+      return token ? { Authorization: `Bearer ${token}` } : {};
+    } catch {
+      return {};
+    }
+  };
+
+  // ১. FETCH ALL REPORTED PROMPTS
   const fetchReports = async () => {
     try {
       setLoading(true);
-      const tokenRes = await authClient.token?.();
-      const token = tokenRes?.data?.token;
+      const authHeader = await getAuthHeader();
 
       const res = await fetch(`${BACKEND_URL}/admin/reported-prompts`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
+          ...authHeader,
         },
       });
 
@@ -36,7 +47,7 @@ export default function ReportedPrompts() {
         toast.error(result.message || "Failed to load reports");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Fetch Error:", error);
       toast.error("Error loading reported prompts!");
     } finally {
       setLoading(false);
@@ -44,21 +55,21 @@ export default function ReportedPrompts() {
   };
 
   useEffect(() => {
-    fetchReports();
+    if (BACKEND_URL) fetchReports();
+    else console.error("BACKEND_URL is missing!");
   }, []);
 
-  // 2. ACTION: REMOVE PROMPT (EXECUTION) ───
+  // ২. ACTION: REMOVE PROMPT
   const handleRemovePrompt = async () => {
     if (!selectedReportId) return;
     try {
       setSubmitting(true);
-      const tokenRes = await authClient.token?.();
-      const token = tokenRes?.data?.token;
+      const authHeader = await getAuthHeader();
 
       const res = await fetch(`${BACKEND_URL}/admin/reported-prompts/${selectedReportId}/remove-prompt`, {
         method: "DELETE",
         headers: {
-          ...(token && { Authorization: `Bearer ${token}` }),
+          ...authHeader,
         },
       });
 
@@ -66,28 +77,28 @@ export default function ReportedPrompts() {
       if (result.success) {
         toast.success("Prompt removed and report resolved!");
         setReports((prev) => prev.filter((r) => r._id !== selectedReportId));
-        setSelectedReportId(null); // Clear selected id after deletion
+        setSelectedReportId(null);
       } else {
         toast.error(result.message || "Failed to remove prompt");
       }
     } catch (error) {
-      toast.error("Something went wrong!");
+      console.error("Remove Error:", error); // আসল এরর দেখতে সাহায্য করবে
+      toast.error("Something went wrong while removing!");
     } finally {
       setSubmitting(false);
     }
   };
 
-  // 3. ACTION: WARN CREATOR ───
+  // ৩. ACTION: WARN CREATOR
   const handleWarnCreator = async (reportId, creatorEmail) => {
     try {
-      const tokenRes = await authClient.token?.();
-      const token = tokenRes?.data?.token;
+      const authHeader = await getAuthHeader();
 
       const res = await fetch(`${BACKEND_URL}/admin/reported-prompts/${reportId}/warn-creator`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
+          ...authHeader,
         },
         body: JSON.stringify({ creatorEmail }),
       });
@@ -100,20 +111,20 @@ export default function ReportedPrompts() {
         toast.error(result.message || "Failed to warn creator");
       }
     } catch (error) {
-      toast.error("Something went wrong!");
+      console.error("Warn Error:", error);
+      toast.error("Something went wrong while warning creator!");
     }
   };
 
-  // 4. ACTION: DISMISS REPORT ───
+  // ৪. ACTION: DISMISS REPORT
   const handleDismissReport = async (reportId) => {
     try {
-      const tokenRes = await authClient.token?.();
-      const token = tokenRes?.data?.token;
+      const authHeader = await getAuthHeader();
 
       const res = await fetch(`${BACKEND_URL}/admin/reported-prompts/${reportId}/dismiss`, {
         method: "PATCH",
         headers: {
-          ...(token && { Authorization: `Bearer ${token}` }),
+          ...authHeader,
         },
       });
 
@@ -125,7 +136,8 @@ export default function ReportedPrompts() {
         toast.error(result.message || "Failed to dismiss report");
       }
     } catch (error) {
-      toast.error("Something went wrong!");
+      console.error("Dismiss Error:", error);
+      toast.error("Something went wrong while dismissing!");
     }
   };
 
@@ -139,7 +151,6 @@ export default function ReportedPrompts() {
 
   return (
     <div className="space-y-8 p-1">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-black flex items-center gap-2">
           Reported Prompts
@@ -149,7 +160,6 @@ export default function ReportedPrompts() {
         </p>
       </div>
 
-      {/* Reports Grid/List */}
       {reports.length === 0 ? (
         <div className="text-center p-12 bg-gray-50 rounded-2xl border border-dashed text-gray-400">
           No pending reports found. Platform is fully clean! 🎉
@@ -163,7 +173,7 @@ export default function ReportedPrompts() {
             >
               <div className="flex flex-col lg:flex-row justify-between gap-6">
                 
-                {/* Left Side: Information */}
+                {/* Left Side */}
                 <div className="space-y-3 flex-1">
                   <div className="flex items-center gap-2">
                     <Chip size="sm" color="danger" variant="flat">
@@ -185,60 +195,58 @@ export default function ReportedPrompts() {
                   </div>
 
                   <div className="text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1 pt-1">
-                    <span>
-                      <strong>Creator:</strong> {report.creatorEmail}
-                    </span>
-                    <span>
-                      <strong>Reporter:</strong> {report.reporterEmail || "Anonymous"}
-                    </span>
+                    <span><strong>Creator:</strong> {report.creatorEmail}</span>
+                    <span><strong>Reporter:</strong> {report.reporterEmail || "Anonymous"}</span>
                   </div>
                 </div>
 
-                {/* Right Side: Admin Controls */}
+                {/* Right Side */}
                 <div className="flex flex-row lg:flex-col justify-end gap-3 items-center lg:items-stretch min-w-[180px]">
                   
-                  {/* Action 1: Remove Prompt using AlertDialog wrapper */}
+                  {/* Action 1: Remove Prompt */}
                   <AlertDialog>
                     <Button
                       size="sm"
                       color="danger"
                       variant="solid"
                       className="font-medium rounded-xl flex items-center gap-1"
-                      onClick={() => setSelectedReportId(report._id)} // On Click-e temporary ID assign hobe
+                      onClick={() => {
+                        setSelectedReportId(report._id);
+                        setSelectedReportTitle(report.promptTitle);
+                      }}
                     >
                       <FiTrash2 size={16} /> Remove Prompt
                     </Button>
                     
-                    <AlertDialog.Backdrop>
-                      <AlertDialog.Container>
-                        <AlertDialog.Dialog className="sm:max-w-[400px]">
-                          <AlertDialog.CloseTrigger />
-                          <AlertDialog.Header>
-                            <AlertDialog.Icon status="danger" />
-                            <AlertDialog.Heading>Delete prompt permanently?</AlertDialog.Heading>
-                          </AlertDialog.Header>
-                          <AlertDialog.Body>
-                            <p>
-                              This will permanently delete <strong className="text-red-600">{report.promptTitle}</strong> and all of its data from the marketplace. This action cannot be undone.
-                            </p>
-                          </AlertDialog.Body>
-                          <AlertDialog.Footer>
-                            <Button slot="close" variant="tertiary" className="rounded-xl">
-                              Cancel
-                            </Button>
-                            <Button 
-                              slot="close" 
-                              variant="danger" 
-                              className="rounded-xl font-semibold"
-                              isLoading={submitting}
-                              onPress={handleRemovePrompt} // Yes button click-e execution trigger hobe
-                            >
-                              Delete Prompt
-                            </Button>
-                          </AlertDialog.Footer>
-                        </AlertDialog.Dialog>
-                      </AlertDialog.Container>
-                    </AlertDialog.Backdrop>
+                    <AlertDialog.Backdrop />
+                    <AlertDialog.Container>
+                      <AlertDialog.Dialog className="sm:max-w-[400px]">
+                        <AlertDialog.CloseTrigger />
+                        <AlertDialog.Header>
+                          <AlertDialog.Icon status="danger" />
+                          <AlertDialog.Heading>Delete prompt permanently?</AlertDialog.Heading>
+                        </AlertDialog.Header>
+                        <AlertDialog.Body>
+                          <p>
+                            This will permanently delete <strong className="text-red-600">{selectedReportTitle}</strong> and all of its data. This action cannot be undone.
+                          </p>
+                        </AlertDialog.Body>
+                        <AlertDialog.Footer>
+                          <Button slot="close" variant="tertiary" className="rounded-xl">
+                            Cancel
+                          </Button>
+                          <Button 
+                            slot="close" 
+                            variant="danger" 
+                            className="rounded-xl font-semibold"
+                            isLoading={submitting}
+                            onPress={handleRemovePrompt}
+                          >
+                            Delete Prompt
+                          </Button>
+                        </AlertDialog.Footer>
+                      </AlertDialog.Dialog>
+                    </AlertDialog.Container>
                   </AlertDialog>
 
                   {/* Action 2: Warn Creator */}
