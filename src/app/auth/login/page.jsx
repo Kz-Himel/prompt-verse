@@ -11,7 +11,7 @@ import {
 } from 'react-icons/fa6';
 import { FcGoogle } from 'react-icons/fc'; 
 import { useRouter } from 'next/navigation';
-import { signIn } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth-client'; // 🎯 ফিক্সড: টাইপো এড়াতে সরাসরি authClient ইমপোর্ট করা হলো
 import { toast } from 'react-toastify';
 
 export default function LoginPage() {
@@ -19,6 +19,7 @@ export default function LoginPage() {
 
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false); // 🎯 গুগলের জন্য আলাদা লোডিং স্টেট
   
   const [showPassword, setShowPassword] = useState(false);
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
@@ -28,7 +29,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { data, error: authError } = await signIn.email({
+      // 🎯 ফিক্সড: authClient.signIn ব্যবহার করা হয়েছে
+      const { data, error: authError } = await authClient.signIn.email({
         email: credentials.email,
         password: credentials.password,
       });
@@ -38,9 +40,7 @@ export default function LoginPage() {
       } else {
         toast.success('Successfully logged in!');
         
-        // ⭐️ ফিক্সড লজিক: router.push এর বদলে window.location.href ব্যবহার করা হয়েছে
-        // এর ফলে পেজটি রিফ্রেশ হয়ে ড্যাশবোর্ডে যাবে এবং নেভবার সাথে সাথে আপডেট হবে।
-        // আপনার অথ ক্লায়েন্ট যেভাবে রোল (role) রিটার্ন করে সেই অনুযায়ী ডাটা চেক করুন (যেমন: data?.user?.role)
+        // ⭐️ আপনার অথ ক্লায়েন্ট যেভাবে রোল (role) রিটার্ন করে সেই অনুযায়ী ডাটা চেক
         const userRole = data?.user?.role || "user"; 
 
         if (userRole === "admin") {
@@ -52,7 +52,7 @@ export default function LoginPage() {
         }
       }
     } catch (err) {
-      console.error(err);
+      console.error("Login UI Error:", err);
       toast.error('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
@@ -60,12 +60,18 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
     try {
-      await signIn.social({ provider: 'google' });
+      // 🎯 ফিক্সড: authClient.signIn এবং সাথে callbackURL যুক্ত করা হয়েছে
+      await authClient.signIn.social({ 
+        provider: 'google',
+        callbackURL: '/dashboard/user' // 👈 গুগল লগইন শেষে ইউজার ডিফল্টভাবে এই ড্যাশবোর্ডে যাবে (আপনার প্রক্সি স্ক্রিপ্ট বাকিটা হ্যান্ডেল করবে)
+      });
       toast.info('Connecting with Google...');
     } catch (err) {
-      console.error(err);
+      console.error("Google Login UI Error:", err);
       toast.error('Google sign in failed.');
+      setGoogleLoading(false);
     }
   };
 
@@ -90,7 +96,7 @@ export default function LoginPage() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleLogin} className="flex flex-col gap-4">
+            <form onSubmit={handleLogin} className="flex flex-col gap-4" autoComplete="on">
               
               {/* Email Input */}
               <TextField isRequired className="space-y-1.5 w-full">
@@ -166,8 +172,9 @@ export default function LoginPage() {
               variant="bordered"
               radius="xl"
               size="lg"
+              isLoading={googleLoading} // 🎯 প্রসেসিং এর সময় লোডার শো করবে
               onClick={handleGoogleLogin}
-              startContent={<FcGoogle size={20} />}
+              startContent={!googleLoading && <FcGoogle size={20} />}
               className="w-full border-slate-200 font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300"
             >
               Sign in with Google

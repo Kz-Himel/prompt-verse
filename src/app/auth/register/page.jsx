@@ -22,7 +22,7 @@ import {
 } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
-import { signIn } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client"; // 🎯 সরাসরি authClient ইমপোর্ট করা হলো যেন কোনো টাইপো না হয়
 import { toast } from "react-toastify";
 
 export default function RegisterPage() {
@@ -59,7 +59,8 @@ export default function RegisterPage() {
     }
 
     try {
-      const { error: authError } = await signUp.email({
+      // 🎯 ফিক্সড: authClient.signUp ব্যবহার করা হয়েছে
+      const { error: authError } = await authClient.signUp.email({
         email: formData.email,
         password: formData.password,
         name: formData.name,
@@ -75,24 +76,26 @@ export default function RegisterPage() {
       toast.success(`Account created successfully as ${formData.role}!`);
       router.push("/auth/login"); 
     } catch (err) {
-      console.error(err);
+      console.error("Registration UI Error:", err);
       toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // 🛠️ Google Signup ফিক্সড মেথড
+  // 🛠️ Google Signup ফিক্সড মেthod
   const handleGoogleSignup = async () => {
     setGoogleLoading(true);
     try {
-      await signIn.social({
+      // 🎯 ফিক্সড: authClient.signIn ব্যবহার করা হয়েছে
+      await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/dashboard/user", // 👈 সফল লগইনের পর ইউজারকে যেখানে পাঠাতে চান (যেমন: /dashboard বা /)
+        callbackURL: "/dashboard/user", 
       });
     } catch (err) {
-      console.error(err);
+      console.error("Google Auth UI Error:", err);
       toast.error("Google signup failed. Please try again.");
+    } finally {
       setGoogleLoading(false);
     }
   };
@@ -119,7 +122,6 @@ export default function RegisterPage() {
               </p>
             </div>
 
-            {/* 🛠️ autoComplete="off" যুক্ত করা হয়েছে যেন আগের ডেটা শো না করে */}
             <form onSubmit={handleRegister} autoComplete="off" className="space-y-4">
               {/* Full Name */}
               <TextField isRequired className="space-y-1.5 w-full">
