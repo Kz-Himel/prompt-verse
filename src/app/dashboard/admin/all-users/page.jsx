@@ -89,44 +89,43 @@ export default function AllUsers() {
 
   //
   const handleDeleteConfirm = async () => {
-    if (!deleteId) {
-      toast.error("User ID missing!");
-      return;
+  if (!deleteId) {
+    toast.error("User ID missing!");
+    return;
+  }
+
+  try {
+    setDeleteLoading(true);
+    const headers = await getHeaders();
+
+    const cleanId = encodeURIComponent(deleteId.trim());
+
+    const res = await fetch(`${BACKEND_URL}/admin/users/${cleanId}`, {
+      method: "DELETE",
+      headers: headers,
+    });
+
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error(`Server returned non-JSON response (Status: ${res.status})`);
     }
 
-    try {
-      setDeleteLoading(true);
-      const headers = await getHeaders();
+    const result = await res.json();
 
-      // এটি সরাসরি আপনার /admin/users/:identifier রাউটে হিট করবে এবং আইডি হওয়ায় কোনো এরর আসবে না
-      const res = await fetch(`${BACKEND_URL}/admin/users/${deleteId}`, {
-        method: "DELETE",
-        headers: headers,
-      });
-
-      const contentType = res.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        throw new Error(
-          `Server returned non-JSON response (Status: ${res.status})`,
-        );
-      }
-
-      const result = await res.json();
-
-      if (res.ok && result.success) {
-        toast.success("User deleted successfully!");
-        closeDeleteModal();
-        fetchUsers();
-      } else {
-        toast.error(result.message || "Failed to delete user");
-      }
-    } catch (error) {
-      console.error("Delete Error:", error);
-      toast.error(error.message || "Something went wrong!");
-    } finally {
-      setDeleteLoading(false);
+    if (res.ok && result.success) {
+      toast.success(result.message || "User deleted successfully!");
+      closeDeleteModal();
+      fetchUsers();
+    } else {
+      toast.error(result.message || "Failed to delete user");
     }
-  };
+  } catch (error) {
+    console.error("Delete Error:", error);
+    toast.error(error.message || "Something went wrong!");
+  } finally {
+    setDeleteLoading(false);
+  }
+};
 
   if (loading)
     return (

@@ -8,13 +8,16 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 export default function AdminPrompts() {
   const [promptsList, setPromptsList] = useState([]);
   const [tableLoading, setTableLoading] = useState(true);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // Delete Dialog
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteEmail, setDeleteEmail] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+
+  // Reject Dialog
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectTargetId, setRejectTargetId] = useState(null);
   const [rejectFeedback, setRejectFeedback] = useState("");
-
   const [actionLoadingId, setActionLoadingId] = useState(null);
 
   const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -81,8 +84,8 @@ export default function AdminPrompts() {
         toast.success("Prompt approved successfully!");
         setPromptsList((prev) =>
           prev.map((item) =>
-            item._id === id ? { ...item, status: "Approved" } : item,
-          ),
+            item._id === id ? { ...item, status: "Approved" } : item
+          )
         );
       } else {
         toast.error(result.message || "Failed to approve prompt");
@@ -94,16 +97,10 @@ export default function AdminPrompts() {
     }
   };
 
-  const openRejectModal = (id) => {
+  const openRejectDialog = (id) => {
     setRejectTargetId(id);
     setRejectFeedback("");
-    setIsRejectModalOpen(true);
-  };
-
-  const closeRejectModal = () => {
-    setIsRejectModalOpen(false);
-    setRejectTargetId(null);
-    setRejectFeedback("");
+    setRejectDialogOpen(true);
   };
 
   const handleRejectSubmit = async () => {
@@ -111,29 +108,23 @@ export default function AdminPrompts() {
       toast.warning("Please enter rejection feedback!");
       return;
     }
-
     try {
       setActionLoadingId(rejectTargetId);
-      closeRejectModal();
+      setRejectDialogOpen(false);
       const headers = await getHeaders();
-      const res = await fetch(
-        `${BACKEND_URL}/admin/prompts/${rejectTargetId}/reject`,
-        {
-          method: "PUT",
-          headers: headers,
-          body: JSON.stringify({ feedback: rejectFeedback }),
-        },
-      );
+      const res = await fetch(`${BACKEND_URL}/admin/prompts/${rejectTargetId}/reject`, {
+        method: "PUT",
+        headers: headers,
+        body: JSON.stringify({ feedback: rejectFeedback }),
+      });
       const result = await res.json();
 
       if (res.ok && result.success) {
         toast.error("Prompt rejected successfully.");
         setPromptsList((prev) =>
           prev.map((item) =>
-            item._id === rejectTargetId
-              ? { ...item, status: "Rejected" }
-              : item,
-          ),
+            item._id === rejectTargetId ? { ...item, status: "Rejected" } : item
+          )
         );
       } else {
         toast.error(result.message || "Failed to reject prompt");
@@ -145,54 +136,36 @@ export default function AdminPrompts() {
     }
   };
 
-  const openDeleteModal = (item) => {
+  const openDeleteDialog = (item) => {
     const email = item.authorEmail;
-
     if (!email) {
       toast.warning("Author email is missing for this prompt!");
       return;
     }
-
     setDeleteEmail(email);
-    setIsDeleteModalOpen(true);
+    setDeleteDialogOpen(true);
   };
 
-  const closeDeleteModal = () => {
-    setIsDeleteModalOpen(false);
-    setDeleteEmail(null);
-  };
-
-  // User confirmation handler change:
   const handleDeleteConfirm = async () => {
     if (!deleteEmail) return;
-
     try {
       setDeleteLoading(true);
       const headers = await getHeaders();
-      const encodedEmail = encodeURIComponent(deleteEmail);
-
-      // CHANGED: পাথের বদলে কুয়েরি প্যারামিটার (?identifier=...) হিসেবে পাঠানো হচ্ছে
-      // এটি Vercel-এর .com জনিত 404 এরর পুরোপুরি সমাধান করবে
-      const res = await fetch(
-        `${BACKEND_URL}/admin/users?identifier=${encodedEmail}`,
-        {
-          method: "DELETE",
-          headers: headers,
-        },
-      );
+      const cleanEmail = encodeURIComponent(deleteEmail.trim());
+      const res = await fetch(`${BACKEND_URL}/admin/users/${cleanEmail}`, {
+        method: "DELETE",
+        headers: headers,
+      });
 
       const contentType = res.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
-        throw new Error(
-          `Server returned non-JSON response (Status: ${res.status})`,
-        );
+        throw new Error(`Server returned non-JSON response (Status: ${res.status})`);
       }
 
       const result = await res.json();
-
       if (res.ok && result.success) {
-        toast.success("User deleted successfully!");
-        closeDeleteModal();
+        toast.success(result.message || "User deleted successfully!");
+        setDeleteDialogOpen(false);
         fetchPrompts();
       } else {
         toast.error(result.message || "Failed to delete user");
@@ -215,7 +188,7 @@ export default function AdminPrompts() {
     <div className="p-6 max-w-7xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Manage Prompts</h1>
 
-      <Table aria-label="Prompts management table">
+      <Table aria-label="Prompts management container">
         <Table.ScrollContainer>
           <Table.Content
             aria-label="Prompts content list"
@@ -232,27 +205,24 @@ export default function AdminPrompts() {
               emptyContent={!tableLoading && "No prompts found in database"}
             >
               {tableLoading ? (
-                // <Table.Row>
-                //   <Table.Cell><Spinner size="sm" /></Table.Cell>
-                //   <Table.Cell>Loading...</Table.Cell>
-                //   <Table.Cell>-</Table.Cell>
-                //   <Table.Cell>-</Table.Cell>
-                // </Table.Row>
-                <LoadingSpinner />
+                <Table.Row>
+                  <Table.Cell colSpan={4} className="text-center py-10">
+                    <div className="flex justify-center w-full">
+                      <LoadingSpinner />
+                    </div>
+                  </Table.Cell>
+                </Table.Row>
               ) : (
                 promptsList.map((item) => {
                   const itemId = item._id || item.id;
                   const isApproved = item.status?.toLowerCase() === "approved";
                   const isRejected = item.status?.toLowerCase() === "rejected";
                   const isCurrentActionLoading = actionLoadingId === itemId;
-
                   const hasEmail = !!item.authorEmail;
 
                   return (
                     <Table.Row key={itemId}>
-                      <Table.Cell className="font-medium">
-                        {item.title}
-                      </Table.Cell>
+                      <Table.Cell className="font-medium">{item.title}</Table.Cell>
                       <Table.Cell>{item.category}</Table.Cell>
                       <Table.Cell>
                         <Chip
@@ -266,37 +236,33 @@ export default function AdminPrompts() {
                       </Table.Cell>
                       <Table.Cell>
                         <div className="flex gap-2 min-w-[320px]">
-                          {/* Approve Button */}
                           <Button
                             size="sm"
                             color="primary"
                             variant={isApproved ? "flat" : "solid"}
                             isDisabled={isApproved || isCurrentActionLoading}
-                            isLoading={isCurrentActionLoading && isApproved}
+                            isLoading={isCurrentActionLoading && !isApproved}
                             onClick={() => handleApprove(itemId)}
                           >
                             {isApproved ? "Approved" : "Approve"}
                           </Button>
 
-                          {/* Reject Button */}
                           <Button
                             size="sm"
                             color="danger"
                             variant={isRejected ? "flat" : "solid"}
                             isDisabled={isRejected || isCurrentActionLoading}
-                            isLoading={isCurrentActionLoading && isRejected}
-                            onClick={() => openRejectModal(itemId)}
+                            onClick={() => openRejectDialog(itemId)}
                           >
                             {isRejected ? "Rejected" : "Reject"}
                           </Button>
 
-                          {/* Delete Creator Button */}
                           <Button
                             size="sm"
                             color="danger"
                             variant="solid"
                             isDisabled={!hasEmail}
-                            onClick={() => openDeleteModal(item)}
+                            onClick={() => openDeleteDialog(item)}
                           >
                             Delete Creator
                           </Button>
@@ -311,17 +277,14 @@ export default function AdminPrompts() {
         </Table.ScrollContainer>
       </Table>
 
-      {/* ================= Reject Feedback Modal ================= */}
-      <AlertDialog
-        isOpen={isRejectModalOpen}
-        onOpenChange={setIsRejectModalOpen}
-      >
+      {/* ─── REJECT ALERT DIALOG ─── */}
+      <AlertDialog isOpen={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
         <AlertDialog.Backdrop>
           <AlertDialog.Container>
             <AlertDialog.Dialog className="sm:max-w-[400px]">
-              <AlertDialog.CloseTrigger onClick={closeRejectModal} />
+              <AlertDialog.CloseTrigger />
               <AlertDialog.Header>
-                <AlertDialog.Icon status="danger" />
+                <AlertDialog.Icon status="warning" />
                 <AlertDialog.Heading>Reject Prompt Reason</AlertDialog.Heading>
               </AlertDialog.Header>
               <AlertDialog.Body>
@@ -329,17 +292,21 @@ export default function AdminPrompts() {
                   Please provide a reason for rejecting this prompt:
                 </p>
                 <textarea
-                  className="w-full p-2 border border-default-200 rounded-lg bg-transparent text-sm focus:outline-none focus:border-danger min-h-[80px]"
+                  className="w-full p-2 border border-default-200 rounded-lg bg-transparent text-sm focus:outline-none focus:border-danger min-h-[80px] text-foreground"
                   placeholder="e.g., Inappropriate content..."
                   value={rejectFeedback}
                   onChange={(e) => setRejectFeedback(e.target.value)}
                 />
               </AlertDialog.Body>
               <AlertDialog.Footer>
-                <Button variant="tertiary" size="sm" onClick={closeRejectModal}>
+                <Button
+                  slot="close"
+                  variant="tertiary"
+                  onClick={() => setRejectDialogOpen(false)}
+                >
                   Cancel
                 </Button>
-                <Button color="danger" size="sm" onClick={handleRejectSubmit}>
+                <Button variant="danger" onClick={handleRejectSubmit}>
                   Submit Rejection
                 </Button>
               </AlertDialog.Footer>
@@ -348,33 +315,29 @@ export default function AdminPrompts() {
         </AlertDialog.Backdrop>
       </AlertDialog>
 
-      {/* ================= Delete User Dialouge ================= */}
-      <AlertDialog
-        isOpen={isDeleteModalOpen}
-        onOpenChange={setIsDeleteModalOpen}
-      >
+      {/* ─── DELETE CREATOR ALERT DIALOG ─── */}
+      <AlertDialog isOpen={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialog.Backdrop>
           <AlertDialog.Container>
             <AlertDialog.Dialog className="sm:max-w-[400px]">
-              <AlertDialog.CloseTrigger onClick={closeDeleteModal} />
+              <AlertDialog.CloseTrigger />
               <AlertDialog.Header>
                 <AlertDialog.Icon status="danger" />
-                <AlertDialog.Heading>
-                  Delete account permanently?
-                </AlertDialog.Heading>
+                <AlertDialog.Heading>Delete account permanently?</AlertDialog.Heading>
               </AlertDialog.Header>
               <AlertDialog.Body>
-                <p>
+                <p className="text-sm text-gray-600 leading-relaxed">
                   This will permanently delete user{" "}
-                  <strong>{deleteEmail}</strong> and all related data from the
-                  database.
-                  <strong> This action cannot be undone.</strong>
+                  <strong className="text-red-600">{deleteEmail}</strong> and all
+                  related data from the database.{" "}
+                  <strong className="text-red-600">This action cannot be undone.</strong>
                 </p>
               </AlertDialog.Body>
               <AlertDialog.Footer>
                 <Button
+                  slot="close"
                   variant="tertiary"
-                  onClick={closeDeleteModal}
+                  onClick={() => setDeleteDialogOpen(false)}
                   disabled={deleteLoading}
                 >
                   Cancel

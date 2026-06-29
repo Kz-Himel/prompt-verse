@@ -10,15 +10,12 @@ export default function ReportedPrompts() {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  
-  // মডাল কন্ট্রোল করার জন্য স্টেট
-  const [isOpen, setIsOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedReportId, setSelectedReportId] = useState(null);
   const [selectedReportTitle, setSelectedReportTitle] = useState("");
 
   const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  // হেল্পার ফাংশন: অথ টোকেন গেট করা
   const getAuthHeader = async () => {
     try {
       const tokenRes = await authClient.token?.();
@@ -29,20 +26,14 @@ export default function ReportedPrompts() {
     }
   };
 
-  // ১. FETCH ALL REPORTED PROMPTS
   const fetchReports = async () => {
     try {
       setLoading(true);
       const authHeader = await getAuthHeader();
-
       const res = await fetch(`${BACKEND_URL}/admin/reported-prompts`, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeader,
-        },
+        headers: { "Content-Type": "application/json", ...authHeader },
       });
-
       const result = await res.json();
       if (result.success) {
         setReports(result.data || []);
@@ -61,23 +52,26 @@ export default function ReportedPrompts() {
     if (BACKEND_URL) fetchReports();
   }, []);
 
-  // ২. ACTION: REMOVE PROMPT
+  const openDeleteDialog = (reportId, promptTitle) => {
+    setSelectedReportId(reportId);
+    setSelectedReportTitle(promptTitle);
+    setDialogOpen(true);
+  };
+
   const handleRemovePrompt = async () => {
     if (!selectedReportId) return;
     try {
       setSubmitting(true);
       const authHeader = await getAuthHeader();
-
       const res = await fetch(`${BACKEND_URL}/admin/reported-prompts/${selectedReportId}/remove-prompt`, {
         method: "DELETE",
         headers: { ...authHeader },
       });
-
       const result = await res.json();
       if (result.success) {
         toast.success("Prompt removed and report resolved!");
         setReports((prev) => prev.filter((r) => r._id !== selectedReportId));
-        setIsOpen(false); // মডাল বন্ধ হবে
+        setDialogOpen(false);
       } else {
         toast.error(result.message || "Failed to remove prompt");
       }
@@ -89,19 +83,14 @@ export default function ReportedPrompts() {
     }
   };
 
-  // ৩. ACTION: WARN CREATOR
   const handleWarnCreator = async (reportId, creatorEmail) => {
     try {
       const authHeader = await getAuthHeader();
       const res = await fetch(`${BACKEND_URL}/admin/reported-prompts/${reportId}/warn-creator`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          ...authHeader,
-        },
+        headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({ creatorEmail }),
       });
-
       const result = await res.json();
       if (result.success) {
         toast.warn("Creator warned and report resolved!");
@@ -115,7 +104,6 @@ export default function ReportedPrompts() {
     }
   };
 
-  // ৪. ACTION: DISMISS REPORT
   const handleDismissReport = async (reportId) => {
     try {
       const authHeader = await getAuthHeader();
@@ -123,7 +111,6 @@ export default function ReportedPrompts() {
         method: "PATCH",
         headers: { ...authHeader },
       });
-
       const result = await res.json();
       if (result.success) {
         toast.info("Report dismissed successfully.");
@@ -168,7 +155,6 @@ export default function ReportedPrompts() {
               className="border border-red-100 bg-white shadow-sm rounded-2xl overflow-hidden p-6 hover:shadow-md transition-all duration-300"
             >
               <div className="flex flex-col lg:flex-row justify-between gap-6">
-                {/* Left Side: Information */}
                 <div className="space-y-3 flex-1">
                   <div className="flex items-center gap-2">
                     <Chip size="sm" color="danger" variant="flat">
@@ -195,20 +181,13 @@ export default function ReportedPrompts() {
                   </div>
                 </div>
 
-                {/* Right Side: Admin Controls */}
                 <div className="flex flex-row lg:flex-col justify-end gap-3 items-center lg:items-stretch min-w-[180px]">
-                  
-                  {/* Remove Prompt Button (লুপের ভেতর শুধু বাটন থাকবে) */}
                   <Button
                     size="sm"
                     color="danger"
                     variant="solid"
                     className="font-medium rounded-xl flex items-center gap-1"
-                    onClick={() => {
-                      setSelectedReportId(report._id);
-                      setSelectedReportTitle(report.promptTitle);
-                      setIsOpen(true); // মডাল ওপেন হবে
-                    }}
+                    onClick={() => openDeleteDialog(report._id, report.promptTitle)}
                   >
                     <FiTrash2 size={16} /> Remove Prompt
                   </Button>
@@ -232,7 +211,6 @@ export default function ReportedPrompts() {
                   >
                     <FiEyeOff size={16} /> Dismiss / Safe
                   </Button>
-
                 </div>
               </div>
             </Card>
@@ -240,38 +218,43 @@ export default function ReportedPrompts() {
         </div>
       )}
 
-      {/* ─── GLOBAL DIALOG (লুপের বাইরে মাত্র ১ বার থাকবে) ─── */}
-      <AlertDialog isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <AlertDialog.Backdrop />
-        <AlertDialog.Container>
-          <AlertDialog.Dialog className="sm:max-w-[400px]">
-            <AlertDialog.CloseTrigger onClick={() => setIsOpen(false)} />
-            <AlertDialog.Header>
-              <AlertDialog.Icon status="danger" />
-              <AlertDialog.Heading>Delete prompt permanently?</AlertDialog.Heading>
-            </AlertDialog.Header>
-            <AlertDialog.Body>
-              <p>
-                This will permanently delete <strong className="text-red-600">{selectedReportTitle}</strong> and all of its data from the marketplace. This action cannot be undone.
-              </p>
-            </AlertDialog.Body>
-            <AlertDialog.Footer>
-              <Button variant="tertiary" className="rounded-xl" onClick={() => setIsOpen(false)}>
-                Cancel
-              </Button>
-              <Button 
-                variant="danger" 
-                className="rounded-xl font-semibold"
-                isLoading={submitting}
-                onClick={handleRemovePrompt}
-              >
-                Delete Prompt
-              </Button>
-            </AlertDialog.Footer>
-          </AlertDialog.Dialog>
-        </AlertDialog.Container>
+      {/* ─── ALERT DIALOG ─── */}
+      <AlertDialog isOpen={dialogOpen} onOpenChange={setDialogOpen}>
+        <AlertDialog.Backdrop>
+          <AlertDialog.Container>
+            <AlertDialog.Dialog className="sm:max-w-[400px]">
+              <AlertDialog.CloseTrigger />
+              <AlertDialog.Header>
+                <AlertDialog.Icon status="danger" />
+                <AlertDialog.Heading>Delete prompt permanently?</AlertDialog.Heading>
+              </AlertDialog.Header>
+              <AlertDialog.Body>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  This will permanently delete{" "}
+                  <strong className="text-red-600">{selectedReportTitle}</strong>{" "}
+                  and all of its data from the marketplace. This action cannot be undone.
+                </p>
+              </AlertDialog.Body>
+              <AlertDialog.Footer>
+                <Button
+                  slot="close"
+                  variant="tertiary"
+                  onClick={() => setDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="danger"
+                  isLoading={submitting}
+                  onClick={handleRemovePrompt}
+                >
+                  Delete Prompt
+                </Button>
+              </AlertDialog.Footer>
+            </AlertDialog.Dialog>
+          </AlertDialog.Container>
+        </AlertDialog.Backdrop>
       </AlertDialog>
-
     </div>
   );
 }
