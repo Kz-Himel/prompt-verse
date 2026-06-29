@@ -22,7 +22,7 @@ export default function AdminPrompts() {
   // ডাইনামিক অ্যাকশন লোডিং
   const [actionLoadingId, setActionLoadingId] = useState(null);
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
   const columns = [
     { id: "title", name: "TITLE", isRowHeader: true },

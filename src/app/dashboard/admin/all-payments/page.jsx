@@ -10,7 +10,7 @@ export default function AllPaymentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
   useEffect(() => {
     const fetchPaymentsData = async () => {

@@ -14,7 +14,7 @@ export default function AllUsers() {
   const [deleteId, setDeleteId] = useState(null);       // যে ইউজার ডিলিট হবে তার ID
   const [deleteLoading, setDeleteLoading] = useState(false); // ডিলিট বাটনের লোডিং স্টেট
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
   const getHeaders = async () => {
     const headers = { "Content-Type": "application/json" };

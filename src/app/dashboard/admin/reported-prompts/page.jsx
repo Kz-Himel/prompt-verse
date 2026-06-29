@@ -12,7 +12,7 @@ export default function ReportedPrompts() {
   const [submitting, setSubmitting] = useState(false);
   const [selectedReportId, setSelectedReportId] = useState(null);
   
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
   // ─── ১. FETCH ALL REPORTED PROMPTS ───
   const fetchReports = async () => {

@@ -10,7 +10,7 @@ export default function AdminAnalytics() {
   const [stats, setStats] = useState({ totalUsers: 0, totalPrompts: 0, totalReviews: 0, totalCopies: 0 });
   const [loading, setLoading] = useState(true);
   const isFetched = useRef(false); // Double fetch rodh korar jonno
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
   useEffect(() => {
     // strict mode-e jeno duplicate token request na pathay

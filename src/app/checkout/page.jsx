@@ -29,7 +29,7 @@ function CheckoutContent() {
         setAuthToken(token);
 
         // ২. এক্সপ্রেস ব্যাকএন্ডে হিট করে clientSecret জেনারেট করা
-        const res = await fetch("http://localhost:5000/create-payment-intent", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/create-payment-intent`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

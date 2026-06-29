@@ -14,7 +14,7 @@ export default function MyPromptsPage() {
   const { data: session, isPending } = authClient.useSession();
   const currentUser = session?.user;
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
 
   // ─── ডাইনামিক হেডার জেনারেটর (টোকেনসহ) ───
   const getHeaders = async () => {

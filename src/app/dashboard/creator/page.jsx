@@ -33,7 +33,7 @@ export default function CreatorDashboardHome() {
         }
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/creator/analytics`,
+          `${process.env.NEXT_PUBLIC_API_URL}/creator/analytics`,
           {
             method: "GET",
             headers: {

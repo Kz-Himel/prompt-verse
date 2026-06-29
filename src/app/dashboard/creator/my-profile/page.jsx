@@ -24,7 +24,7 @@ export default function CreatorProfilePage() {
         }
 
         // 🌐 ব্যাকএন্ড API এন্ডপয়েন্টে হিট করা
-        const response = await fetch("http://localhost:5000/user/profile", {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
