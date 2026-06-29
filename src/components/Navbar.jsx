@@ -9,7 +9,6 @@ import {
   HiXMark,
   HiChevronDown,
   HiChevronUp,
-  HiOutlineSparkles,
   HiOutlineSquares2X2,
   HiOutlineArrowRightOnRectangle,
 } from "react-icons/hi2";
@@ -22,8 +21,8 @@ export default function Navbar() {
   const { data: session, isPending } = useSession();
 
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const [profileOpen, setProfileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false); // হাইড্রেশন মিসম্যাচ রোধ করার জন্য স্টেট
 
   const dropdownRef = useRef(null);
 
@@ -33,6 +32,8 @@ export default function Navbar() {
       : "/dashboard/user";
 
   useEffect(() => {
+    setMounted(true); // ব্রাউজারে কম্পোনেন্ট পুরোপুরি লোড হলে এটি true হবে
+
     function handleOutsideClick(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setProfileOpen(false);
@@ -64,7 +65,6 @@ export default function Navbar() {
     if (href === "/") {
       return pathname === "/";
     }
-
     return pathname.startsWith(href);
   };
 
@@ -120,7 +120,8 @@ export default function Navbar() {
 
         {/* Desktop Right */}
         <div className="hidden items-center gap-3 md:flex">
-          {!isPending && !session && (
+          {/* লগড-আউট ভিউ (শুধুমাত্র ক্লায়েন্টে মাউন্ট হওয়ার পর রেন্ডার হবে) */}
+          {mounted && !isPending && !session && (
             <>
               <Link href="/auth/login" className={navLinkClass("/auth/login")}>
                 Login
@@ -135,7 +136,8 @@ export default function Navbar() {
             </>
           )}
 
-          {!isPending && session && (
+          {/* লগড-ইন ভিউ (শুধুমাত্র ক্লায়েন্টে মাউন্ট হওয়ার পর রেন্ডার হবে) */}
+          {mounted && !isPending && session && (
             <div ref={dropdownRef} className="relative">
               <button
                 type="button"
@@ -144,7 +146,7 @@ export default function Navbar() {
               >
                 <Avatar
                   size="sm"
-                  src={session?.user?.image || undefined}
+                  src={session?.user?.image ? String(session.user.image) : undefined}
                   name={session?.user?.name || "U"}
                 />
 
@@ -166,7 +168,7 @@ export default function Navbar() {
                     <div className="flex items-center gap-3">
                       <Avatar
                         size="md"
-                        src={session?.user?.image || undefined}
+                        src={session?.user?.image ? String(session.user.image) : undefined}
                         name={session?.user?.name || "User"}
                       />
 
@@ -221,97 +223,101 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Menu */}
-{mobileOpen && (
-  <div className="border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 md:hidden">
-    <nav className="flex flex-col gap-2 p-4">
-      <Link
-        href="/"
-        className={navLinkClass("/")}
-        onClick={() => setMobileOpen(false)}
-      >
-        Home
-      </Link>
+      {mobileOpen && (
+        <div className="border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 md:hidden">
+          <nav className="flex flex-col gap-2 p-4">
+            <Link
+              href="/"
+              className={navLinkClass("/")}
+              onClick={() => setMobileOpen(false)}
+            >
+              Home
+            </Link>
 
-      <Link
-        href="/prompts"
-        className={navLinkClass("/prompts")}
-        onClick={() => setMobileOpen(false)}
-      >
-        All Prompts
-      </Link>
+            <Link
+              href="/prompts"
+              className={navLinkClass("/prompts")}
+              onClick={() => setMobileOpen(false)}
+            >
+              All Prompts
+            </Link>
 
-      <Link href="/pricing" className={navLinkClass("/pricing")}>
-            Pricing
-      </Link>
+            <Link
+              href="/pricing"
+              className={navLinkClass("/pricing")}
+              onClick={() => setMobileOpen(false)}
+            >
+              Pricing
+            </Link>
 
-      {/* Logged In */}
-      {!isPending && session && (
-        <>
-          <div className="mt-3 flex items-center gap-3 rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800">
-            <Avatar
-              size="md"
-              src={session?.user?.image || undefined}
-              name={session?.user?.name || "User"}
-            />
+            {/* Mobile Logged In View */}
+            {mounted && !isPending && session && (
+              <>
+                <div className="mt-3 flex items-center gap-3 rounded-2xl border border-zinc-200 p-3 dark:border-zinc-800">
+                  <Avatar
+                    size="md"
+                    src={session?.user?.image ? String(session.user.image) : undefined}
+                    name={session?.user?.name || "User"}
+                  />
 
-            <div className="min-w-0">
-              <p className="truncate font-semibold text-zinc-900 dark:text-zinc-100">
-                {session?.user?.name}
-              </p>
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold text-zinc-900 dark:text-zinc-100">
+                      {session?.user?.name}
+                    </p>
 
-              <p className="truncate text-xs text-zinc-500">
-                {session?.user?.email}
-              </p>
+                    <p className="truncate text-xs text-zinc-500">
+                      {session?.user?.email}
+                    </p>
 
-              <p className="mt-1 text-xs font-medium capitalize text-indigo-600 dark:text-indigo-400">
-                {session?.user?.role}
-              </p>
-            </div>
-          </div>
+                    <p className="mt-1 text-xs font-medium capitalize text-indigo-600 dark:text-indigo-400">
+                      {session?.user?.role}
+                    </p>
+                  </div>
+                </div>
 
-          <Link
-            href={dashboardHref}
-            onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-900"
-          >
-            <HiOutlineSquares2X2 size={18} />
-            Dashboard
-          </Link>
+                <Link
+                  href={dashboardHref}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-900"
+                >
+                  <HiOutlineSquares2X2 size={18} />
+                  Dashboard
+                </Link>
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium text-red-500 transition hover:bg-red-50 dark:hover:bg-red-950/30"
-          >
-            <HiOutlineArrowRightOnRectangle size={18} />
-            Logout
-          </button>
-        </>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium text-red-500 transition hover:bg-red-50 dark:hover:bg-red-950/30"
+                >
+                  <HiOutlineArrowRightOnRectangle size={18} />
+                  Logout
+                </button>
+              </>
+            )}
+
+            {/* Mobile Logged Out View */}
+            {mounted && !isPending && !session && (
+              <>
+                <Link
+                  href="/auth/login"
+                  onClick={() => setMobileOpen(false)}
+                  className={navLinkClass("/auth/login")}
+                >
+                  Login
+                </Link>
+
+                <Link
+                  href="/auth/register"
+                  onClick={() => setMobileOpen(false)}
+                  className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white"
+                >
+                  Register
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
       )}
-
-      {/* Logged Out */}
-      {!isPending && !session && (
-        <>
-          <Link
-            href="/auth/login"
-            onClick={() => setMobileOpen(false)}
-            className={navLinkClass("/auth/login")}
-          >
-            Login
-          </Link>
-
-          <Link
-            href="/auth/register"
-            onClick={() => setMobileOpen(false)}
-            className="rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3 text-center text-sm font-semibold text-white"
-          >
-            Register
-          </Link>
-        </>
-      )}
-    </nav>
-  </div>
-)}
     </header>
   );
 }
