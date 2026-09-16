@@ -7,40 +7,69 @@ export default function NewsletterSection() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (email) {
+      setSubmitted(true);
+    }
+  };
+
   return (
-    <section style={{ padding: '80px 24px' }}>
-      <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+    <section className="bg-[#EBF1F5] py-20 lg:py-28 px-6">
+      <div className="max-w-3xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.12) 0%, rgba(6,182,212,0.06) 100%)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '24px', padding: '60px 40px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}
+          transition={{ duration: 0.5 }}
+          className="relative overflow-hidden rounded-3xl bg-[#EBF1F5] p-8 sm:p-12 text-center shadow-[6px_6px_14px_#d1d9e0,-6px_-6px_14px_#ffffff] border border-white/50"
         >
-          <div style={{ position: 'absolute', top: '-80px', left: '50%', transform: 'translateX(-50%)', width: '300px', height: '200px', background: 'radial-gradient(ellipse, rgba(124,58,237,0.2), transparent 70%)', pointerEvents: 'none' }} />
-          <span style={{ fontSize: '36px', display: 'block', marginBottom: '16px' }}>📬</span>
-          <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: 'clamp(22px, 3.5vw, 32px)', fontWeight: 800, color: '#F8FAFC', margin: '0 0 12px', letterSpacing: '-0.5px' }}>Stay Ahead of the Curve</h2>
-          <p style={{ fontSize: '15px', color: '#64748B', margin: '0 0 32px', maxWidth: '420px', marginInline: 'auto' }}>Get weekly curated prompts, creator tips, and AI news delivered straight to your inbox.</p>
+          {/* Top Emoji Icon with Soft Shadow */}
+          <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#EBF1F5] text-2xl shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] border border-white/30">
+            📬
+          </div>
+
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1E293B] tracking-tight mb-3">
+            Stay Ahead of the Curve
+          </h2>
+
+          <p className="text-xs sm:text-sm text-[#64748B] font-medium max-w-md mx-auto mb-8 leading-relaxed">
+            Get weekly curated prompts, creator tips, and AI news delivered straight to your inbox.
+          </p>
 
           {submitted ? (
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-              style={{ padding: '16px 28px', borderRadius: '12px', background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', color: '#10B981', fontWeight: 600, fontSize: '15px', display: 'inline-block' }}>
-              ✅ You're on the list! Check your inbox.
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }} 
+              animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-2 rounded-2xl bg-[#EBF1F5] px-6 py-4 text-xs sm:text-sm font-bold text-[#0F766E] shadow-[inset_2px_2px_5px_#d1d9e0,inset_-2px_-2px_5px_#ffffff] border border-white/40"
+            >
+              You're on the list! Check your inbox.
             </motion.div>
           ) : (
-            <div style={{ display: 'flex', maxWidth: '460px', margin: '0 auto', background: 'rgba(26,32,53,0.8)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '12px', overflow: 'hidden' }}>
-              <input
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="Enter your email address"
-                type="email"
-                style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', padding: '15px 16px', color: '#F8FAFC', fontSize: '14px' }}
-              />
-              <button onClick={() => email && setSubmitted(true)} style={{ padding: '13px 24px', background: 'linear-gradient(135deg, #7C3AED, #5B21B6)', border: 'none', color: '#fff', fontWeight: 600, fontSize: '14px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                Subscribe
-              </button>
-            </div>
+            <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+              <div className="flex flex-col sm:flex-row items-center gap-3 p-2 rounded-2xl bg-[#EBF1F5] shadow-[inset_3px_3px_6px_#d1d9e0,inset_-3px_-3px_6px_#ffffff] border border-white/30">
+                <input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  type="email"
+                  required
+                  className="w-full bg-transparent px-4 py-2.5 text-xs sm:text-sm font-medium text-[#1E293B] placeholder-[#94A3B8] outline-none border-none"
+                />
+                
+                <button 
+                  type="submit" 
+                  className="w-full sm:w-auto shrink-0 px-6 py-3 rounded-xl bg-[#0F766E] text-white font-bold text-xs sm:text-sm tracking-wide shadow-[3px_3px_6px_#d1d9e0,-3px_-3px_6px_#ffffff] hover:bg-[#0D655E] active:scale-95 transition-all duration-200"
+                >
+                  Subscribe
+                </button>
+              </div>
+            </form>
           )}
-          <p style={{ margin: '14px 0 0', fontSize: '12px', color: '#475569' }}>No spam, ever. Unsubscribe anytime.</p>
+
+          <p className="mt-5 text-[11px] font-semibold text-[#64748B]">
+            No spam, ever. Unsubscribe anytime.
+          </p>
         </motion.div>
       </div>
     </section>
