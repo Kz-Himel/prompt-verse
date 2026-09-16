@@ -22,7 +22,7 @@ export default function PromptCard({ prompt, index }) {
   };
 
   return (
-    <div className="bg-[#EBF1F5] rounded-3xl p-5 shadow-[8px_8px_18px_#c7d0d8,-8px_-8px_18px_#ffffff] border border-white/60 flex flex-col justify-between hover:scale-[1.01] transition-all duration-300">
+    <div className="bg-[#EBF1F5] rounded-2xl p-5 shadow-[4px_4px_10px_#d1d9e0,-4px_-4px_10px_#ffffff] border border-white/40 flex flex-col justify-between hover:scale-[1.01] transition-all duration-300">
       <div>
         {/* Title and Badge */}
         <div className="flex justify-between items-start gap-2 mb-2">
@@ -32,7 +32,7 @@ export default function PromptCard({ prompt, index }) {
 
           {/* Neumorphic Pill Badge */}
           <span
-            className={`text-[11px] px-3 py-1 rounded-full font-bold shadow-[2px_2px_4px_#c7d0d8,-2px_-2px_4px_#ffffff] border border-white/40 shrink-0 ${
+            className={`text-[11px] px-3 py-1 rounded-full font-bold shadow-[2px_2px_5px_#d1d9e0,-2px_-2px_5px_#ffffff] border border-white/40 shrink-0 ${
               isLocked
                 ? "bg-[#EBF1F5] text-amber-600"
                 : "bg-[#EBF1F5] text-[#0F766E]"
@@ -47,8 +47,8 @@ export default function PromptCard({ prompt, index }) {
           {prompt.aiTool || "AI Tool"}
         </p>
 
-        {/* ── Prompt Content Box (Inset Soft Shadow) ── */}
-        <div className="relative p-4 rounded-2xl bg-[#EBF1F5] shadow-[inset_3px_3px_6px_#c7d0d8,inset_-3px_-3px_6px_#ffffff] border border-white/40 min-h-[110px] flex items-center overflow-hidden">
+        {/* ── Prompt Content Box (Soft Inset Shadow) ── */}
+        <div className="relative p-4 rounded-xl bg-[#EBF1F5] shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] border border-white/30 min-h-[110px] flex items-center overflow-hidden">
           {isLocked ? (
             <>
               {/* Blurred Text Placeholder */}
@@ -79,10 +79,10 @@ export default function PromptCard({ prompt, index }) {
       <div className="mt-5 pt-2">
         <button
           onClick={handleAction}
-          className={`w-full text-center py-3 text-xs font-extrabold rounded-xl transition-all active:scale-95 ${
+          className={`w-full text-center py-2.5 text-xs font-extrabold rounded-xl transition-all active:scale-95 ${
             isLocked
-              ? "bg-[#EBF1F5] text-amber-600 shadow-[4px_4px_10px_#c7d0d8,-4px_-4px_10px_#ffffff] border border-white/60 hover:bg-amber-50"
-              : "bg-[#0F766E] hover:bg-[#0D9488] text-white shadow-[0px_4px_12px_rgba(15,118,110,0.35)]"
+              ? "bg-[#EBF1F5] text-amber-600 shadow-[3px_3px_8px_#d1d9e0,-3px_-3px_8px_#ffffff] border border-white/50 hover:bg-amber-50"
+              : "bg-[#0F766E] hover:bg-[#0D9488] text-white shadow-[0px_3px_8px_rgba(15,118,110,0.25)]"
           }`}
         >
           {isLocked ? "🔒 Get Premium Pack" : "View Details"}
