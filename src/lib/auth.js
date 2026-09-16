@@ -3,8 +3,13 @@ import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { jwt } from "better-auth/plugins";
 
-const client = new MongoClient(process.env.MONGODB_URI);
-await client.connect();
+const uri = process.env.MONGODB_URI;
+
+if (!uri) {
+  throw new Error("MONGODB_URI is not defined. Check your .env.local file.");
+}
+
+const client = new MongoClient(uri);
 const db = client.db(process.env.AUTH_DB_NAME);
 
 export const auth = betterAuth({
@@ -22,16 +27,16 @@ export const auth = betterAuth({
   },
 
   user: {
-  additionalFields: {
-    role: {
-      defaultValue: "user",
+    additionalFields: {
+      role: {
+        defaultValue: "user",
+      },
+      status: {
+        type: "string",
+        defaultValue: "Free",
+      },
     },
-    status: {
-      type: "string",
-      defaultValue: "Free", 
-    }
-  }
-},
+  },
 
   session: {
     cookieCache: {
