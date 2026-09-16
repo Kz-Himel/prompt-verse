@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Button, Spinner } from "@heroui/react";
+import { Spinner } from "@heroui/react";
 import { ArrowUpRight } from "@gravity-ui/icons";
 import PromptCard from "../PromptCard";
 import Link from "next/link";
@@ -16,8 +16,7 @@ export default function FeaturedPrompts() {
     const fetchFeaturedPrompts = async () => {
       try {
         setLoading(true);
-        const Backend_url =
-          process.env.NEXT_PUBLIC_API_URL
+        const Backend_url = process.env.NEXT_PUBLIC_API_URL;
         const token =
           typeof window !== "undefined"
             ? localStorage.getItem("access-token")
@@ -54,62 +53,64 @@ export default function FeaturedPrompts() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-white py-28">
-      {/* Background Grid & Blobs */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.04)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(circle_at_center,black_45%,transparent_100%)]" />
-      <div className="absolute -left-40 top-0 h-[500px] w-[500px] rounded-full bg-violet-500/5 blur-3xl" />
-      <div className="absolute -right-40 bottom-0 h-[500px] w-[500px] rounded-full bg-cyan-500/5 blur-3xl" />
-
+    <section className="relative overflow-hidden bg-[#EBF1F5] py-20 lg:py-28">
       <div className="relative mx-auto max-w-7xl px-6">
+        
         {/* Header */}
-        <div className="mb-20 flex flex-col items-center text-center">
-          <span className="mb-5 inline-flex rounded-full border border-violet-200 bg-violet-50 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-violet-600">
+        <div className="mb-16 flex flex-col items-center text-center">
+          {/* Neumorphic Badge */}
+          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#EBF1F5] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#0F766E] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] border border-white/60">
             ✨ Featured Collection
           </span>
 
-          <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-[#1E293B] sm:text-4xl lg:text-5xl">
             Featured Prompts
           </h2>
 
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-500">
+          <p className="mt-4 max-w-2xl text-sm sm:text-base leading-relaxed text-[#64748B] font-medium">
             Handpicked high-converting prompt scripts vetted by our team.
             Discover premium prompts built to save time and maximize
             productivity.
           </p>
 
+          {/* Neumorphic "View All" Button */}
           <Link
             href="/prompts"
-            className="group mt-8 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 hover:shadow-xl"
+            className="group mt-8 inline-flex items-center gap-2 rounded-full bg-[#EBF1F5] px-6 py-2.5 text-xs md:text-sm font-bold text-[#1E293B] shadow-[5px_5px_12px_#c7d0d8,-5px_-5px_12px_#ffffff] border border-white/60 transition-all duration-300 hover:text-[#0F766E] active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff]"
           >
             <span>View All</span>
 
             <ArrowUpRight
-              size={18}
-              className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+              size={16}
+              className="text-[#0F766E] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             />
           </Link>
         </div>
 
-        {/* Loading & Error Handles */}
+        {/* Loading Handle */}
         {loading && (
           <div className="flex justify-center items-center py-20">
             <Spinner
               size="lg"
-              color="violet"
+              classNames={{
+                circle1: "border-b-[#0F766E]",
+                circle2: "border-b-[#0F766E]",
+              }}
               label="Loading Featured Prompts..."
             />
           </div>
         )}
 
+        {/* Error Handle */}
         {error && (
-          <div className="text-center text-red-500 font-semibold py-10">
+          <div className="mx-auto max-w-md rounded-2xl bg-[#EBF1F5] p-6 text-center text-red-500 font-bold shadow-[inset_3px_3px_6px_#c7d0d8,inset_-3px_-3px_6px_#ffffff] border border-white/40">
             ❌ {error}. Please try again later.
           </div>
         )}
 
-        {/* Grid Using Your PromptCard Component */}
+        {/* Grid Using Updated Neumorphic PromptCard */}
         {!loading && !error && (
-          <div className="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {prompts.map((prompt, index) => (
               <motion.div
                 key={prompt._id || prompt.id}
@@ -117,15 +118,11 @@ export default function FeaturedPrompts() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{
-                  duration: 0.5,
+                  duration: 0.4,
                   delay: index * 0.08,
                 }}
-                whileHover={{
-                  y: -8,
-                  scale: 1.02,
-                }}
               >
-                <PromptCard prompt={prompt} />
+                <PromptCard prompt={prompt} index={index} />
               </motion.div>
             ))}
           </div>
