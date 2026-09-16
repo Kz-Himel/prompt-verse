@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { authClient } from "@/lib/auth-client";
 import MyPromptsCard from "../../components/MyPromptsCard";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { FiLock, FiFolderPlus } from "react-icons/fi";
 
 export default function MyPromptsPage() {
   const [prompts, setPrompts] = useState([]);
@@ -14,7 +15,7 @@ export default function MyPromptsPage() {
   const { data: session, isPending } = authClient.useSession();
   const currentUser = session?.user;
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const getHeaders = async () => {
     const headers = {
@@ -32,7 +33,6 @@ export default function MyPromptsPage() {
     return headers;
   };
 
-  // Current user prompt fetch
   useEffect(() => {
     const fetchMyPrompts = async () => {
       try {
@@ -66,7 +66,6 @@ export default function MyPromptsPage() {
     }
   }, [currentUser?.email, isPending]);
 
-  //prompt delete handler
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this prompt?")) return;
 
@@ -80,7 +79,7 @@ export default function MyPromptsPage() {
       const result = await res.json();
 
       if (result.success) {
-        setPrompts(prompts.filter((p) => p._id !== id));
+        setPrompts((prev) => prev.filter((p) => p._id !== id));
         toast.success("Prompt deleted successfully!");
       } else {
         toast.error(result.message || "Failed to delete prompt");
@@ -91,23 +90,35 @@ export default function MyPromptsPage() {
     }
   };
 
-  // prompt update handler
   const handleUpdate = (updatedPrompt) => {
-    setPrompts(
-      prompts.map((p) => (p._id === updatedPrompt._id ? updatedPrompt : p))
+    setPrompts((prev) =>
+      prev.map((p) => (p._id === updatedPrompt._id ? updatedPrompt : p))
     );
   };
 
   if (isPending || loading) {
-    return <div className="p-10 text-center text-sm font-semibold text-slate-500">
-      <LoadingSpinner />
-    </div>;
+    return (
+      <LoadingSpinner 
+        text="Loading Your Prompts..." 
+        subtext="Fetching your personal prompt collection" 
+      />
+    );
   }
 
   if (!currentUser) {
     return (
-      <div className="p-10 text-center text-red-500 font-medium">
-        Please login first to view your prompts.
+      <div className="p-6 md:p-10 w-full flex justify-center items-center min-h-[350px]">
+        <div className="neu-card p-8 rounded-2xl max-w-md w-full text-center space-y-4 border border-[var(--border)]">
+          <div className="w-12 h-12 rounded-2xl neu-input flex items-center justify-center mx-auto text-amber-500">
+            <FiLock className="text-2xl" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-[var(--text)]">Access Restricted</h3>
+            <p className="text-xs text-[var(--text-muted)] mt-1 font-medium">
+              Please login first to view and manage your prompts.
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -117,13 +128,18 @@ export default function MyPromptsPage() {
       <ToastContainer position="top-right" autoClose={2000} />
       
       <div>
-        <h1 className="text-2xl font-bold text-gray-800">My Prompts</h1>
-        <p className="text-gray-500 text-sm mt-1">Manage all your submitted prompts easily.</p>
+        <h1 className="text-2xl font-bold text-[var(--text)] tracking-tight">My Prompts</h1>
+        <p className="text-[var(--text-muted)] text-sm mt-1">Manage all your submitted prompts easily.</p>
       </div>
 
       {prompts.length === 0 ? (
-        <div className="bg-white border rounded-2xl p-10 text-center text-gray-500 shadow-sm">
-          You havent created any prompts yet.
+        <div className="neu-card p-10 rounded-2xl text-center border border-[var(--border)] space-y-3">
+          <div className="w-12 h-12 rounded-2xl neu-input flex items-center justify-center mx-auto text-[var(--text-muted)]">
+            <FiFolderPlus className="text-2xl" />
+          </div>
+          <p className="text-sm font-semibold text-[var(--text-muted)]">
+            You haven't created any prompts yet.
+          </p>
         </div>
       ) : (
         <MyPromptsCard 

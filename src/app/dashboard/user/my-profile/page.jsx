@@ -1,8 +1,10 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import ProfileCard from "../../components/ProfileCard"; 
 import { authClient } from "@/lib/auth-client"; 
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { FiAlertCircle, FiRefreshCw } from "react-icons/fi";
 
 export default function UserProfilePage() {
   const [profile, setProfile] = useState(null);
@@ -53,22 +55,32 @@ export default function UserProfilePage() {
 
   if (loading) {
     return (
-      <div className="p-6 md:p-10 w-full flex items-center justify-center min-h-[300px]">
-        <LoadingSpinner />
-      </div>
+      <LoadingSpinner 
+        text="Loading Profile..." 
+        subtext="Fetching your account details" 
+      />
     );
   }
 
   if (error) {
     return (
-      <div className="p-6 md:p-10 w-full text-center text-red-500 space-y-3">
-        <p className="font-semibold">Error: {error}</p>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors"
-        >
-          Retry Fetching
-        </button>
+      <div className="p-6 md:p-10 w-full flex justify-center items-center min-h-[350px]">
+        <div className="neu-card p-8 rounded-2xl max-w-md w-full text-center space-y-4 border border-[var(--border)]">
+          <div className="w-12 h-12 rounded-2xl neu-input flex items-center justify-center mx-auto text-red-500">
+            <FiAlertCircle className="text-2xl" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-[var(--text)]">Failed to load profile</h3>
+            <p className="text-xs text-red-500/90 mt-1 font-medium">{error}</p>
+          </div>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="neu-button-primary w-full py-2.5 px-4 text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <FiRefreshCw className="text-sm" />
+            <span>Retry Fetching</span>
+          </button>
+        </div>
       </div>
     );
   }
@@ -76,11 +88,10 @@ export default function UserProfilePage() {
   return (
     <div className="p-6 md:p-10 max-w-[1200px] mx-auto w-full space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-800">My Profile</h1>
-        <p className="text-gray-500 text-sm mt-1">View your profile details and subscription status.</p>
+        <h1 className="text-2xl font-bold text-[var(--text)] tracking-tight">My Profile</h1>
+        <p className="text-[var(--text-muted)] text-sm mt-1">View your profile details and subscription status.</p>
       </div>
 
-      {/* ডাইনামিক প্রোফাইল ডাটা পাস করা হচ্ছে */}
       <ProfileCard userProfile={profile} />
     </div>
   );

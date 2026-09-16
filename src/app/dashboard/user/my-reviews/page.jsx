@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FiMessageSquare, FiStar, FiEye, FiCalendar } from "react-icons/fi";
+import { FiMessageSquare, FiStar, FiEye, FiCalendar, FiLock } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
@@ -17,7 +17,7 @@ export default function MyReviewsPage() {
   const { data: session, isPending } = authClient.useSession();
   const currentUser = session?.user;
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const getHeaders = async () => {
     const headers = {
@@ -35,7 +35,7 @@ export default function MyReviewsPage() {
     return headers;
   };
 
-  // Ftech user review
+  // Fetch user reviews
   useEffect(() => {
     const fetchMyReviews = async () => {
       try {
@@ -69,7 +69,7 @@ export default function MyReviewsPage() {
     }
   }, [currentUser?.email, isPending]);
 
-  // rating user handler
+  // Render Rating Stars with Neumorphic subtle styling
   const renderStars = (rating) => {
     return Array.from({ length: 5 }).map((_, index) => (
       <FiStar
@@ -77,24 +77,37 @@ export default function MyReviewsPage() {
         className={`w-4 h-4 ${
           index < rating 
             ? "text-amber-400 fill-amber-400" 
-            : "text-gray-200 dark:text-zinc-700"
+            : "text-[var(--text-muted)] opacity-30"
         }`}
       />
     ));
   };
 
+  // Neumorphic Loading State using LoadingSpinner
   if (isPending || loading) {
     return (
-      <div className="p-6 md:p-10 w-full flex items-center justify-center min-h-[400px]">
-        <LoadingSpinner />
-      </div>
+      <LoadingSpinner 
+        text="Loading Your Reviews..." 
+        subtext="Fetching feedback and ratings" 
+      />
     );
   }
 
+  // Neumorphic Unauthorized Warning State
   if (!currentUser) {
     return (
-      <div className="p-10 text-center text-red-500 font-medium">
-        Please login first to view your reviews.
+      <div className="p-6 md:p-10 w-full flex justify-center items-center min-h-[350px]">
+        <div className="neu-card p-8 rounded-2xl max-w-md w-full text-center space-y-4 border border-[var(--border)]">
+          <div className="w-12 h-12 rounded-2xl neu-input flex items-center justify-center mx-auto text-amber-500">
+            <FiLock className="text-2xl" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-[var(--text)]">Access Restricted</h3>
+            <p className="text-xs text-[var(--text-muted)] mt-1 font-medium">
+              Please login first to view your reviews.
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -103,12 +116,12 @@ export default function MyReviewsPage() {
     <div className="p-6 md:p-10 max-w-[1200px] mx-auto w-full space-y-6">
       <ToastContainer position="top-right" autoClose={2000} />
 
-      {/* হেডার */}
+      {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-zinc-100 flex items-center gap-2">
-          <FiMessageSquare className="text-purple-600" /> My Reviews
+        <h1 className="text-2xl font-bold text-[var(--text)] tracking-tight flex items-center gap-2.5">
+          <FiMessageSquare className="text-[var(--primary)] text-xl" /> My Reviews
         </h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <p className="text-[var(--text-muted)] text-sm mt-1">
           Track, monitor, and view all the feedback and ratings you have shared across the marketplace.
         </p>
       </div>
@@ -117,12 +130,17 @@ export default function MyReviewsPage() {
         <motion.div 
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }}
-          className="text-center py-16 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 text-gray-500"
+          className="neu-card p-10 rounded-2xl text-center border border-[var(--border)] space-y-3 text-[var(--text-muted)]"
         >
-          You haven't written any reviews yet. Share your experience on marketplace prompts!
+          <div className="w-12 h-12 rounded-2xl neu-input flex items-center justify-center mx-auto text-[var(--primary)]">
+            <FiMessageSquare className="text-2xl opacity-60" />
+          </div>
+          <p className="text-sm font-semibold">
+            You haven't written any reviews yet. Share your experience on marketplace prompts!
+          </p>
         </motion.div>
       ) : (
-        /* রিভিউ ট্র্যাকিং লিস্ট */
+        /* Review Tracking List */
         <div className="space-y-4 max-w-4xl">
           <AnimatePresence>
             {reviews.map((review, index) => (
@@ -131,24 +149,24 @@ export default function MyReviewsPage() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-5 md:p-6 flex flex-col sm:flex-row sm:items-start justify-between gap-4 group hover:border-purple-200 dark:hover:border-purple-900/40 transition-all"
+                className="neu-card p-5 md:p-6 rounded-[20px] border border-[var(--border)] flex flex-col sm:flex-row sm:items-start justify-between gap-4 transition-all"
               >
-                <div className="space-y-2.5 flex-1">
-                  <h3 className="text-base font-bold text-gray-800 dark:text-zinc-100">
+                <div className="space-y-3 flex-1">
+                  <h3 className="text-base font-bold text-[var(--text)]">
                     {review.promptTitle}
                   </h3>
                   
                   <div className="flex flex-wrap items-center gap-3 text-xs">
-                    <div className="flex items-center gap-0.5">
+                    <div className="flex items-center gap-1 neu-input px-2.5 py-1 rounded-full">
                       {renderStars(review.rating)}
                     </div>
-                    <span className="text-gray-300 dark:text-zinc-700">•</span>
-                    <span className="text-gray-500 flex items-center gap-1">
-                      <FiCalendar /> {review.createdAt}
+                    <span className="text-[var(--text-muted)] opacity-40">•</span>
+                    <span className="text-[var(--text-muted)] flex items-center gap-1 font-medium">
+                      <FiCalendar className="text-[var(--primary)]" /> {review.createdAt}
                     </span>
                   </div>
 
-                  <p className="text-sm text-gray-600 dark:text-zinc-400 leading-relaxed bg-gray-50/50 dark:bg-zinc-800/40 p-3 rounded-xl border border-gray-100 dark:border-zinc-800">
+                  <p className="text-sm text-[var(--text)] leading-relaxed neu-input p-4 rounded-xl text-[var(--text)]/90">
                     {review.comment}
                   </p>
                 </div>
@@ -156,10 +174,10 @@ export default function MyReviewsPage() {
                 <div className="flex sm:flex-col justify-end pt-2 sm:pt-0">
                   <button
                     onClick={() => router.push(`/prompts/${review.promptId}`)}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-gray-100 hover:bg-purple-600 hover:text-white text-gray-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-purple-600 dark:hover:text-white rounded-xl text-xs font-semibold transition-all cursor-pointer shadow-sm"
+                    className="neu-button-primary flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl cursor-pointer transition-all active:scale-95"
                     title="View Prompt Page"
                   >
-                    <FiEye className="w-3.5 h-3.5" /> View Prompt
+                    <FiEye className="text-sm" /> View Prompt
                   </button>
                 </div>
               </motion.div>

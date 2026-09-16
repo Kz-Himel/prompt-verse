@@ -10,6 +10,7 @@ import {
   FiMessageSquare,
   FiAward,
   FiArrowRight,
+  FiLock,
 } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
 import StatsCard from "../components/StatsCard";
@@ -29,8 +30,7 @@ export default function UserDashboardHome() {
   const { data: session, isPending } = authClient.useSession();
   const currentUser = session?.user;
 
-  const BACKEND_URL =
-    process.env.NEXT_PUBLIC_API_URL
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const getHeaders = async () => {
     const headers = {
@@ -48,46 +48,44 @@ export default function UserDashboardHome() {
     return headers;
   };
 
-  // dashboard data fetching
+  // Dashboard data fetching
   useEffect(() => {
-   const fetchDashboardData = async () => {
-  try {
-    setLoading(true);
-    const headers = await getHeaders();
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        const headers = await getHeaders();
 
-    // console.log("Fetching from:", `${BACKEND_URL}/user/dashboard-stats`);
+        const res = await fetch(`${BACKEND_URL}/user/dashboard-stats`, {
+          method: "GET",
+          headers: headers,
+        });
 
-    const res = await fetch(`${BACKEND_URL}/user/dashboard-stats`, {
-      method: "GET",
-      headers: headers,
-    });
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          console.error("Backend directly failed. Status:", res.status);
+          toast.error("Backend server is not returning JSON!");
+          setLoading(false);
+          return;
+        }
 
-    const contentType = res.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      console.error("Backend directly failed. Status:", res.status);
-      toast.error("Backend server is not returning JSON!");
-      setLoading(false);
-      return;
-    }
+        const result = await res.json();
 
-    const result = await res.json();
-    console.log("Backend response result:", result);
+        if (result.success) {
+          setUserStats(
+            result.stats || { savedCount: 0, reviewCount: 0, subscription: "Free" }
+          );
+          setActivities(result.activities || []);
+        } else {
+          toast.error(result.message || "Failed to load dashboard statistics");
+        }
+      } catch (error) {
+        console.error("Dashboard Fetch Error:", error);
+        toast.error("Network error occurred!");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    if (result.success) {
-      setUserStats(
-        result.stats || { savedCount: 0, reviewCount: 0, subscription: "Free" }
-      );
-      setActivities(result.activities || []);
-    } else {
-      toast.error(result.message || "Failed to load dashboard statistics");
-    }
-  } catch (error) {
-    console.error("Dashboard Fetch Error:", error);
-    toast.error("Network error occurred!");
-  } finally {
-    setLoading(false);
-  }
-};
     if (currentUser?.email && !isPending) {
       fetchDashboardData();
     } else if (!isPending && !currentUser) {
@@ -97,16 +95,27 @@ export default function UserDashboardHome() {
 
   if (isPending || loading) {
     return (
-      <div className="p-6 md:p-10 w-full flex items-center justify-center min-h-[400px]">
-        <LoadingSpinner />
-      </div>
+      <LoadingSpinner 
+        text="Loading Dashboard..." 
+        subtext="Fetching statistics and recent activity" 
+      />
     );
   }
 
   if (!currentUser) {
     return (
-      <div className="p-10 text-center text-red-500 font-medium">
-        Please login first to view your dashboard.
+      <div className="p-6 md:p-10 w-full flex justify-center items-center min-h-[350px]">
+        <div className="neu-card p-8 rounded-2xl max-w-md w-full text-center space-y-4 border border-[var(--border)]">
+          <div className="w-12 h-12 rounded-2xl neu-input flex items-center justify-center mx-auto text-amber-500">
+            <FiLock className="text-2xl" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-[var(--text)]">Access Restricted</h3>
+            <p className="text-xs text-[var(--text-muted)] mt-1 font-medium">
+              Please login first to view your dashboard.
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -116,20 +125,19 @@ export default function UserDashboardHome() {
       label: "Saved Prompts",
       value: userStats.savedCount,
       icon: FiBookmark,
-      color: "bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400",
+      color: "text-blue-500",
     },
     {
       label: "My Reviews",
       value: userStats.reviewCount,
       icon: FiMessageSquare,
-      color: "bg-pink-50 text-pink-600 dark:bg-pink-950/40 dark:text-pink-400",
+      color: "text-pink-500",
     },
     {
       label: "Account Plan",
       value: userStats.subscription,
       icon: FiAward,
-      color:
-        "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400",
+      color: "text-amber-500",
     },
   ];
 
@@ -137,16 +145,17 @@ export default function UserDashboardHome() {
     <div className="p-6 md:p-10 max-w-[1200px] mx-auto w-full space-y-8">
       <ToastContainer position="top-right" autoClose={2000} />
 
+      {/* Welcome Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-zinc-100">
+        <h1 className="text-2xl font-bold text-[var(--text)] tracking-tight">
           Welcome back, {currentUser.name || "Explorer"}! 🚀
         </h1>
-        <p className="text-gray-500 text-sm mt-1">
-          Here is an overview of your saved items, interaction metrics, and
-          activity history.
+        <p className="text-[var(--text-muted)] text-sm mt-1">
+          Here is an overview of your saved items, interaction metrics, and activity history.
         </p>
       </div>
 
+      {/* Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {statsData.map((stat, index) => (
           <motion.div
@@ -160,34 +169,33 @@ export default function UserDashboardHome() {
         ))}
       </div>
 
+      {/* Upgrade Callout Banner */}
       {userStats.subscription.toLowerCase() === "free" && (
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.3 }}
-          className="p-6 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm"
+          className="neu-card p-6 md:p-8 rounded-[24px] border border-[var(--border)] flex flex-col md:flex-row items-center justify-between gap-6"
         >
-          <div className="space-y-1 text-center md:text-left">
-            <h3 className="text-lg font-bold">
+          <div className="space-y-2 text-center md:text-left">
+            <h3 className="text-lg font-bold text-[var(--text)]">
               Upgrade to Premium for Unlimited Assets! 💎
             </h3>
-            <p className="text-sm text-purple-100 max-w-2xl">
-              You are currently on a <strong>Free Account</strong>. Pay a
-              one-time fee of <strong>$5 via Stripe</strong> to instantly unlock
-              blur-hidden private prompts, copy elite contents, and publish
-              unlimited assets!
+            <p className="text-sm text-[var(--text-muted)] max-w-2xl leading-relaxed">
+              You are currently on a <strong className="text-[var(--text)]">Free Account</strong>. Pay a one-time fee of <strong className="text-[var(--primary)]">$5 via Stripe</strong> to instantly unlock blur-hidden private prompts, copy elite contents, and publish unlimited assets!
             </p>
           </div>
           <button
             onClick={() => router.push("/dashboard/payment")}
-            className="flex items-center gap-2 bg-white text-purple-700 hover:bg-purple-50 font-bold px-6 py-3 rounded-xl text-sm transition-all cursor-pointer flex-shrink-0 shadow-sm"
+            className="neu-button-primary flex items-center gap-2 font-bold px-6 py-3 rounded-xl text-sm cursor-pointer flex-shrink-0 active:scale-95 transition-all"
           >
-            Upgrade to Premium <FiArrowRight />
+            <span>Upgrade to Premium</span>
+            <FiArrowRight className="text-base" />
           </button>
         </motion.div>
       )}
 
-      {/* RecentActivityCard */}
+      {/* Recent Activity Section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

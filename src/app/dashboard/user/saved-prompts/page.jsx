@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FiBookmark, FiEye, FiTrash2, FiCpu, FiUser } from "react-icons/fi";
+import { FiBookmark, FiEye, FiTrash2, FiCpu, FiUser, FiLock } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
@@ -17,7 +17,7 @@ export default function SavedPromptsPage() {
   const { data: session, isPending } = authClient.useSession();
   const currentUser = session?.user;
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const getHeaders = async () => {
     const headers = {
@@ -96,16 +96,27 @@ export default function SavedPromptsPage() {
 
   if (isPending || loading) {
     return (
-      <div className="p-6 md:p-10 w-full flex items-center justify-center min-h-[400px]">
-        <LoadingSpinner />
-      </div>
+      <LoadingSpinner 
+        text="Loading Saved Prompts..." 
+        subtext="Fetching your bookmarked items" 
+      />
     );
   }
 
   if (!currentUser) {
     return (
-      <div className="p-10 text-center text-red-500 font-medium">
-        Please login first to view your saved prompts.
+      <div className="p-6 md:p-10 w-full flex justify-center items-center min-h-[350px]">
+        <div className="neu-card p-8 rounded-2xl max-w-md w-full text-center space-y-4 border border-[var(--border)]">
+          <div className="w-12 h-12 rounded-2xl neu-input flex items-center justify-center mx-auto text-amber-500">
+            <FiLock className="text-2xl" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-[var(--text)]">Access Restricted</h3>
+            <p className="text-xs text-[var(--text-muted)] mt-1 font-medium">
+              Please login first to view your saved prompts.
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -114,12 +125,12 @@ export default function SavedPromptsPage() {
     <div className="p-6 md:p-10 max-w-[1200px] mx-auto w-full space-y-6">
       <ToastContainer position="top-right" autoClose={2000} />
 
-      {/* হেডার */}
+      {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-zinc-100 flex items-center gap-2">
-          <FiBookmark className="text-purple-600" /> Saved Prompts
+        <h1 className="text-2xl font-bold text-[var(--text)] tracking-tight flex items-center gap-2.5">
+          <FiBookmark className="text-[var(--primary)] text-xl" /> Saved Prompts
         </h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <p className="text-[var(--text-muted)] text-sm mt-1">
           Quickly access or remove your favorite bookmarked AI prompts from the marketplace.
         </p>
       </div>
@@ -128,63 +139,68 @@ export default function SavedPromptsPage() {
         <motion.div 
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }}
-          className="text-center py-16 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 text-gray-500"
+          className="neu-card p-10 rounded-2xl text-center border border-[var(--border)] space-y-3 text-[var(--text-muted)]"
         >
-          No saved prompts found. Explore the marketplace to bookmark your favorite items!
+          <div className="w-12 h-12 rounded-2xl neu-input flex items-center justify-center mx-auto text-[var(--primary)]">
+            <FiBookmark className="text-2xl opacity-60" />
+          </div>
+          <p className="text-sm font-semibold">
+            No saved prompts found. Explore the marketplace to bookmark your favorite items!
+          </p>
         </motion.div>
       ) : (
-        /* রেসপন্সিভ গ্রিড লেআউট */
+        /* Responsive Grid Layout */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           <AnimatePresence>
             {savedPrompts.map((prompt) => (
               <motion.div
                 key={prompt._id}
                 layout
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3 }}
-                className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-5 flex flex-col justify-between hover:shadow-md transition-all group"
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.25 }}
+                className="neu-card p-5 rounded-[20px] border border-[var(--border)] flex flex-col justify-between transition-all group"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 px-2.5 py-1 rounded-md text-xs font-semibold">
+                    <span className="neu-input px-3 py-1 rounded-lg text-xs font-semibold text-[var(--primary)]">
                       {prompt.category}
                     </span>
-                    <span className="flex items-center gap-1 text-xs text-gray-500">
-                      <FiCpu className="text-sm" /> {prompt.aiTool}
+                    <span className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] font-medium">
+                      <FiCpu className="text-sm text-[var(--primary)]" /> {prompt.aiTool}
                     </span>
                   </div>
 
-                  <h3 className="text-base font-bold text-gray-800 dark:text-zinc-100 group-hover:text-purple-600 transition-colors line-clamp-2">
+                  <h3 className="text-base font-bold text-[var(--text)] group-hover:text-[var(--primary)] transition-colors line-clamp-2">
                     {prompt.title}
                   </h3>
 
-                  <div className="mt-4 pt-4 border-t border-gray-100 dark:border-zinc-800 flex items-center justify-between text-xs text-gray-500">
-                    <span className="flex items-center gap-1 max-w-[150px] truncate" title={prompt.authorEmail}>
-                      <FiUser /> {prompt.authorEmail ? prompt.authorEmail.split("@")[0] : "Creator"}
+                  <div className="mt-4 pt-4 border-t border-[var(--border)] flex items-center justify-between text-xs text-[var(--text-muted)]">
+                    <span className="flex items-center gap-1.5 max-w-[140px] truncate font-medium" title={prompt.authorEmail}>
+                      <FiUser className="text-[var(--primary)]" /> {prompt.authorEmail ? prompt.authorEmail.split("@")[0] : "Creator"}
                     </span>
                     <span>
-                      Copied: <strong className="text-gray-700 dark:text-zinc-300">{prompt.copyCount || 0} times</strong>
+                      Copied: <strong className="text-[var(--text)] font-semibold">{prompt.copyCount || 0} times</strong>
                     </span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 mt-5 pt-3 border-t border-gray-100 dark:border-zinc-800">
+                <div className="grid grid-cols-2 gap-3 mt-5 pt-3 border-t border-[var(--border)]">
                   <button
                     onClick={() => handleRemoveBookmark(prompt._id)}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900/30 dark:text-red-400 dark:hover:bg-red-950/20 transition-colors cursor-pointer"
+                    className="neu-card flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-red-500 hover:text-red-600 transition-colors cursor-pointer active:scale-95 border border-[var(--border)]"
                     title="Remove Bookmark"
                   >
-                    <FiTrash2 /> Remove
+                    <FiTrash2 className="text-sm" /> Remove
                   </button>
 
                   <button
                     onClick={() => router.push(`/prompts/${prompt._id}`)}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-purple-600 text-white hover:bg-purple-700 shadow-sm transition-colors cursor-pointer"
+                    className="neu-button-primary flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer active:scale-95"
                     title="View Full Details"
                   >
-                    <FiEye /> View Details
+                    <FiEye className="text-sm" /> View Details
                   </button>
                 </div>
               </motion.div>
