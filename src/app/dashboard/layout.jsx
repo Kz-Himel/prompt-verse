@@ -16,14 +16,17 @@ export default function DashboardLayout({ children }) {
   // Hydration mismatch atkate component mount ebong dynamic loading ekshathe block rakha hobe
   if (!isMounted || isPending) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#fff] text-gray-400 font-medium">
-        Loading Dashboard...
+      <div className="flex min-h-screen items-center justify-center bg-[var(--bg)] text-[var(--text-muted)] font-medium transition-colors duration-300">
+        <div className="flex items-center gap-3 neu-card px-6 py-4">
+          <div className="w-5 h-5 border-2 border-[var(--primary)] border-t-transparent rounded-full animate-spin"></div>
+          <span>Loading Dashboard...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="relative flex min-h-screen bg-[#fff] overflow-hidden">
+    <div className="relative flex min-h-screen bg-[var(--bg)] text-[var(--text)] transition-colors duration-300 overflow-hidden">
       
       {/* Sidebar Wrapper: Layer control z-50 dropdown/drawer functionality */}
       <div className="z-50">
