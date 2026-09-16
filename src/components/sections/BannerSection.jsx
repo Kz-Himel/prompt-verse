@@ -53,14 +53,9 @@ export default function BannerSection() {
   };
 
   return (
-    <section className="relative overflow-hidden pt-36 pb-28 lg:pt-44 lg:pb-36 isolation-isolate bg-white">
-      {/* Light Premium Grid Overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.02)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-
-      {/* Soft Vibrant Glow Backgrounds */}
-      <div className="absolute left-1/2 top-0 -translate-x-1/2 h-[500px] w-[900px] rounded-full bg-gradient-to-r from-violet-500/8 via-fuchsia-500/5 to-indigo-500/8 blur-[120px] pointer-events-none" />
-      <div className="absolute right-10 bottom-10 h-[300px] w-[300px] rounded-full bg-indigo-500/4 blur-[100px] pointer-events-none" />
-
+    <section className="relative overflow-hidden pt-12 pb-16 lg:pt-16 lg:pb-24 bg-[#EBF1F5]">
+      
+      {/* Container - Image Exact Neumorphic Soft Card Layout */}
       <div className="relative z-10 mx-auto max-w-[1400px] px-6 lg:px-8">
         <motion.div
           className="flex flex-col items-center text-center"
@@ -68,27 +63,27 @@ export default function BannerSection() {
           initial="hidden"
           animate="visible"
         >
-          {/* Badge */}
+          {/* AI Badge - Img Theme */}
           <motion.div
             variants={itemVariants}
-            className="group mb-7 inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/50 p-1 pl-1.5 pr-3 text-xs font-semibold text-slate-900 shadow-sm backdrop-blur-md transition-all hover:border-violet-300"
+            className="group mb-6 inline-flex items-center gap-2 rounded-full bg-[#EBF1F5] p-1.5 pl-2 pr-4 text-xs font-semibold text-[#1E293B] shadow-[4px_4px_10px_#c7d0d8,-4px_-4px_10px_#ffffff] border border-white/60"
           >
-            <span className="flex h-6 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 px-2.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-xs">
-              New
+            <span className="flex h-6 items-center justify-center rounded-full bg-[#0F766E] px-2.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-[0px_2px_8px_rgba(15,118,110,0.35)]">
+              AI-Powered
             </span>
-            <span className="flex items-center gap-1.5 font-semibold tracking-tight">
+            <span className="flex items-center gap-1.5 font-semibold tracking-tight text-[#64748B]">
               🚀 #1 Marketplace for AI Prompts
-              <ArrowUpRight className="h-3.5 w-3.5 text-slate-400 transition-colors group-hover:text-violet-600" />
+              <ArrowUpRight className="h-3.5 w-3.5 text-[#0F766E]" />
             </span>
           </motion.div>
 
-          {/* Heading */}
+          {/* Heading - Img Font & Colors */}
           <motion.h1
             variants={itemVariants}
-            className="max-w-[1050px] text-4xl font-extrabold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl md:text-6xl lg:text-[76px]"
+            className="max-w-[1050px] text-4xl font-extrabold leading-[1.15] tracking-tight text-[#1E293B] sm:text-5xl md:text-6xl lg:text-[68px]"
           >
             Automate & Elevate with
-            <span className="mt-2 block bg-gradient-to-r from-violet-600 via-fuchsia-500 to-indigo-600 bg-clip-text pb-2 font-black text-transparent">
+            <span className="mt-2 block text-[#0F766E] font-black">
               Premium AI Prompts
             </span>
           </motion.h1>
@@ -96,19 +91,22 @@ export default function BannerSection() {
           {/* Description */}
           <motion.p
             variants={itemVariants}
-            className="mt-6 max-w-[680px] text-base font-medium leading-relaxed text-slate-500 sm:text-lg"
+            className="mt-5 max-w-[680px] text-base font-medium leading-relaxed text-[#64748B] sm:text-lg"
           >
             Unlock ultimate workflow productivity. Explore thousands of optimized prompt kits for
             ChatGPT, Midjourney, and Claude. Turn prompts into digital assets.
           </motion.p>
 
-          {/* Search Bar Section */}
+          {/* Search Bar Section - Img Inset Shadow Input */}
           <motion.div 
             variants={itemVariants}
-            className="mt-10 w-full max-w-2xl px-2"
+            className="mt-8 w-full max-w-2xl px-2"
           >
-            <form onSubmit={handleSearchSubmit} className="relative flex items-center p-2 rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-200/50 focus-within:border-violet-500/50 focus-within:shadow-violet-500/5 transition-all duration-300">
-              <div className="flex pl-3 items-center pointer-events-none text-slate-400">
+            <form 
+              onSubmit={handleSearchSubmit} 
+              className="relative flex items-center p-2 rounded-2xl bg-[#EBF1F5] shadow-[8px_8px_20px_#c7d0d8,-8px_-8px_20px_#ffffff] border border-white/60 focus-within:shadow-[inset_3px_3px_6px_#c7d0d8,inset_-3px_-3px_6px_#ffffff] transition-all duration-300"
+            >
+              <div className="flex pl-3 items-center pointer-events-none text-[#64748B]">
                 <Magnifier className="h-5 w-5" />
               </div>
               <input
@@ -116,26 +114,26 @@ export default function BannerSection() {
                 placeholder="Search for 'Midjourney logo', 'Copywriting prompt'..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-transparent pl-3 pr-4 py-3 text-sm text-slate-900 outline-none placeholder-slate-400 font-medium"
+                className="w-full bg-transparent pl-3 pr-4 py-3 text-xs md:text-sm text-[#1E293B] outline-none placeholder-[#64748B] font-medium"
               />
               <button
                 type="submit"
-                className="hidden sm:flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-all shadow-md"
+                className="hidden sm:flex items-center gap-1.5 bg-[#0F766E] hover:bg-[#0D9488] text-white font-semibold px-6 py-3 rounded-xl text-xs md:text-sm transition-all shadow-[0px_4px_14px_rgba(15,118,110,0.35)] active:scale-95"
               >
                 Search
               </button>
             </form>
 
-            {/* Trending Prompt Tags */}
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 px-1">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            {/* Trending Tags - Image Pill Style */}
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-2 px-1">
+              <span className="text-xs font-bold text-[#64748B] uppercase tracking-wider">
                 Trending:
               </span>
               {TRENDING_TAGS.map((tag) => (
                 <Link
                   key={tag.id}
                   href={tag.href}
-                  className="text-xs font-semibold px-3 py-1 rounded-lg border border-slate-200/60 bg-slate-50/40 text-slate-600 hover:text-violet-600 hover:border-violet-300 shadow-xs transition-all"
+                  className="text-xs font-semibold px-3.5 py-1.5 rounded-full bg-[#EBF1F5] text-[#64748B] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] border border-white/60 hover:text-[#0F766E] transition-all active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff]"
                 >
                   {tag.name}
                 </Link>
@@ -143,14 +141,14 @@ export default function BannerSection() {
             </div>
           </motion.div>
 
-          {/* Call-To-Action (CTA) Buttons */}
+          {/* CTA Buttons */}
           <motion.div
             variants={itemVariants}
-            className="mt-10 flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row"
+            className="mt-8 flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row"
           >
             <Link
               href="/prompts"
-              className="group relative flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-8 py-4 font-semibold text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-500/30 sm:w-auto"
+              className="group relative flex w-full items-center justify-center gap-2 rounded-xl bg-[#0F766E] hover:bg-[#0D9488] px-8 py-3.5 font-semibold text-white shadow-[0px_6px_18px_rgba(15,118,110,0.35)] transition-all duration-300 sm:w-auto active:scale-95"
             >
               Explore All Prompts
               <Sparkles className="h-4 w-4 text-white/90 transition-transform group-hover:rotate-12" />
@@ -158,51 +156,47 @@ export default function BannerSection() {
 
             <Link
               href="/register"
-              className="flex w-full items-center justify-center rounded-xl border border-slate-200 bg-white px-8 py-4 font-semibold text-slate-600 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:text-slate-900 sm:w-auto"
+              className="flex w-full items-center justify-center rounded-xl bg-[#EBF1F5] px-8 py-3.5 font-semibold text-[#1E293B] shadow-[5px_5px_12px_#c7d0d8,-5px_-5px_12px_#ffffff] border border-white/60 transition-all duration-300 hover:text-[#0F766E] sm:w-auto active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff]"
             >
               Become a Creator
             </Link>
           </motion.div>
 
-          {/* Stats Metrics */}
+          {/* Metrics - Soft Card View */}
           <motion.div
             variants={itemVariants}
-            className="relative mt-20 w-full max-w-4xl"
+            className="relative mt-14 w-full max-w-3xl rounded-2xl bg-[#EBF1F5] p-6 shadow-[8px_8px_20px_#c7d0d8,-8px_-8px_20px_#ffffff] border border-white/60"
           >
-            <div className="absolute inset-0 flex items-center" aria-hidden="true">
-              <div className="w-full border-t border-slate-200/60" />
-            </div>
-
-            <div className="relative flex justify-center">
-              <span className="bg-white px-6 text-xs font-bold uppercase tracking-widest text-slate-400">
+            <div className="relative flex justify-center mb-4">
+              <span className="text-xs font-bold uppercase tracking-widest text-[#64748B]">
                 Trusted ecosystem metrics
               </span>
             </div>
 
-            <div className="mt-10 grid grid-cols-3 gap-4 md:gap-12">
+            <div className="grid grid-cols-3 gap-4">
               <div className="text-center">
-                <h3 className="text-3xl font-black text-slate-900 sm:text-4xl md:text-5xl">
+                <h3 className="text-2xl font-extrabold text-[#1E293B] sm:text-4xl">
                   15K+
                 </h3>
-                <p className="mt-2 text-xs md:text-sm font-bold uppercase tracking-wider text-slate-400">
+                <p className="mt-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#0F766E]">
                   AI Prompts
                 </p>
               </div>
 
-              <div className="border-x border-slate-200/80 px-4 text-center">
-                <h3 className="text-3xl font-black text-slate-900 sm:text-4xl md:text-5xl">
+              <div className="border-x border-black/5 px-2 text-center">
+                <h3 className="text-2xl font-extrabold text-[#1E293B] sm:text-4xl">
                   6K+
                 </h3>
-                <p className="mt-2 text-xs md:text-sm font-bold uppercase tracking-wider text-slate-400">
+                <p className="mt-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#0F766E]">
                   Creators
                 </p>
               </div>
 
               <div className="text-center">
-                <h3 className="text-3xl font-black text-slate-900 sm:text-4xl md:text-5xl">
+                <h3 className="text-2xl font-extrabold text-[#1E293B] sm:text-4xl">
                   120K+
                 </h3>
-                <p className="mt-2 text-xs md:text-sm font-bold uppercase tracking-wider text-slate-400">
+                <p className="mt-1 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#0F766E]">
                   Downloads
                 </p>
               </div>
@@ -210,33 +204,33 @@ export default function BannerSection() {
           </motion.div>
         </motion.div>
 
-        {/* Floating Side Card Decoration */}
+        {/* Floating Side Card */}
         <motion.div
-          className="absolute left-6 top-48 hidden xl:block"
+          className="absolute left-6 top-28 hidden xl:block"
           initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0, y: [0, -12, 0] }}
+          animate={{ opacity: 1, x: 0, y: [0, -10, 0] }}
           transition={{
             x: { duration: 1, delay: 0.4 },
             y: { duration: 5, repeat: Infinity },
           }}
         >
-          <div className="w-[280px] rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl shadow-slate-200/50 backdrop-blur-xl">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+          <div className="w-[260px] rounded-2xl bg-[#EBF1F5] p-4 shadow-[8px_8px_18px_#c7d0d8,-8px_-8px_18px_#ffffff] border border-white/60">
+            <div className="flex items-center gap-2">
+              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#0F766E]/10 text-[#0F766E]">
                 <ShieldCheck className="h-4 w-4" />
               </div>
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-[#64748B]">
                 Verified Expert
               </p>
             </div>
 
-            <p className="mt-3.5 font-bold leading-snug text-slate-900">
+            <p className="mt-3 text-xs font-bold leading-snug text-[#1E293B]">
               ✨ Write Viral Twitter Hooks in 5 Seconds
             </p>
 
-            <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3">
-              <span className="text-sm font-bold text-slate-500">⭐ 4.9</span>
-              <span className="text-base font-black text-violet-600">
+            <div className="mt-4 flex items-center justify-between border-t border-black/5 pt-2.5">
+              <span className="text-xs font-bold text-[#64748B]">⭐ 4.9</span>
+              <span className="text-sm font-extrabold text-[#0F766E]">
                 $19
               </span>
             </div>
