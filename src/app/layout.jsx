@@ -1,4 +1,5 @@
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "@/app/globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -14,15 +15,18 @@ export default function RootLayout({ children }) {
       lang="en"
       className={`h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-[#EBF1F5] text-[#1E293B] dark:bg-[#151C24] dark:text-[#F1F5F9] transition-colors duration-300">
           <Navbar />
-          <main className="relative min-h-screen bg-zinc-50 dark:bg-zinc-950 overflow-hidden">
+          <main className="relative min-h-screen bg-[#EBF1F5] dark:bg-[#151C24] overflow-hidden">
             {children}
           </main>
           <Footer />
-          <ToastContainer />
+          <ToastContainer 
+            toastClassName={() => 
+              "bg-[#EBF1F5] text-[#1E293B] dark:bg-[#151C24] dark:text-[#F1F5F9] shadow-[6px_6px_12px_#c7d0d8,-6px_-6px_12px_#ffffff] dark:shadow-[6px_6px_12px_#0d1217,-6px_-6px_12px_#1d2631] rounded-xl p-4 border border-white/50 dark:border-white/5 my-2"
+            }
+          />
       </body>
     </html>
   );
 }
-
