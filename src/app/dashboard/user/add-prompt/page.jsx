@@ -6,7 +6,7 @@ import { authClient } from "@/lib/auth-client";
 
 const UserAddPromptPage = () => {
   const [promptCount, setPromptCount] = useState(0);
-  const [userSubscription, setUserSubscription] = useState("Free"); 
+  const [userSubscription, setUserSubscription] = useState("Free");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const UserAddPromptPage = () => {
 
           if (resData.success && resData.stats) {
             setPromptCount(resData.stats.promptCount || 0);
-            
+
             if (resData.stats.subscription) {
               setUserSubscription(resData.stats.subscription);
             }
@@ -50,16 +50,22 @@ const UserAddPromptPage = () => {
     fetchUserPromptCount();
   }, []);
 
+  // Neumorphic Soft UI Loader
   if (loading) {
     return (
-      <div className="p-6 w-full flex items-center justify-center min-h-[300px]">
-        <div className="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+      <div className="p-6 w-full flex items-center justify-center min-h-[400px]">
+        <div className="neu-card p-6 rounded-2xl flex flex-col items-center gap-3 border border-[var(--border)]">
+          <div className="w-10 h-10 border-3 border-[var(--primary)]/20 border-t-[var(--primary)] rounded-full animate-spin"></div>
+          <span className="text-xs font-semibold text-[var(--text-muted)] tracking-wider uppercase">
+            Loading Details...
+          </span>
+        </div>
       </div>
     );
   }
 
-  const isPremium = 
-    userSubscription.toLowerCase() === "premium" || 
+  const isPremium =
+    userSubscription.toLowerCase() === "premium" ||
     userSubscription.toLowerCase() === "creator" ||
     userSubscription.toLowerCase() === "unlimited";
 
@@ -67,7 +73,7 @@ const UserAddPromptPage = () => {
     <AddPromptPage
       role={isPremium ? "creator" : "user"}
       currentCount={promptCount}
-      isPremium={isPremium} 
+      isPremium={isPremium}
     />
   );
 };
