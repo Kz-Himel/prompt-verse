@@ -4,7 +4,7 @@ import { FiX } from "react-icons/fi";
 import { RiPriceTag3Line } from "react-icons/ri";
 import SectionHeader from "./SectionHeader";
 import FormField, { inputCls } from "./FormField";
-import { DIFFICULTY_LEVELS, SUGGESTED_TAGS } from "../lib-dashboard/utils";
+import { DIFFICULTY_LEVELS, SUGGESTED_TAGS } from "../../lib-dashboard/utils";
 
 export default function TagsSection({
   form,

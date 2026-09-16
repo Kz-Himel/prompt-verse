@@ -9,13 +9,13 @@ import { toast } from "react-toastify";
 import { useSession, authClient } from "@/lib/auth-client";
 
 // Modular Sub-components
-import BasicInfoSection from "@/components/add-prompt/BasicInfoSection";
-import ContentSection from "@/components/add-prompt/ContentSection";
-import TagsSection from "@/components/add-prompt/TagsSection";
-import ThumbnailSection from "@/components/add-prompt/ThumbnailSection";
-import VisibilitySection from "@/components/add-prompt/VisibilitySection";
-import PromptLimitReached from "@/components/add-prompt/PromptLimitReached";
-import PromptSuccess from "@/components/add-prompt/PromptSuccess";
+import BasicInfoSection from "../components/add-prompt/BasicInfoSection";
+import ContentSection from "../components/add-prompt/ContentSection";
+import TagsSection from "../components/add-prompt/TagsSection";
+import ThumbnailSection from "../components/add-prompt/ThumbnailSection";
+import VisibilitySection from "../components/add-prompt/VisibilitySection";
+import PromptLimitReached from "../components/add-prompt/PromptLimitReached";
+import PromptSuccess from "../components/add-prompt/PromptSuccess";
 
 const FREE_USER_LIMIT = 3;
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;

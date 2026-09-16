@@ -3,7 +3,7 @@
 import { RiFileTextLine } from "react-icons/ri";
 import SectionHeader from "./SectionHeader";
 import FormField, { inputCls, selectCls } from "./FormField";
-import { CATEGORIES, AI_TOOLS } from "../lib-dashboard/utils";
+import { CATEGORIES, AI_TOOLS } from "../../lib-dashboard/utils";
 
 export default function BasicInfoSection({ form, errors, set }) {
   return (
