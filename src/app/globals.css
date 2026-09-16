@@ -2,22 +2,82 @@
 @import "@heroui/styles"; 
 
 :root {
-  --primary: #6d28d9;
-  --bg: #ffffff;
-  --card: #f8fafc;
-  --text: #111827;
-  --border: #e5e7eb;
+  /* PromptVerse Light Theme (Neumorphic Soft UI) */
+  --bg: #EBF1F5;
+  --card: #EBF1F5;
+  --primary: #0F766E;        /* Deep Teal Green */
+  --primary-light: #99F6E4;  /* Soft Cyan/Teal Highlight */
+  --text: #1E293B;           /* Dark Slate Blue */
+  --text-muted: #64748B;     /* Cool Gray */
+  --border: rgba(255, 255, 255, 0.6);
+
+  /* Neumorphic Shadows & Effects */
+  --shadow-flat: 8px 8px 16px #c7d0d8, -8px -8px 16px #ffffff;
+  --shadow-hover: 12px 12px 20px #becaf5, -12px -12px 20px #ffffff;
+  --shadow-pressed: inset 4px 4px 8px #c7d0d8, inset -4px -4px 8px #ffffff;
+  --glow-primary: 0px 4px 14px rgba(15, 118, 110, 0.35);
 }
 
 [data-theme="dark"] {
-  --primary: #8b5cf6;
-  --bg: #09090b;
-  --card: #18181b;
-  --text: #f4f4f5;
-  --border: #27272a;
+  /* Neumorphic Dark Theme Variation */
+  --bg: #151C24;
+  --card: #151C24;
+  --primary: #2DD4BF;
+  --primary-light: #115E59;
+  --text: #F1F5F9;
+  --text-muted: #94A3B8;
+  --border: rgba(255, 255, 255, 0.05);
+
+  --shadow-flat: 8px 8px 18px #0d1217, -8px -8px 18px #1d2631;
+  --shadow-hover: 10px 10px 22px #090d11, -10px -10px 22px #212b37;
+  --shadow-pressed: inset 4px 4px 8px #0d1217, inset -4px -4px 8px #1d2631;
+  --glow-primary: 0px 4px 16px rgba(45, 212, 191, 0.25);
 }
 
 body {
-  background: var(--bg);
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Base Neumorphic Card Style */
+.neu-card {
+  background: var(--card);
+  box-shadow: var(--shadow-flat);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.neu-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* Interactive Button Effects */
+.neu-button-primary {
+  background-color: var(--primary);
+  color: #ffffff;
+  border-radius: 12px;
+  box-shadow: var(--glow-primary);
+  transition: all 0.2s ease;
+}
+
+.neu-button-primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.neu-button-primary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-pressed);
+}
+
+.neu-input {
+  background: var(--card);
+  box-shadow: var(--shadow-pressed);
+  border-radius: 14px;
+  border: 1px solid transparent;
   color: var(--text);
 }
