@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Button, Input, Card, TextField, Label, InputGroup } from '@heroui/react';
+import { Button, Card } from '@heroui/react';
 import {
   FaEnvelope,
   FaLock,
@@ -60,7 +60,6 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     try {
-      // authClient.signIn  callbackURL 
       await authClient.signIn.social({ 
         provider: 'google',
         callbackURL: '/dashboard/user'
@@ -74,83 +73,89 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center p-4 transition-colors duration-200">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
         className="w-full max-w-md"
       >
-        <Card className="p-6 sm:p-10 shadow-xl border border-slate-200/60 rounded-3xl bg-white">
+        {/* Soft UI Elevated Main Card */}
+        <Card className="p-6 sm:p-10 border-none rounded-3xl bg-[var(--card)] shadow-[8px_8px_20px_rgba(0,0,0,0.06),-8px_-8px_20px_rgba(255,255,255,0.8)] dark:shadow-[10px_10px_24px_#080b0f,-4px_-4px_16px_rgba(255,255,255,0.02)]">
           <div className="flex flex-col gap-6 w-full">
+            
             {/* Header */}
             <div className="text-center">
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text)]">
                 Welcome Back
               </h1>
-              <p className="text-sm text-slate-500 mt-1.5">
+              <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1.5 font-medium">
                 Log in to view premiums & track your dashboard
               </p>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleLogin} className="flex flex-col gap-4" autoComplete="on">
+            <form onSubmit={handleLogin} className="flex flex-col gap-5" autoComplete="on">
               
-              {/* Email Input */}
-              <TextField isRequired className="space-y-1.5 w-full">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
+              {/* Email Input Field */}
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
                   Email Address
-                </Label>
-                <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
-                  <FaEnvelope className="text-slate-400" />
-                  <Input
+                </label>
+                
+                <div className="flex items-center rounded-2xl bg-[var(--card)] px-4 shadow-[inset_2px_2px_5px_rgba(0,0,0,0.06),inset_-2px_-2px_5px_rgba(255,255,255,0.7)] dark:shadow-[inset_3px_3px_6px_#080b0f,inset_-2px_-2px_6px_rgba(255,255,255,0.02)]">
+                  <FaEnvelope className="text-[var(--primary)] shrink-0 mr-3" />
+                  <input
                     type="email"
+                    required
                     placeholder="name@example.com"
                     value={credentials.email}
                     onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
-                    className="w-full bg-transparent outline-none text-sm py-1.5"
+                    className="w-full bg-transparent border-none outline-none focus:outline-none ring-0 focus:ring-0 text-xs sm:text-sm text-[var(--text)] placeholder-[var(--text-muted)] py-3.5"
                   />
-                </InputGroup>
-              </TextField>
+                </div>
+              </div>
 
-              {/* Password Input */}
-              <TextField isRequired className="space-y-1.5 w-full">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
+              {/* Password Input Field */}
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
                   Password
-                </Label>
-                <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
-                  <FaLock className="text-slate-400" />
-                  <Input
+                </label>
+                
+                <div className="flex items-center rounded-2xl bg-[var(--card)] px-4 shadow-[inset_2px_2px_5px_rgba(0,0,0,0.06),inset_-2px_-2px_5px_rgba(255,255,255,0.7)] dark:shadow-[inset_3px_3px_6px_#080b0f,inset_-2px_-2px_6px_rgba(255,255,255,0.02)]">
+                  <FaLock className="text-[var(--primary)] shrink-0 mr-3" />
+                  <input
                     type={showPassword ? 'text' : 'password'}
+                    required
                     placeholder="••••••••"
                     value={credentials.password}
                     onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                    className="w-full bg-transparent outline-none text-sm py-1.5"
+                    className="w-full bg-transparent border-none outline-none focus:outline-none ring-0 focus:ring-0 text-xs sm:text-sm text-[var(--text)] placeholder-[var(--text-muted)] py-3.5"
                   />
-                  <button className="focus:outline-none ml-auto" type="button" onClick={togglePasswordVisibility}>
+                  <button className="focus:outline-none ml-2 cursor-pointer" type="button" onClick={togglePasswordVisibility}>
                     {showPassword ? (
-                      <FaEyeSlash className="text-lg text-slate-400 hover:text-slate-600 transition-colors" />
+                      <FaEyeSlash className="text-base text-[var(--text-muted)] hover:text-[var(--text)] transition-colors" />
                     ) : (
-                      <FaEye className="text-lg text-slate-400 hover:text-slate-600 transition-colors" />
+                      <FaEye className="text-base text-[var(--text-muted)] hover:text-[var(--text)] transition-colors" />
                     )}
                   </button>
-                </InputGroup>
-              </TextField>
+                </div>
+              </div>
 
               {/* Forgot Password Link */}
               <div className="text-right">
-                <a href="#" className="text-xs text-indigo-600 hover:underline font-medium">
+                <a href="#" className="text-xs text-[var(--primary)] hover:underline font-semibold">
                   Forgot Password?
                 </a>
               </div>
 
-              {/* Submit Button */}
+              {/* Primary Submit Button */}
               <Button
                 type="submit"
                 isLoading={loading}
                 radius="xl"
                 size="lg"
-                className="w-full bg-indigo-600 font-semibold text-white shadow-lg shadow-indigo-100 transition-transform hover:bg-indigo-700 active:scale-[0.98] mt-2"
+                className="w-full bg-[var(--primary)] font-semibold text-white border-none shadow-[3px_3px_8px_rgba(15,118,110,0.35)] hover:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.2)] active:scale-[0.99] transition-all cursor-pointer mt-1 py-3.5 focus:outline-none"
               >
                 Sign In
               </Button>
@@ -158,11 +163,11 @@ export default function LoginPage() {
 
             {/* Visual Divider */}
             <div className="relative flex py-1 items-center">
-              <div className="flex-grow border-t border-slate-200"></div>
-              <span className="flex-shrink mx-4 text-slate-400 text-[11px] font-medium uppercase tracking-wider">
+              <div className="flex-grow border-t border-[var(--border)]"></div>
+              <span className="flex-shrink mx-4 text-[var(--text-muted)] text-[11px] font-bold uppercase tracking-wider">
                 Or connect with
               </span>
-              <div className="flex-grow border-t border-slate-200"></div>
+              <div className="flex-grow border-t border-[var(--border)]"></div>
             </div>
 
             {/* Google Login Button */}
@@ -170,18 +175,18 @@ export default function LoginPage() {
               variant="bordered"
               radius="xl"
               size="lg"
-              isLoading={googleLoading} // 🎯 প্রসেসিং এর সময় লোডার শো করবে
+              isLoading={googleLoading}
               onClick={handleGoogleLogin}
-              startContent={!googleLoading && <FcGoogle size={20} />}
-              className="w-full border-slate-200 font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-300"
+              startContent={!googleLoading && <FcGoogle size={18} />}
+              className="w-full border-none bg-[var(--card)] text-[var(--text)] font-semibold shadow-[3px_3px_8px_rgba(0,0,0,0.05),-3px_-3px_8px_rgba(255,255,255,0.7)] dark:shadow-[3px_3px_8px_#080b0f,-2px_-2px_6px_rgba(255,255,255,0.02)] hover:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.08),inset_-2px_-2px_5px_rgba(255,255,255,0.6)] dark:hover:shadow-[inset_2px_2px_5px_#080b0f,inset_-2px_-2px_5px_rgba(255,255,255,0.02)] transition-all cursor-pointer py-3.5 focus:outline-none"
             >
               Sign in with Google
             </Button>
 
             {/* Footer Redirect */}
-            <p className="text-center text-sm text-slate-500">
+            <p className="text-center text-xs sm:text-sm text-[var(--text-muted)] font-medium">
               New to PromptVerse?{' '}
-              <a href="/auth/register" className="font-semibold text-indigo-600 hover:text-indigo-700 underline-offset-4 hover:underline">
+              <a href="/auth/register" className="font-bold text-[var(--primary)] hover:underline">
                 Create Account
               </a>
             </p>
