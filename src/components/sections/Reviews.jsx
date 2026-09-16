@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 const StarRating = ({ rating }) => (
-  <div className="flex gap-0.5">
+  <div className="flex gap-1">
     {[1, 2, 3, 4, 5].map((s) => (
       <span
         key={s}
-        className={`text-sm ${s <= rating ? 'text-amber-500' : 'text-slate-200'}`}
+        className={`text-xs ${s <= rating ? 'text-amber-500' : 'text-slate-300'}`}
       >
         ★
       </span>
@@ -21,7 +21,7 @@ export default function CustomerReviews() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL;
 
     fetch(`${backendUrl}/customer-reviews`)
       .then((res) => res.json())
@@ -35,93 +35,80 @@ export default function CustomerReviews() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden px-6 py-28 bg-white">
-      {/* Premium Subtle Grid & Soft Radial Glow */}
-      <div 
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.015)_1px,transparent_1px)] bg-[size:32px_32px]"
-        style={{
-          maskImage: 'radial-gradient(circle at center, black 60%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(circle at center, black 60%, transparent 100%)'
-        }}
-      />
-      <div className="pointer-events-none absolute -top-40 -right-40 h-[600px] w-[600px] bg-[radial-gradient(circle,rgba(239,68,68,0.03),transparent_70%)]" />
-      <div className="pointer-events-none absolute -bottom-40 -left-40 h-[600px] w-[600px] bg-[radial-gradient(circle,rgba(124,58,237,0.04),transparent_70%)]" />
-
-      <div className="relative z-10 mx-auto max-w-7xl">
+    <section className="relative overflow-hidden bg-[#EBF1F5] py-20 lg:py-28">
+      <div className="relative z-10 mx-auto max-w-7xl px-6">
+        
         {/* Heading Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-20 text-center"
+          className="mb-16 flex flex-col items-center text-center"
         >
-          <span className="mb-4 inline-block rounded-full border border-rose-500/12 bg-rose-500/6 px-4 py-1.5 text-xs font-bold tracking-wider text-rose-500 uppercase">
+          {/* Neumorphic Badge */}
+          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#EBF1F5] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#0F766E] shadow-[2px_2px_5px_#d1d9e0,-2px_-2px_5px_#ffffff] border border-white/50">
             ❤️ Community Love
           </span>
-          <h2 className="font-['Syne'] text-4xl font-black tracking-tight text-slate-900 sm:text-5xl md:text-6xl mb-5">
+
+          <h2 className="text-3xl font-extrabold tracking-tight text-[#1E293B] sm:text-4xl lg:text-5xl leading-tight">
             What Our Users Say
           </h2>
-          <p className="mx-auto max-w-xl text-lg leading-relaxed text-slate-500">
+
+          <p className="mt-4 max-w-md text-sm sm:text-base leading-relaxed text-[#64748B] font-medium">
             Over 12,500 creators and buyers trust PromptVault to supercharge their workflow.
           </p>
         </motion.div>
 
         {/* Loading State */}
         {loading ? (
-          <div className="flex justify-center items-center min-h-[200px]">
-            <div className="text-center text-base font-semibold text-slate-400 animate-pulse tracking-wide">
+          <div className="flex justify-center items-center py-12">
+            <div className="px-6 py-3 rounded-full bg-[#EBF1F5] shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] text-xs font-bold text-[#0F766E] animate-pulse">
               Loading community reviews...
             </div>
           </div>
         ) : (
           /* Reviews Grid */
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
             {reviews.map((r, i) => (
               <motion.div
                 key={r.name + i}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.06, duration: 0.5 }}
-                whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                className="relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-100 bg-white p-8 shadow-xl shadow-slate-200/40 transition-shadow duration-300 hover:shadow-2xl hover:shadow-slate-200/60"
+                transition={{ delay: i * 0.06, duration: 0.4 }}
+                className="group relative flex flex-col justify-between rounded-2xl bg-[#EBF1F5] p-7 shadow-[4px_4px_10px_#d1d9e0,-4px_-4px_10px_#ffffff] border border-white/40 transition-all duration-300 hover:scale-[1.01]"
               >
-                {/* Decorative Premium Quote Mark */}
-                <div className="pointer-events-none absolute top-4 right-6 select-none font-serif text-7xl font-black text-slate-100 leading-none">
-                  “
-                </div>
-
-                <div className="relative z-10">
-                  {/* Rating */}
-                  <div className="mb-5">
+                {/* Quote Icon Box (Neumorphic Inset) */}
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#EBF1F5] text-lg font-black text-[#0F766E] shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] border border-white/30">
+                    “
+                  </div>
+                  
+                  {/* Rating Badge */}
+                  <div className="rounded-lg bg-[#EBF1F5] px-2.5 py-1 shadow-[inset_1.5px_1.5px_3px_#d1d9e0,inset_-1.5px_-1.5px_3px_#ffffff] border border-white/20">
                     <StarRating rating={r.rating} />
                   </div>
-
-                  {/* Review Text */}
-                  <p className="text-[15px] leading-relaxed text-slate-600 font-medium">
-                    "{r.text}"
-                  </p>
                 </div>
 
+                {/* Review Text */}
+                <p className="my-2 text-xs sm:text-sm leading-relaxed text-[#64748B] font-medium">
+                  "{r.text}"
+                </p>
+
                 {/* Reviewer Profile */}
-                <div className="flex items-center gap-3.5 border-t border-slate-50/80 pt-5 mt-6">
-                  {/* Premium Gradient Avatar */}
-                  <div
-                    className="font-['Syne'] flex h-11 w-11 shrink-0 items-center justify-center rounded-full border text-xs font-extrabold"
-                    style={{
-                      background: `linear-gradient(135deg, ${r.color}18, ${r.color}05)`,
-                      borderColor: `${r.color}25`,
-                      color: r.color,
-                    }}
-                  >
+                <div className="flex items-center gap-3.5 border-t border-slate-300/40 pt-4 mt-5">
+                  {/* Avatar */}
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EBF1F5] text-xs font-black shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] border border-white/30"
+                       style={{ color: r.color || '#0F766E' }}>
                     {r.initials}
                   </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900 tracking-tight">
+
+                  <div className="min-w-0">
+                    <h4 className="text-xs sm:text-sm font-extrabold text-[#1E293B] truncate">
                       {r.name}
                     </h4>
-                    <p className="text-xs font-semibold text-slate-400">
+                    <p className="text-[11px] font-semibold text-[#64748B] truncate">
                       {r.role}
                     </p>
                   </div>
