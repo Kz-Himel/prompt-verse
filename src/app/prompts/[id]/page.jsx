@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { 
-  FiLayers, FiCpu, FiBookmark, FiCopy, FiAlertTriangle, FiLock, FiAward, FiTag 
+  FiLayers, FiCpu, FiBookmark, FiCopy, FiAlertTriangle, FiLock, FiAward, FiTag, FiArrowLeft 
 } from "react-icons/fi";
 import { RiSparklingFill } from "react-icons/ri";
 import { authClient } from "@/lib/auth-client";
@@ -48,7 +48,7 @@ export default function PromptDetailsPage() {
     return headers;
   };
 
-  // Data fetching ans sync
+  // Data fetching and sync
   useEffect(() => {
     const fetchPromptDetails = async () => {
       try {
@@ -81,14 +81,19 @@ export default function PromptDetailsPage() {
     if (id && !isPending) {
       fetchPromptDetails();
     }
-  }, [id, currentUser?.email, isPending]);
+  }, [id, currentUser?.email, isPending, API_URL]);
 
-  if (loading) return <div className="text-center py-20 text-sm font-semibold text-slate-500">
-    <LoadingSpinner />
-    </div>;
-  if (!prompt) return <div className="text-center py-20 text-red-500 font-medium">
-    Prompt not found!
-    </div>;
+  if (loading) return (
+    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center py-20 text-sm font-semibold text-[var(--text-muted)]">
+      <LoadingSpinner />
+    </div>
+  );
+  
+  if (!prompt) return (
+    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center py-20 text-red-500 font-medium">
+      Prompt not found!
+    </div>
+  );
 
   const hasAccess = prompt.content !== "LOCKED_PREMIUM";
 
@@ -222,82 +227,119 @@ export default function PromptDetailsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/50 py-10 px-4 sm:px-6 lg:px-8 text-slate-800">
+    <div className="min-h-screen bg-[var(--bg)] py-10 px-4 sm:px-6 lg:px-8 text-[var(--text)] transition-colors duration-200">
       <ToastContainer position="top-right" autoClose={2000} />
       
       <div className="max-w-5xl mx-auto space-y-6">
         
-        {/* Top action bar */}
-        <div className="flex justify-between items-center bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-          <button onClick={() => router.push("/prompts")} className="text-sm font-medium text-violet-600 hover:underline">
-            ← All Prompts
+        {/* Top Action Bar (Soft UI Elevated Container) */}
+        <div className="flex justify-between items-center bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 shadow-[4px_4px_10px_rgba(0,0,0,0.05),-4px_-4px_10px_rgba(255,255,255,0.7)] dark:shadow-[4px_4px_10px_#080b0f,-2px_-2px_8px_rgba(255,255,255,0.02)]">
+          <button 
+            onClick={() => router.push("/prompts")} 
+            className="flex items-center gap-2 text-xs font-semibold text-[var(--primary)] px-3.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-[3px_3px_7px_rgba(0,0,0,0.05),-3px_-3px_7px_rgba(255,255,255,0.7)] dark:shadow-[3px_3px_7px_#080b0f,-2px_-2px_6px_rgba(255,255,255,0.02)] hover:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.08),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] cursor-pointer transition-all duration-150"
+          >
+            <FiArrowLeft className="w-3.5 h-3.5" /> All Prompts
           </button>
           
           <div className="flex items-center gap-3">
+            {/* Bookmark Soft Button */}
             <button 
               onClick={handleBookmarkToggle}
-              className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2 border rounded-xl transition-all ${
-                isBookmarked ? "bg-violet-600 text-white border-violet-600" : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+              className={`flex items-center gap-1.5 text-xs font-semibold px-4 py-2.5 rounded-xl border transition-all duration-150 cursor-pointer ${
+                isBookmarked 
+                  ? "bg-[var(--primary)] text-white border-transparent shadow-[3px_3px_8px_rgba(15,118,110,0.35)]" 
+                  : "bg-[var(--card)] text-[var(--text-muted)] border-[var(--border)] shadow-[3px_3px_7px_rgba(0,0,0,0.05),-3px_-3px_7px_rgba(255,255,255,0.7)] dark:shadow-[3px_3px_7px_#080b0f,-2px_-2px_6px_rgba(255,255,255,0.02)] hover:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.08),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] hover:text-[var(--text)]"
               }`}
             >
-              <FiBookmark className={isBookmarked ? "fill-current" : ""} /> {isBookmarked ? "Bookmarked" : "Bookmark"}
+              <FiBookmark className={isBookmarked ? "fill-current" : ""} /> 
+              {isBookmarked ? "Bookmarked" : "Bookmark"}
             </button>
-            <button onClick={() => setIsReportModalOpen(true)} className="flex items-center gap-1.5 text-sm font-medium px-4 py-2 bg-white text-rose-600 border border-slate-200 rounded-xl hover:bg-rose-50 transition-all">
+
+            {/* Report Soft Button */}
+            <button 
+              onClick={() => setIsReportModalOpen(true)} 
+              className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2.5 bg-[var(--card)] text-rose-500 border border-[var(--border)] rounded-xl shadow-[3px_3px_7px_rgba(0,0,0,0.05),-3px_-3px_7px_rgba(255,255,255,0.7)] dark:shadow-[3px_3px_7px_#080b0f,-2px_-2px_6px_rgba(255,255,255,0.02)] hover:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.08),inset_-2px_-2px_4px_rgba(255,255,255,0.6)] cursor-pointer transition-all duration-150"
+            >
               <FiAlertTriangle /> Report
             </button>
           </div>
         </div>
 
-        {/* Main layout grid */}
+        {/* Main Layout Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
-              <div className="flex flex-wrap gap-2">
-                <span className="inline-flex items-center gap-1 bg-violet-50 text-violet-700 text-xs font-semibold px-2.5 py-1 rounded-md">
+            
+            {/* Primary Details Card */}
+            <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-[5px_5px_15px_rgba(0,0,0,0.05),-5px_-5px_15px_rgba(255,255,255,0.7)] dark:shadow-[6px_6px_16px_#080b0f,-3px_-3px_10px_rgba(255,255,255,0.02)] space-y-5">
+              
+              {/* Badges */}
+              <div className="flex flex-wrap gap-2.5">
+                <span className="inline-flex items-center gap-1.5 bg-[var(--card)] border border-[var(--border)] text-[var(--primary)] text-xs font-semibold px-3 py-1.5 rounded-xl shadow-[inset_1px_1px_3px_rgba(0,0,0,0.06),inset_-1px_-1px_3px_rgba(255,255,255,0.7)] dark:shadow-[inset_2px_2px_4px_#080b0f,inset_-1px_-1px_3px_rgba(255,255,255,0.02)]">
                   <FiLayers /> {prompt.category}
                 </span>
-                <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-md">
+                <span className="inline-flex items-center gap-1.5 bg-[var(--card)] border border-[var(--border)] text-blue-500 dark:text-blue-400 text-xs font-semibold px-3 py-1.5 rounded-xl shadow-[inset_1px_1px_3px_rgba(0,0,0,0.06),inset_-1px_-1px_3px_rgba(255,255,255,0.7)] dark:shadow-[inset_2px_2px_4px_#080b0f,inset_-1px_-1px_3px_rgba(255,255,255,0.02)]">
                   <FiCpu /> {prompt.aiTool}
                 </span>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-2">
-                <RiSparklingFill className="text-violet-600 shrink-0" /> {prompt.title}
+              {/* Title */}
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-2.5 text-[var(--text)]">
+                <RiSparklingFill className="text-[var(--primary)] shrink-0" /> {prompt.title}
               </h1>
 
-              <p className="text-slate-600 text-sm leading-relaxed border-b border-slate-100 pb-4">{prompt.description}</p>
+              {/* Description */}
+              <p className="text-[var(--text-muted)] text-sm leading-relaxed border-b border-[var(--border)] pb-5">
+                {prompt.description}
+              </p>
               
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <h4 className="font-semibold text-xs uppercase tracking-wider mb-1 text-slate-500">Usage Instructions:</h4>
-                <p className="text-xs text-slate-600 leading-relaxed">{prompt.instructions || "No custom usage instructions provided."}</p>
+              {/* Usage Instructions (Inset Soft UI Box) */}
+              <div className="bg-[var(--card)] p-4 rounded-xl border border-[var(--border)] shadow-[inset_2px_2px_5px_rgba(0,0,0,0.06),inset_-2px_-2px_5px_rgba(255,255,255,0.7)] dark:shadow-[inset_3px_3px_6px_#080b0f,inset_-2px_-2px_6px_rgba(255,255,255,0.02)]">
+                <h4 className="font-semibold text-xs uppercase tracking-wider mb-1 text-[var(--primary)]">
+                  Usage Instructions:
+                </h4>
+                <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+                  {prompt.instructions || "No custom usage instructions provided."}
+                </p>
               </div>
 
-              {/* Prompt text box */}
-              <div className="space-y-2 pt-2">
+              {/* Prompt Text Box */}
+              <div className="space-y-2.5 pt-2">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-slate-700 text-sm font-semibold">Prompt Template</h3>
+                  <h3 className="text-[var(--text)] text-sm font-semibold">Prompt Template</h3>
                   {hasAccess && (
-                    <button onClick={handleCopyPrompt} className="text-xs font-medium text-violet-600 flex items-center gap-1 hover:underline">
+                    <button 
+                      onClick={handleCopyPrompt} 
+                      className="text-xs font-semibold text-[var(--primary)] flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-[2px_2px_5px_rgba(0,0,0,0.05),-2px_-2px_5px_rgba(255,255,255,0.7)] dark:shadow-[2px_2px_5px_#080b0f,-1px_-1px_4px_rgba(255,255,255,0.02)] hover:shadow-[inset_2px_2px_3px_rgba(0,0,0,0.08),inset_-2px_-2px_3px_rgba(255,255,255,0.6)] cursor-pointer transition-all duration-150"
+                    >
                       <FiCopy /> Copy Prompt
                     </button>
                   )}
                 </div>
 
-                <div className="relative rounded-xl border overflow-hidden">
-                  <div className={`p-5 font-mono text-sm leading-relaxed whitespace-pre-wrap ${
-                    hasAccess ? "bg-slate-900 text-slate-100" : "bg-slate-100 text-slate-400 blur-xs select-none pointer-events-none"
+                <div className="relative rounded-2xl border border-[var(--border)] overflow-hidden">
+                  {/* Code Container - Inset Soft UI Viewport */}
+                  <div className={`p-5 font-mono text-xs sm:text-sm leading-relaxed whitespace-pre-wrap transition-all ${
+                    hasAccess 
+                      ? "bg-[var(--card)] text-[var(--text)] shadow-[inset_3px_3px_8px_rgba(0,0,0,0.08),inset_-3px_-3px_8px_rgba(255,255,255,0.7)] dark:shadow-[inset_4px_4px_10px_#080b0f,inset_-2px_-2px_8px_rgba(255,255,255,0.02)]" 
+                      : "bg-[var(--card)] text-[var(--text-muted)] blur-xs select-none pointer-events-none opacity-40"
                   }`}>
                     {hasAccess ? prompt.content : "•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••\n•••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••"}
                   </div>
 
+                  {/* Locked Overlay for Non-Premium Users */}
                   {!hasAccess && (
-                    <div className="absolute inset-0 bg-slate-900/60 flex flex-col items-center justify-center p-6 text-center backdrop-blur-xs">
-                      <div className="w-12 h-12 bg-amber-500 text-white rounded-full flex items-center justify-center mb-3 text-lg shadow-md">
+                    <div className="absolute inset-0 bg-[var(--card)]/80 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center">
+                      <div className="w-12 h-12 bg-[var(--card)] border border-[var(--border)] text-amber-500 rounded-2xl flex items-center justify-center mb-3 text-lg shadow-[4px_4px_10px_rgba(0,0,0,0.1),-4px_-4px_10px_rgba(255,255,255,0.8)] dark:shadow-[4px_4px_10px_#080b0f,-2px_-2px_8px_rgba(255,255,255,0.02)]">
                         <FiLock />
                       </div>
-                      <h4 className="text-white font-bold text-base">Premium Prompt</h4>
-                      <p className="text-slate-200 text-xs max-w-xs mt-1 mb-4">Subscribe to our Creator Premium Plan to unlock full access to this prompt.</p>
-                      <button onClick={() => router.push("/payment")} className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold text-xs px-6 py-2.5 rounded-xl shadow-md hover:opacity-90">
+                      <h4 className="text-[var(--text)] font-bold text-base">Premium Prompt</h4>
+                      <p className="text-[var(--text-muted)] text-xs max-w-xs mt-1 mb-4">
+                        Subscribe to our Creator Premium Plan to unlock full access to this prompt.
+                      </p>
+                      <button 
+                        onClick={() => router.push("/payment")} 
+                        className="bg-[var(--primary)] text-white font-semibold text-xs px-6 py-2.5 rounded-xl shadow-[3px_3px_8px_rgba(15,118,110,0.35)] hover:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.2)] cursor-pointer transition-all duration-150"
+                      >
                         Subscribe to Premium
                       </button>
                     </div>
@@ -306,56 +348,80 @@ export default function PromptDetailsPage() {
               </div>
             </div>
 
-            {/* Review section */}
+            {/* Review Section */}
             <ReviewSection reviews={prompt.reviews} hasAccess={hasAccess} onReviewSubmit={handleReviewSubmit} />
           </div>
 
-          {/* Right sidebar */}
+          {/* Right Sidebar */}
           <div className="space-y-6">
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4 text-xs">
-              <h3 className="font-bold text-sm border-b pb-2 text-slate-700 uppercase tracking-wider">Metadata</h3>
+            
+            {/* Metadata Card */}
+            <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-[5px_5px_15px_rgba(0,0,0,0.05),-5px_-5px_15px_rgba(255,255,255,0.7)] dark:shadow-[6px_6px_16px_#080b0f,-3px_-3px_10px_rgba(255,255,255,0.02)] space-y-4 text-xs">
+              <h3 className="font-bold text-xs border-b border-[var(--border)] pb-3 text-[var(--primary)] uppercase tracking-wider">
+                Metadata
+              </h3>
+              
               <div>
-                <p className="text-slate-400 font-medium">Creator Info</p>
-                <p className="font-semibold text-slate-700 truncate mt-0.5">{prompt.authorEmail}</p>
+                <p className="text-[var(--text-muted)] font-medium">Creator Info</p>
+                <p className="font-semibold text-[var(--text)] truncate mt-1">{prompt.authorEmail}</p>
               </div>
-              <div className="grid grid-cols-2 gap-4 border-y border-slate-100 py-3">
+
+              <div className="grid grid-cols-2 gap-4 border-y border-[var(--border)] py-3">
                 <div>
-                  <p className="text-slate-400 font-medium">Copies Provided</p>
-                  <p className="font-bold text-sm text-slate-700 mt-0.5">{prompt.copyCount || 0}</p>
+                  <p className="text-[var(--text-muted)] font-medium">Copies Provided</p>
+                  <p className="font-bold text-sm text-[var(--text)] mt-1">{prompt.copyCount || 0}</p>
                 </div>
                 <div>
-                  <p className="text-slate-400 font-medium">Difficulty</p>
-                  <p className="font-semibold uppercase text-violet-600 flex items-center gap-1 mt-0.5">
+                  <p className="text-[var(--text-muted)] font-medium">Difficulty</p>
+                  <p className="font-semibold uppercase text-[var(--primary)] flex items-center gap-1 mt-1">
                     <FiAward /> {prompt.difficulty || "Beginner"}
                   </p>
                 </div>
               </div>
+
               <div>
-                <p className="text-slate-400 font-medium">Visibility Status</p>
-                <span className={`inline-block px-2 py-0.5 font-medium rounded mt-1.5 capitalize ${
-                  prompt.visibility === "public" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+                <p className="text-[var(--text-muted)] font-medium">Visibility Status</p>
+                <span className={`inline-block px-3 py-1 font-semibold rounded-lg mt-2 capitalize text-[10px] border border-[var(--border)] ${
+                  prompt.visibility === "public" 
+                    ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" 
+                    : "bg-amber-500/10 text-amber-600 dark:text-amber-400"
                 }`}>
                   {prompt.visibility}
                 </span>
               </div>
             </div>
 
-            {/* Tags claude */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-2 text-xs">
-              <p className="font-semibold text-slate-500 flex items-center gap-1"><FiTag /> Related Tags</p>
-              <div className="flex flex-wrap gap-1.5 pt-1">
+            {/* Related Tags Card */}
+            <div className="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-[5px_5px_15px_rgba(0,0,0,0.05),-5px_-5px_15px_rgba(255,255,255,0.7)] dark:shadow-[6px_6px_16px_#080b0f,-3px_-3px_10px_rgba(255,255,255,0.02)] space-y-3 text-xs">
+              <p className="font-semibold text-[var(--text-muted)] flex items-center gap-1.5">
+                <FiTag className="text-[var(--primary)]" /> Related Tags
+              </p>
+              
+              <div className="flex flex-wrap gap-2 pt-1">
                 {prompt.tags?.map((tag, i) => (
-                  <span key={i} className="bg-slate-100 border border-slate-200 text-slate-600 px-2.5 py-1 rounded-md font-medium">#{tag}</span>
+                  <span 
+                    key={i} 
+                    className="bg-[var(--card)] border border-[var(--border)] text-[var(--text)] px-3 py-1.5 rounded-xl font-medium shadow-[2px_2px_5px_rgba(0,0,0,0.04),-2px_-2px_5px_rgba(255,255,255,0.6)] dark:shadow-[2px_2px_5px_#080b0f,-1px_-1px_4px_rgba(255,255,255,0.02)]"
+                  >
+                    #{tag}
+                  </span>
                 ))}
-                {(!prompt.tags || prompt.tags.length === 0) && <span className="text-slate-400 italic">No tags associated</span>}
+                {(!prompt.tags || prompt.tags.length === 0) && (
+                  <span className="text-[var(--text-muted)] italic">No tags associated</span>
+                )}
               </div>
             </div>
+
           </div>
         </div>
       </div>
 
-      {/* report modal */}
-      <ReportModal isOpen={isReportModalOpen} onClose={() => setIsReportModalOpen(false)} onSubmit={handleReportSubmit} />
+      {/* Report Modal */}
+      <ReportModal 
+        isOpen={isReportModalOpen} 
+        onClose={() => setIsReportModalOpen(false)} 
+        onSubmit={handleReportSubmit} 
+      />
     </div>
   );
 }
