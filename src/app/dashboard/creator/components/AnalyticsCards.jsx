@@ -1,6 +1,5 @@
 "use client";
 
-import { Card } from "@heroui/react";
 import { motion } from "framer-motion";
 import { FiCpu, FiCopy, FiBookmark } from "react-icons/fi";
 
@@ -11,20 +10,17 @@ export default function AnalyticsCards({ data }) {
     {
       title: "Total Prompts",
       value: stats.totalPrompts,
-      icon: <FiCpu className="text-2xl text-purple-600" />,
-      bg: "bg-purple-50",
+      icon: <FiCpu className="text-xl text-[var(--primary)]" />,
     },
     {
       title: "Total Copies",
       value: stats.totalCopies,
-      icon: <FiCopy className="text-2xl text-blue-600" />,
-      bg: "bg-blue-50",
+      icon: <FiCopy className="text-xl text-blue-500" />,
     },
     {
       title: "Total Bookmarks",
       value: stats.totalBookmarks,
-      icon: <FiBookmark className="text-2xl text-pink-600" />,
-      bg: "bg-pink-50",
+      icon: <FiBookmark className="text-xl text-pink-500" />,
     },
   ];
 
@@ -37,19 +33,19 @@ export default function AnalyticsCards({ data }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: index * 0.1 }}
         >
-          <Card shadow="sm" className="border border-gray-100 p-2 bg-white rounded-2xl">
-            <div className="flex flex-row items-center justify-between p-4 w-full">
-              <div>
-                <p className="text-sm font-medium text-gray-500">{card.title}</p>
-                <h3 className="text-2xl font-bold mt-1 text-gray-800">
-                  {card.value.toLocaleString()}
-                </h3>
-              </div>
-              <div className={`p-3 rounded-xl ${card.bg}`}>
-                {card.icon}
-              </div>
+          <div className="neu-card p-5 rounded-[20px] border border-[var(--border)] flex items-center justify-between transition-all">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                {card.title}
+              </p>
+              <h3 className="text-2xl font-bold text-[var(--text)] tracking-tight">
+                {card.value.toLocaleString()}
+              </h3>
             </div>
-          </Card>
+            <div className="w-12 h-12 rounded-2xl neu-input flex items-center justify-center shrink-0">
+              {card.icon}
+            </div>
+          </div>
         </motion.div>
       ))}
     </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import { Card } from "@heroui/react";
 import { motion } from "framer-motion";
 import {
   AreaChart,
@@ -40,7 +39,9 @@ export default function AnalyticsCharts({ chartData = [] }) {
     };
   });
 
-  const isDataEmpty = finalizedData.every(item => item.copies === 0 && item.prompts === 0);
+  const isDataEmpty = finalizedData.every(
+    (item) => item.copies === 0 && item.prompts === 0
+  );
 
   return (
     <motion.div
@@ -49,15 +50,19 @@ export default function AnalyticsCharts({ chartData = [] }) {
       transition={{ duration: 0.5, delay: 0.3 }}
       className="w-full"
     >
-      <Card shadow="sm" className="border border-gray-100 p-6 bg-white rounded-2xl">
+      <div className="neu-card p-6 rounded-[24px] border border-[var(--border)]">
         <div className="flex flex-col items-start pb-4">
-          <h4 className="text-lg font-bold text-gray-800">Performance & Growth Overview</h4>
-          <p className="text-sm text-gray-400">Track your prompt copies and creation growth</p>
+          <h4 className="text-lg font-bold text-[var(--text)] tracking-tight">
+            Performance & Growth Overview
+          </h4>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">
+            Track your prompt copies and creation growth
+          </p>
         </div>
-        
+
         <div className="pt-4 h-[350px] w-full">
           {isDataEmpty ? (
-            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+            <div className="flex items-center justify-center h-full neu-input rounded-2xl text-[var(--text-muted)] text-sm font-medium">
               No analytics data available yet
             </div>
           ) : (
@@ -67,30 +72,48 @@ export default function AnalyticsCharts({ chartData = [] }) {
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
               >
                 <defs>
-                  {/* Total Copies */}
+                  {/* Total Copies Gradient */}
                   <linearGradient id="colorCopies" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                   </linearGradient>
-                  {/* Prompt Growth */}
+                  {/* Prompt Growth Gradient */}
                   <linearGradient id="colorPrompts" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
-                <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} tickLine={false} />
-                <YAxis stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="var(--border)"
+                  opacity={0.5}
+                />
+                <XAxis
+                  dataKey="name"
+                  stroke="var(--text-muted)"
+                  fontSize={12}
+                  tickLine={false}
+                />
+                <YAxis
+                  stroke="var(--text-muted)"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#fff",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
+                    backgroundColor: "var(--bg-surface, #ffffff)",
+                    borderColor: "var(--border)",
+                    borderRadius: "12px",
+                    color: "var(--text)",
+                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
                   }}
+                  itemStyle={{ color: "var(--text)" }}
                 />
                 <Legend verticalAlign="top" height={36} iconType="circle" />
-                
-                {/* Total copy line */}
+
+                {/* Total copy area */}
                 <Area
                   type="monotone"
                   dataKey="copies"
@@ -101,7 +124,7 @@ export default function AnalyticsCharts({ chartData = [] }) {
                   fill="url(#colorCopies)"
                 />
 
-                {/* 2. Prompt growth area*/}
+                {/* Prompt growth area */}
                 <Area
                   type="monotone"
                   dataKey="prompts"
@@ -115,7 +138,7 @@ export default function AnalyticsCharts({ chartData = [] }) {
             </ResponsiveContainer>
           )}
         </div>
-      </Card>
+      </div>
     </motion.div>
   );
 }

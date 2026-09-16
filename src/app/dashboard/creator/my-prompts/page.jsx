@@ -14,7 +14,7 @@ export default function MyPromptsPage() {
   const { data: session, isPending } = authClient.useSession();
   const currentUser = session?.user;
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const getHeaders = async () => {
     const headers = {
@@ -89,7 +89,6 @@ export default function MyPromptsPage() {
     }
   };
 
-
   const handleUpdate = (updatedPrompt) => {
     setPrompts(
       prompts.map((p) => (p._id === updatedPrompt._id ? updatedPrompt : p))
@@ -97,15 +96,26 @@ export default function MyPromptsPage() {
   };
 
   if (isPending || loading) {
-    return <div className="p-10 text-center text-sm font-semibold text-slate-500">
-      <LoadingSpinner />
-    </div>;
+    return (
+      <LoadingSpinner 
+        text="Loading Prompts..." 
+        subtext="Fetching your saved prompts" 
+      />
+    );
   }
 
   if (!currentUser) {
     return (
-      <div className="p-10 text-center text-red-500 font-medium">
-        Please login first to view your prompts.
+      <div className="p-6 md:p-10 w-full flex justify-center items-center min-h-[350px]">
+        <div className="neu-card p-8 rounded-2xl max-w-md w-full text-center space-y-3 border border-[var(--border)]">
+          <div className="w-12 h-12 rounded-2xl neu-input flex items-center justify-center mx-auto text-rose-500 font-bold text-xl">
+            !
+          </div>
+          <h3 className="text-base font-bold text-[var(--text)]">Access Restricted</h3>
+          <p className="text-xs text-[var(--text-muted)] font-medium">
+            Please login first to view and manage your prompts.
+          </p>
+        </div>
       </div>
     );
   }
@@ -115,13 +125,20 @@ export default function MyPromptsPage() {
       <ToastContainer position="top-right" autoClose={2000} />
       
       <div>
-        <h1 className="text-2xl font-bold text-gray-800">My Prompts</h1>
-        <p className="text-gray-500 text-sm mt-1">Manage all your submitted prompts easily.</p>
+        <h1 className="text-2xl font-bold text-[var(--text)] tracking-tight">
+          My Prompts
+        </h1>
+        <p className="text-[var(--text-muted)] text-sm mt-1">
+          Manage all your submitted prompts easily.
+        </p>
       </div>
 
       {prompts.length === 0 ? (
-        <div className="bg-white border rounded-2xl p-10 text-center text-gray-500 shadow-sm">
-          You haven't created any prompts yet.
+        <div className="neu-card rounded-2xl p-12 text-center border border-[var(--border)] space-y-2">
+          <p className="text-[var(--text)] font-semibold text-base">No Prompts Found</p>
+          <p className="text-[var(--text-muted)] text-xs font-medium">
+            You haven't created any prompts yet. Start by adding one!
+          </p>
         </div>
       ) : (
         <MyPromptsCard 

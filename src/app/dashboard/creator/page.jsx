@@ -58,32 +58,40 @@ export default function CreatorDashboardHome() {
     fetchAnalytics();
   }, []);
 
-  // ─── LOADING SKELETON ───
+  // ─── LOADING SKELETON / SPINNER ───
   if (loading) {
     return (
-      <div className="p-6 max-w-[1400px] mx-auto animate-pulse space-y-6">
-        <LoadingSpinner />
-      </div>
+      <LoadingSpinner 
+        text="Loading Creator Dashboard..." 
+        subtext="Fetching your performance, sales, and analytics data" 
+      />
     );
   }
 
   // ─── ERROR STATE ───
   if (error) {
     return (
-      <div className="p-6 max-w-[1400px] mx-auto text-center py-20">
-        <h2 className="text-xl font-bold text-red-500">Oops! Something went wrong</h2>
-        <p className="text-gray-500 mt-2">{error}</p>
-        <button 
-          onClick={() => window.location.reload()} 
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition"
-        >
-          Try Again
-        </button>
+      <div className="p-6 md:p-10 max-w-[1400px] mx-auto w-full flex justify-center items-center min-h-[400px]">
+        <div className="neu-card p-8 rounded-2xl max-w-md w-full text-center space-y-4 border border-[var(--border)]">
+          <div className="w-12 h-12 rounded-2xl neu-input flex items-center justify-center mx-auto text-rose-500 font-bold text-xl">
+            !
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-[var(--text)]">Oops! Something went wrong</h2>
+            <p className="text-xs text-[var(--text-muted)] mt-1 font-medium">{error}</p>
+          </div>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="neu-button-primary px-5 py-2.5 rounded-xl text-xs font-bold cursor-pointer active:scale-95 transition-all inline-block"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
 
-  // Database safty check
+  // Database safety check
   const stats = analyticsData?.stats || { totalPrompts: 0, totalCopies: 0, totalBookmarks: 0 };
   const chartData = analyticsData?.chartData || [];
   const prompts = analyticsData?.prompts || [];
@@ -101,11 +109,12 @@ export default function CreatorDashboardHome() {
           <SalesHistoryCard sales={sales} />
         </div>
 
-        <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Performance Analytics</h3>
+        <div className="neu-card p-6 rounded-[24px] border border-[var(--border)]">
+          <h3 className="text-lg font-bold text-[var(--text)] tracking-tight mb-4">
+            Performance Analytics
+          </h3>
           <AnalyticsCharts chartData={chartData} />
         </div>
-
       </div>
     </div>
   );
