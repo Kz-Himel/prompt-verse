@@ -92,7 +92,7 @@ export default function FeaturedPrompts() {
           <div className="flex justify-center items-center py-20">
             <Spinner
               size="lg"
-              classNames={{
+              className={{
                 circle1: "border-b-[#0F766E]",
                 circle2: "border-b-[#0F766E]",
               }}

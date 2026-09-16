@@ -50,6 +50,11 @@ export default function Navbar() {
     };
   }, []);
 
+  // Close mobile menu automatically on route change
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
   const handleLogout = async () => {
     try {
       await signOut();
@@ -81,7 +86,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-[#EBF1F5] border-b border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8 gap-4">
-        
+
         {/* Logo - Img Theme */}
         <Link href="/" className="flex items-center gap-2.5 shrink-0">
           <div className="w-8 h-8 rounded-xl bg-[#EBF1F5] flex items-center justify-center shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff]">
@@ -102,7 +107,7 @@ export default function Navbar() {
           <input
             type="text"
             placeholder="Search prompts, categories, or creators..."
-            className="w-full pl-10 pr-16 py-2 rounded-full bg-[#EBF1F5] text-xs text-[#1E293B] placeholder-[#64748B] outline-none shadow-[inset_2px_2px_5px_#c7d0d8,inset_-2px_-2px_5px_#ffffff] border border-white/50 focus:border-[#0F766E]/40 transition-all font-medium"
+            className="w-full pl-10 pr-16 py-2 rounded-full bg-[#EBF1F5] text-xs text-[#1E293B] placeholder-[#64748B] outline-none border border-white/50 focus:border-[#0F766E]/40 transition-all font-medium"
           />
           <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
             <span className="text-[10px] font-semibold text-[#64748B] bg-[#EBF1F5] px-1.5 py-0.5 rounded shadow-[2px_2px_4px_#c7d0d8,-2px_-2px_4px_#ffffff]">
@@ -129,7 +134,7 @@ export default function Navbar() {
           <button className="w-9 h-9 rounded-full bg-[#EBF1F5] flex items-center justify-center text-[#64748B] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] hover:text-[#1E293B] active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff]">
             <HiOutlineSun size={18} />
           </button>
-          
+
           <button className="w-9 h-9 rounded-full bg-[#EBF1F5] flex items-center justify-center text-[#64748B] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] hover:text-[#1E293B] active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff]">
             <HiOutlineBell size={18} />
           </button>
@@ -224,10 +229,100 @@ export default function Navbar() {
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           className="rounded-xl p-2 bg-[#EBF1F5] text-[#1E293B] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] md:hidden"
+          aria-label="Toggle menu"
+          aria-expanded={mobileOpen}
         >
           {mobileOpen ? <HiXMark size={22} /> : <HiBars3 size={22} />}
         </button>
       </div>
+
+      {/* Mobile Menu Panel */}
+      {mobileOpen && (
+        <div className="md:hidden border-t border-white/60 bg-[#EBF1F5] px-4 py-4 space-y-2">
+          <Link
+            href="/"
+            onClick={() => setMobileOpen(false)}
+            className={`block ${navLinkClass("/")}`}
+          >
+            Home
+          </Link>
+          <Link
+            href="/prompts"
+            onClick={() => setMobileOpen(false)}
+            className={`block ${navLinkClass("/prompts")}`}
+          >
+            All Prompts
+          </Link>
+          <Link
+            href="/pricing"
+            onClick={() => setMobileOpen(false)}
+            className={`block ${navLinkClass("/pricing")}`}
+          >
+            Pricing
+          </Link>
+
+          <div className="pt-2 border-t border-black/5">
+            {mounted && !isPending && !session && (
+              <div className="flex flex-col gap-2 mt-2">
+                <Link
+                  href="/auth/login"
+                  onClick={() => setMobileOpen(false)}
+                  className={`block text-center ${navLinkClass("/auth/login")}`}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/auth/register"
+                  onClick={() => setMobileOpen(false)}
+                  className="block text-center rounded-full bg-[#0F766E] hover:bg-[#0D9488] px-5 py-2 text-sm font-semibold text-white transition active:scale-95"
+                >
+                  Register
+                </Link>
+              </div>
+            )}
+
+            {mounted && !isPending && session && (
+              <div className="flex flex-col gap-2 mt-2">
+                <div className="flex items-center gap-3 px-4 py-2">
+                  <Avatar
+                    size="sm"
+                    src={session?.user?.image ? String(session.user.image) : undefined}
+                    name={session?.user?.name || "U"}
+                  />
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-bold text-[#1E293B]">
+                      {session?.user?.name || "User"}
+                    </p>
+                    <p className="truncate text-xs text-[#64748B]">
+                      {session?.user?.email}
+                    </p>
+                  </div>
+                </div>
+
+                <Link
+                  href={dashboardHref}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 px-4 py-2 text-sm font-medium text-[#1E293B]"
+                >
+                  <HiOutlineSquares2X2 size={18} className="text-[#0F766E]" />
+                  Dashboard
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    handleLogout();
+                  }}
+                  className="flex items-center gap-3 px-4 py-2 text-left text-sm font-medium text-red-500"
+                >
+                  <HiOutlineArrowRightOnRectangle size={18} />
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }
