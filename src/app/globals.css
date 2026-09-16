@@ -2,36 +2,37 @@
 @import "@heroui/styles"; 
 
 :root {
-  /* PromptVerse Light Theme (Neumorphic Soft UI) */
+  /* PromptVerse Light Theme - Ultra Minimal Neumorphic Soft UI */
   --bg: #EBF1F5;
   --card: #EBF1F5;
   --primary: #0F766E;        /* Deep Teal Green */
   --primary-light: #99F6E4;  /* Soft Cyan/Teal Highlight */
   --text: #1E293B;           /* Dark Slate Blue */
   --text-muted: #64748B;     /* Cool Gray */
-  --border: rgba(255, 255, 255, 0.6);
+  --border: rgba(255, 255, 255, 0.8);
 
-  /* Neumorphic Shadows & Effects */
-  --shadow-flat: 8px 8px 16px #c7d0d8, -8px -8px 16px #ffffff;
-  --shadow-hover: 12px 12px 20px #becaf5, -12px -12px 20px #ffffff;
-  --shadow-pressed: inset 4px 4px 8px #c7d0d8, inset -4px -4px 8px #ffffff;
-  --glow-primary: 0px 4px 14px rgba(15, 118, 110, 0.35);
+  /* Minimal Light Shadows (Extremely Low Blur & Offset) */
+  --shadow-flat: 3px 3px 6px #d1d9e0, -3px -3px 6px #ffffff;
+  --shadow-hover: 5px 5px 10px #cad3dc, -5px -5px 10px #ffffff;
+  --shadow-pressed: inset 2px 2px 4px #d1d9e0, inset -2px -2px 4px #ffffff;
+  --glow-primary: 0px 2px 8px rgba(15, 118, 110, 0.2);
 }
 
 [data-theme="dark"] {
-  /* Neumorphic Dark Theme Variation */
-  --bg: #151C24;
-  --card: #151C24;
-  --primary: #2DD4BF;
-  --primary-light: #115E59;
-  --text: #F1F5F9;
-  --text-muted: #94A3B8;
-  --border: rgba(255, 255, 255, 0.05);
+  /* Luxury Dark Theme - Minimal Glow & Soft Depth */
+  --bg: #0F141C;
+  --card: #141B24;
+  --primary: #14B8A6;        /* Vibrant Emerald/Teal */
+  --primary-light: #0F766E;
+  --text: #F8FAFC;           /* Bright White/Slate */
+  --text-muted: #94A3B8;     /* Muted Silver */
+  --border: rgba(255, 255, 255, 0.06);
 
-  --shadow-flat: 8px 8px 18px #0d1217, -8px -8px 18px #1d2631;
-  --shadow-hover: 10px 10px 22px #090d11, -10px -10px 22px #212b37;
-  --shadow-pressed: inset 4px 4px 8px #0d1217, inset -4px -4px 8px #1d2631;
-  --glow-primary: 0px 4px 16px rgba(45, 212, 191, 0.25);
+  /* Minimal Dark Shadows (Subtle, Clean Elevation) */
+  --shadow-flat: 4px 4px 8px #080b0f, -3px -3px 7px rgba(255, 255, 255, 0.02);
+  --shadow-hover: 6px 6px 12px #05070a, -4px -4px 9px rgba(255, 255, 255, 0.035);
+  --shadow-pressed: inset 2px 2px 5px #080b0f, inset -2px -2px 5px rgba(255, 255, 255, 0.02);
+  --glow-primary: 0px 3px 10px rgba(20, 184, 166, 0.25);
 }
 
 body {
@@ -41,7 +42,7 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Base Neumorphic Card Style */
+/* Base Neumorphic Card Style (Reduced Blur & Elevation) */
 .neu-card {
   background: var(--card);
   box-shadow: var(--shadow-flat);
@@ -52,21 +53,22 @@ body {
 
 .neu-card:hover {
   box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 /* Interactive Button Effects */
 .neu-button-primary {
-  background-color: var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
   color: #ffffff;
   border-radius: 12px;
   box-shadow: var(--glow-primary);
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .neu-button-primary:hover {
-  opacity: 0.92;
+  opacity: 0.95;
   transform: translateY(-1px);
+  box-shadow: 0px 4px 12px rgba(20, 184, 166, 0.35);
 }
 
 .neu-button-primary:active {
@@ -74,10 +76,17 @@ body {
   box-shadow: var(--shadow-pressed);
 }
 
+/* Input Fields */
 .neu-input {
   background: var(--card);
   box-shadow: var(--shadow-pressed);
   border-radius: 14px;
-  border: 1px solid transparent;
+  border: 1px solid var(--border);
   color: var(--text);
+  transition: border-color 0.2s ease;
+}
+
+.neu-input:focus {
+  outline: none;
+  border-color: var(--primary);
 }
