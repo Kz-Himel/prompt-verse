@@ -1,15 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import {
-  Button,
-  Input,
-  Card,
-  TextField,
-  Label,
-  InputGroup,
-} from "@heroui/react";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Button, Card } from '@heroui/react';
 import {
   FaUser,
   FaEnvelope,
@@ -19,23 +12,22 @@ import {
   FaPen,
   FaEye,
   FaEyeSlash,
-} from "react-icons/fa6";
-import { FcGoogle } from "react-icons/fc";
-import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
-import { toast } from "react-toastify";
+} from 'react-icons/fa6';
+import { FcGoogle } from 'react-icons/fc';
+import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth-client';
+import { toast } from 'react-toastify';
 
 export default function RegisterPage() {
   const router = useRouter();
 
-  // state initialization
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    photoURL: "",
-    role: "user", 
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    photoURL: '',
+    role: 'user',
   });
 
   const [loading, setLoading] = useState(false);
@@ -53,206 +45,273 @@ export default function RegisterPage() {
     setLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match!");
+      toast.error('Passwords do not match!');
       setLoading(false);
       return;
     }
 
     try {
-      // 🎯 ফিক্সড: authClient.signUp ব্যবহার করা হয়েছে
       const { error: authError } = await authClient.signUp.email({
         email: formData.email,
         password: formData.password,
         name: formData.name,
         image: formData.photoURL || undefined,
-        role: formData.role, 
+        role: formData.role,
       });
 
       if (authError) {
-        toast.error(authError.message || "Registration failed.");
+        toast.error(authError.message || 'Registration failed.');
+        setLoading(false);
         return;
       }
 
       toast.success(`Account created successfully as ${formData.role}!`);
-      router.push("/auth/login"); 
+      router.push('/auth/login');
     } catch (err) {
-      console.error("Registration UI Error:", err);
-      toast.error("Something went wrong. Please try again.");
+      console.error('Registration UI Error:', err);
+      toast.error('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Google signup
   const handleGoogleSignup = async () => {
     setGoogleLoading(true);
     try {
       await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/dashboard/user", 
+        provider: 'google',
+        callbackURL: '/dashboard/user',
       });
     } catch (err) {
-      console.error("Google Auth UI Error:", err);
-      toast.error("Google signup failed. Please try again.");
+      console.error('Google Auth UI Error:', err);
+      toast.error('Google signup failed. Please try again.');
     } finally {
       setGoogleLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50/50 px-4 py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center p-4 transition-colors duration-200">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className="w-full max-w-md"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+        className="w-full max-w-md my-8"
       >
-        <Card className="border border-slate-200/60 bg-white p-6 shadow-xl shadow-slate-100 sm:p-10 rounded-3xl">
-          <div className="space-y-6">
+        {/* Soft UI Elevated Main Card */}
+        <Card className="p-6 sm:p-10 border-none rounded-3xl bg-[var(--card)] shadow-[8px_8px_20px_rgba(0,0,0,0.06),-8px_-8px_20px_rgba(255,255,255,0.8)] dark:shadow-[10px_10px_24px_#080b0f,-4px_-4px_16px_rgba(255,255,255,0.02)]">
+          <div className="flex flex-col gap-6 w-full">
+            
+            {/* Header */}
             <div className="text-center">
-              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
-                <FaUser className="text-xl" />
-              </div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text)]">
                 Create Account
               </h1>
-              <p className="mt-1.5 text-sm text-slate-500">
+              <p className="text-xs sm:text-sm text-[var(--text-muted)] mt-1.5 font-medium">
                 Join the community and start sharing amazing AI prompts.
               </p>
             </div>
 
-            <form onSubmit={handleRegister} autoComplete="off" className="space-y-4">
+            {/* Form */}
+            <form onSubmit={handleRegister} className="flex flex-col gap-4" autoComplete="off">
+              
               {/* Full Name */}
-              <TextField isRequired className="space-y-1.5 w-full">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Full Name</Label>
-                <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
-                  <FaUser className="text-slate-400" />
-                  <Input 
-                    placeholder="John Doe" 
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                  Full Name
+                </label>
+                <div className="flex items-center rounded-2xl bg-[var(--card)] px-4 shadow-[inset_2px_2px_5px_rgba(0,0,0,0.06),inset_-2px_-2px_5px_rgba(255,255,255,0.7)] dark:shadow-[inset_3px_3px_6px_#080b0f,inset_-2px_-2px_6px_rgba(255,255,255,0.02)]">
+                  <FaUser className="text-[var(--primary)] shrink-0 mr-3" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="John Doe"
                     autoComplete="new-name"
-                    value={formData.name} 
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
-                    className="w-full bg-transparent outline-none text-sm py-1.5" 
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full bg-transparent border-none outline-none focus:outline-none ring-0 focus:ring-0 text-xs sm:text-sm text-[var(--text)] placeholder-[var(--text-muted)] py-3.5"
                   />
-                </InputGroup>
-              </TextField>
+                </div>
+              </div>
 
-              {/* Email */}
-              <TextField isRequired className="space-y-1.5 w-full">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Email Address</Label>
-                <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
-                  <FaEnvelope className="text-slate-400" />
-                  <Input 
-                    type="email" 
-                    placeholder="name@example.com" 
+              {/* Email Address */}
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                  Email Address
+                </label>
+                <div className="flex items-center rounded-2xl bg-[var(--card)] px-4 shadow-[inset_2px_2px_5px_rgba(0,0,0,0.06),inset_-2px_-2px_5px_rgba(255,255,255,0.7)] dark:shadow-[inset_3px_3px_6px_#080b0f,inset_-2px_-2px_6px_rgba(255,255,255,0.02)]">
+                  <FaEnvelope className="text-[var(--primary)] shrink-0 mr-3" />
+                  <input
+                    type="email"
+                    required
+                    placeholder="name@example.com"
                     autoComplete="new-email"
-                    value={formData.email} 
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })} 
-                    className="w-full bg-transparent outline-none text-sm py-1.5" 
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full bg-transparent border-none outline-none focus:outline-none ring-0 focus:ring-0 text-xs sm:text-sm text-[var(--text)] placeholder-[var(--text-muted)] py-3.5"
                   />
-                </InputGroup>
-              </TextField>
+                </div>
+              </div>
 
               {/* Photo URL */}
-              <TextField className="space-y-1.5 w-full">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Photo URL (Optional)</Label>
-                <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
-                  <FaLink className="text-slate-400" />
-                  <Input 
-                    type="url" 
-                    placeholder="" 
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                  Photo URL (Optional)
+                </label>
+                <div className="flex items-center rounded-2xl bg-[var(--card)] px-4 shadow-[inset_2px_2px_5px_rgba(0,0,0,0.06),inset_-2px_-2px_5px_rgba(255,255,255,0.7)] dark:shadow-[inset_3px_3px_6px_#080b0f,inset_-2px_-2px_6px_rgba(255,255,255,0.02)]">
+                  <FaLink className="text-[var(--primary)] shrink-0 mr-3" />
+                  <input
+                    type="url"
+                    placeholder="https://example.com/photo.jpg"
                     autoComplete="off"
-                    value={formData.photoURL} 
-                    onChange={(e) => setFormData({ ...formData, photoURL: e.target.value })} 
-                    className="w-full bg-transparent outline-none text-sm py-1.5" 
+                    value={formData.photoURL}
+                    onChange={(e) => setFormData({ ...formData, photoURL: e.target.value })}
+                    className="w-full bg-transparent border-none outline-none focus:outline-none ring-0 focus:ring-0 text-xs sm:text-sm text-[var(--text)] placeholder-[var(--text-muted)] py-3.5"
                   />
-                </InputGroup>
-              </TextField>
+                </div>
+              </div>
 
-              {/* Account Type */}
-              <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">Account Type</label>
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div 
-                    onClick={() => setFormData(prev => ({ ...prev, role: "user" }))}
-                    className={`group relative flex cursor-pointer items-center gap-3 rounded-xl border p-2.5 transition-all duration-200 ${formData.role === "user" ? "border-indigo-600 bg-indigo-50/40 ring-1 ring-indigo-600" : "border-slate-200 bg-white hover:border-slate-300"}`}
+              {/* Account Type (Soft UI Toggle Buttons) */}
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                  Account Type
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setFormData((prev) => ({ ...prev, role: 'user' }))}
+                    className={`flex items-center gap-3 p-3 rounded-2xl transition-all cursor-pointer border-none text-left ${
+                      formData.role === 'user'
+                        ? 'bg-[var(--card)] text-[var(--primary)] shadow-[inset_2px_2px_5px_rgba(0,0,0,0.08),inset_-2px_-2px_5px_rgba(255,255,255,0.7)] dark:shadow-[inset_3px_3px_6px_#080b0f,inset_-2px_-2px_6px_rgba(255,255,255,0.02)] font-bold'
+                        : 'bg-[var(--card)] text-[var(--text-muted)] shadow-[3px_3px_8px_rgba(0,0,0,0.05),-3px_-3px_8px_rgba(255,255,255,0.7)] dark:shadow-[3px_3px_8px_#080b0f,-2px_-2px_6px_rgba(255,255,255,0.02)]'
+                    }`}
                   >
-                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${formData.role === "user" ? "bg-indigo-100 text-indigo-600" : "bg-slate-50 text-slate-400"}`}>
-                      <FaUserTie className="text-base" />
+                    <FaUserTie className="text-base shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold leading-tight">User</p>
+                      <span className="text-[10px] opacity-75 font-medium whitespace-nowrap">Browse prompts</span>
                     </div>
-                    <div className="text-left">
-                      <p className="text-xs font-bold text-slate-900 leading-tight">User</p>
-                      <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">Browse prompts</span>
-                    </div>
-                  </div>
+                  </button>
 
-                  <div 
-                    onClick={() => setFormData(prev => ({ ...prev, role: "creator" }))}
-                    className={`group relative flex cursor-pointer items-center gap-3 rounded-xl border p-2.5 transition-all duration-200 ${formData.role === "creator" ? "border-indigo-600 bg-indigo-50/40 ring-1 ring-indigo-600" : "border-slate-200 bg-white hover:border-slate-300"}`}
+                  <button
+                    type="button"
+                    onClick={() => setFormData((prev) => ({ ...prev, role: 'creator' }))}
+                    className={`flex items-center gap-3 p-3 rounded-2xl transition-all cursor-pointer border-none text-left ${
+                      formData.role === 'creator'
+                        ? 'bg-[var(--card)] text-[var(--primary)] shadow-[inset_2px_2px_5px_rgba(0,0,0,0.08),inset_-2px_-2px_5px_rgba(255,255,255,0.7)] dark:shadow-[inset_3px_3px_6px_#080b0f,inset_-2px_-2px_6px_rgba(255,255,255,0.02)] font-bold'
+                        : 'bg-[var(--card)] text-[var(--text-muted)] shadow-[3px_3px_8px_rgba(0,0,0,0.05),-3px_-3px_8px_rgba(255,255,255,0.7)] dark:shadow-[3px_3px_8px_#080b0f,-2px_-2px_6px_rgba(255,255,255,0.02)]'
+                    }`}
                   >
-                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${formData.role === "creator" ? "bg-indigo-100 text-indigo-600" : "bg-slate-50 text-slate-400"}`}>
-                      <FaPen className="text-sm" />
+                    <FaPen className="text-sm shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold leading-tight">Creator</p>
+                      <span className="text-[10px] opacity-75 font-medium whitespace-nowrap">Create & sell</span>
                     </div>
-                    <div className="text-left">
-                      <p className="text-xs font-bold text-slate-900 leading-tight">Creator</p>
-                      <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">Create & sell</span>
-                    </div>
-                  </div>
+                  </button>
                 </div>
               </div>
 
               {/* Password */}
-              <TextField isRequired className="space-y-1.5 w-full">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Password</Label>
-                <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
-                  <FaLock className="text-slate-400" />
-                  <Input 
-                    type={showPassword ? "text" : "password"} 
-                    placeholder="••••••••" 
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                  Password
+                </label>
+                <div className="flex items-center rounded-2xl bg-[var(--card)] px-4 shadow-[inset_2px_2px_5px_rgba(0,0,0,0.06),inset_-2px_-2px_5px_rgba(255,255,255,0.7)] dark:shadow-[inset_3px_3px_6px_#080b0f,inset_-2px_-2px_6px_rgba(255,255,255,0.02)]">
+                  <FaLock className="text-[var(--primary)] shrink-0 mr-3" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    placeholder="••••••••"
                     autoComplete="new-password"
-                    value={formData.password} 
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })} 
-                    className="w-full bg-transparent outline-none text-sm py-1.5" 
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full bg-transparent border-none outline-none focus:outline-none ring-0 focus:ring-0 text-xs sm:text-sm text-[var(--text)] placeholder-[var(--text-muted)] py-3.5"
                   />
-                  <button className="focus:outline-none ml-auto" type="button" onClick={togglePasswordVisibility}>
-                    {showPassword ? <FaEyeSlash className="text-lg text-slate-400" /> : <FaEye className="text-lg text-slate-400" />}
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="focus:outline-none ml-2 cursor-pointer"
+                  >
+                    {showPassword ? (
+                      <FaEyeSlash className="text-base text-[var(--text-muted)] hover:text-[var(--text)] transition-colors" />
+                    ) : (
+                      <FaEye className="text-base text-[var(--text-muted)] hover:text-[var(--text)] transition-colors" />
+                    )}
                   </button>
-                </InputGroup>
-              </TextField>
+                </div>
+              </div>
 
               {/* Confirm Password */}
-              <TextField isRequired className="space-y-1.5 w-full">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-slate-600">Confirm Password</Label>
-                <InputGroup className="border rounded-xl border-slate-200 px-3 py-1 flex items-center gap-2 focus-within:border-indigo-600 transition-colors">
-                  <FaLock className="text-slate-400" />
-                  <Input 
-                    type={showConfirmPassword ? "text" : "password"} 
-                    placeholder="••••••••" 
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                  Confirm Password
+                </label>
+                <div className="flex items-center rounded-2xl bg-[var(--card)] px-4 shadow-[inset_2px_2px_5px_rgba(0,0,0,0.06),inset_-2px_-2px_5px_rgba(255,255,255,0.7)] dark:shadow-[inset_3px_3px_6px_#080b0f,inset_-2px_-2px_6px_rgba(255,255,255,0.02)]">
+                  <FaLock className="text-[var(--primary)] shrink-0 mr-3" />
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    required
+                    placeholder="••••••••"
                     autoComplete="new-password"
-                    value={formData.confirmPassword} 
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} 
-                    className="w-full bg-transparent outline-none text-sm py-1.5" 
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    className="w-full bg-transparent border-none outline-none focus:outline-none ring-0 focus:ring-0 text-xs sm:text-sm text-[var(--text)] placeholder-[var(--text-muted)] py-3.5"
                   />
-                  <button className="focus:outline-none ml-auto" type="button" onClick={toggleConfirmPasswordVisibility}>
-                    {showConfirmPassword ? <FaEyeSlash className="text-lg text-slate-400" /> : <FaEye className="text-lg text-slate-400" />}
+                  <button
+                    type="button"
+                    onClick={toggleConfirmPasswordVisibility}
+                    className="focus:outline-none ml-2 cursor-pointer"
+                  >
+                    {showConfirmPassword ? (
+                      <FaEyeSlash className="text-base text-[var(--text-muted)] hover:text-[var(--text)] transition-colors" />
+                    ) : (
+                      <FaEye className="text-base text-[var(--text-muted)] hover:text-[var(--text)] transition-colors" />
+                    )}
                   </button>
-                </InputGroup>
-              </TextField>
+                </div>
+              </div>
 
-              <Button type="submit" isLoading={loading} radius="xl" size="lg" className="w-full bg-indigo-600 font-semibold text-white shadow-lg mt-2">
+              {/* Primary Submit Button */}
+              <Button
+                type="submit"
+                isLoading={loading}
+                radius="xl"
+                size="lg"
+                className="w-full bg-[var(--primary)] font-semibold text-white border-none shadow-[3px_3px_8px_rgba(15,118,110,0.35)] hover:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.2)] active:scale-[0.99] transition-all cursor-pointer mt-2 py-3.5 focus:outline-none"
+              >
                 Create Account
               </Button>
             </form>
 
-            <div className="flex items-center gap-3">
-              <div className="h-px flex-1 bg-slate-200" />
-              <span className="text-[11px] font-medium uppercase tracking-wider text-slate-400">Or continue with</span>
-              <div className="h-px flex-1 bg-slate-200" />
+            {/* Visual Divider */}
+            <div className="relative flex py-1 items-center">
+              <div className="flex-grow border-t border-[var(--border)]"></div>
+              <span className="flex-shrink mx-4 text-[var(--text-muted)] text-[11px] font-bold uppercase tracking-wider">
+                Or connect with
+              </span>
+              <div className="flex-grow border-t border-[var(--border)]"></div>
             </div>
 
-            <Button variant="bordered" radius="xl" size="lg" isLoading={googleLoading} onPress={handleGoogleSignup} startContent={!googleLoading && <FcGoogle size={20} />} className="w-full border-slate-200 font-medium text-slate-700 hover:bg-slate-50">
-              Continue with Google
+            {/* Google Signup Button */}
+            <Button
+              variant="bordered"
+              radius="xl"
+              size="lg"
+              isLoading={googleLoading}
+              onClick={handleGoogleSignup}
+              startContent={!googleLoading && <FcGoogle size={18} />}
+              className="w-full border-none bg-[var(--card)] text-[var(--text)] font-semibold shadow-[3px_3px_8px_rgba(0,0,0,0.05),-3px_-3px_8px_rgba(255,255,255,0.7)] dark:shadow-[3px_3px_8px_#080b0f,-2px_-2px_6px_rgba(255,255,255,0.02)] hover:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.08),inset_-2px_-2px_5px_rgba(255,255,255,0.6)] dark:hover:shadow-[inset_2px_2px_5px_#080b0f,inset_-2px_-2px_5px_rgba(255,255,255,0.02)] transition-all cursor-pointer py-3.5 focus:outline-none"
+            >
+              Sign up with Google
             </Button>
+
+            {/* Footer Redirect */}
+            <p className="text-center text-xs sm:text-sm text-[var(--text-muted)] font-medium">
+              Already have an account?{' '}
+              <a href="/auth/login" className="font-bold text-[var(--primary)] hover:underline">
+                Sign In
+              </a>
+            </p>
           </div>
         </Card>
       </motion.div>
