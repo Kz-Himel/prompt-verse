@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button, Drawer } from "@heroui/react";
 import { TbLayoutSidebar } from "react-icons/tb";
-import { FaGithub, FaXTwitter, FaDiscord, FaLinkedin } from "react-icons/fa6";
-import { FiZap, FiCrown } from "react-icons/fi";
+import { FaGithub, FaXTwitter, FaDiscord, FaLinkedin, FaCrown } from "react-icons/fa6";
+import { FiZap } from "react-icons/fi";
 
 import { sidebarLinks } from "../data/sidebar-links";
 
@@ -60,7 +60,7 @@ export default function Sidebar({ role = "user" }) {
         {/* Neumorphic Promo / Premium Card */}
         <div className="neu-card p-4 rounded-2xl flex flex-col space-y-3">
           <div className="w-8 h-8 rounded-lg bg-[var(--primary)]/15 text-[var(--primary)] flex items-center justify-center">
-            <FiCrown className="text-base" />
+            <FaCrown className="text-base" />
           </div>
           <div>
             <h4 className="text-sm font-bold text-[var(--text)]">Go Premium</h4>
