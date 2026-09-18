@@ -1,62 +1,43 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { authClient } from "@/lib/auth-client";
-import { toast } from "react-toastify";
+import { useAdminAnalytics } from "@/hooks/useAdminAnalytics";
 
-export function useAdminAnalytics() {
-  const [stats, setStats] = useState({ totalUsers: 0, totalPrompts: 0, totalReviews: 0, totalCopies: 0 });
-  const [loading, setLoading] = useState(true);
-  const isFetched = useRef(false);
-  const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL;
+export default function AdminDashboardPage() {
+  const { stats, loading } = useAdminAnalytics();
 
-  const fetchAdminStats = useCallback(async () => {
-    if (isFetched.current) return;
+  if (loading) {
+    return <div className="p-6">Loading dashboard...</div>;
+  }
 
-    try {
-      setLoading(true);
-      
-      const tokenRes = await authClient.token?.();
-      const token = tokenRes?.data?.token;
+  return (
+    <div className="p-6 md:p-10 max-w-[1200px] mx-auto w-full space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-[var(--text)] tracking-tight">
+          Admin Dashboard
+        </h1>
+        <p className="text-[var(--text-muted)] text-sm mt-1">
+          Overview of platform activity.
+        </p>
+      </div>
 
-      if (!token) {
-        console.warn("No admin token found in client auth!");
-      }
-      
-      const res = await fetch(`${BACKEND_URL}/admin/analytics`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { "Authorization": `Bearer ${token}` })
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error(`Server responded with status: ${res.status}`);
-      }
-
-      const result = await res.json();
-      if (result.success && result.stats) {
-        setStats(result.stats);
-        isFetched.current = true;
-      } else {
-        toast.error(result.message || "Failed to load admin statistics");
-      }
-    } catch (error) {
-      console.error("Fetch Analytics Error:", error);
-      toast.error("Network error or authorization failed!");
-    } finally {
-      setLoading(false);
-    }
-  }, [BACKEND_URL]);
-
-  useEffect(() => {
-    if (BACKEND_URL) fetchAdminStats();
-
-    return () => {
-      isFetched.current = false;
-    };
-  }, [BACKEND_URL, fetchAdminStats]);
-
-  return { stats, loading };
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="neu-card p-4 rounded-xl border border-black/5 dark:border-white/5">
+          <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Total Users</p>
+          <p className="text-2xl font-bold text-[var(--text)] mt-0.5">{stats.totalUsers}</p>
+        </div>
+        <div className="neu-card p-4 rounded-xl border border-black/5 dark:border-white/5">
+          <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Total Prompts</p>
+          <p className="text-2xl font-bold text-[var(--text)] mt-0.5">{stats.totalPrompts}</p>
+        </div>
+        <div className="neu-card p-4 rounded-xl border border-black/5 dark:border-white/5">
+          <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Total Reviews</p>
+          <p className="text-2xl font-bold text-[var(--text)] mt-0.5">{stats.totalReviews}</p>
+        </div>
+        <div className="neu-card p-4 rounded-xl border border-black/5 dark:border-white/5">
+          <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Total Copies</p>
+          <p className="text-2xl font-bold text-[var(--text)] mt-0.5">{stats.totalCopies}</p>
+        </div>
+      </div>
+    </div>
+  );
 }
