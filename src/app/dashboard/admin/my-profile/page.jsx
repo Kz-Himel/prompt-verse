@@ -1,55 +1,34 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { authClient } from "@/lib/auth-client";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
-export function useUserProfile() {
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export default function MyProfilePage() {
+  const { profile, loading, error, refetch } = useUserProfile();
 
-  const fetchUserProfile = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  if (loading) {
+    return <div className="p-6">Loading profile...</div>;
+  }
 
-      const tokenRes = await authClient.token?.();
-      const token = tokenRes?.data?.token;
+  if (error) {
+    return (
+      <div className="p-6">
+        <p className="text-red-500">{error}</p>
+        <button
+          onClick={refetch}
+          className="mt-2 px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
-      if (!token) {
-        throw new Error("Unauthorized: No token found. Please login again.");
-      }
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch user profile data");
-      }
-
-      const resData = await response.json();
-
-      if (resData.success) {
-        setProfile(resData.data);
-      } else {
-        throw new Error(resData.message || "Something went wrong");
-      }
-    } catch (err) {
-      console.error("Profile Fetch Error:", err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchUserProfile();
-  }, [fetchUserProfile]);
-
-  return { profile, loading, error, refetch: fetchUserProfile };
+  return (
+    <div className="p-6">
+      <h1 className="text-xl font-semibold mb-4">My Profile</h1>
+      <pre className="bg-gray-100 p-4 rounded text-sm overflow-x-auto">
+        {JSON.stringify(profile, null, 2)}
+      </pre>
+    </div>
+  );
 }
