@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { HiChevronDown, HiOutlineSparkles, HiOutlineUserGroup } from "react-icons/hi2";
+import { HiChevronDown, HiOutlineSparkles, HiOutlineUserGroup, HiCodeBracket } from "react-icons/hi2";
 
 const FAQS = [
   {
@@ -27,94 +27,114 @@ const FAQS = [
   },
 ];
 
-/**
- * Decorative 5-layer stack next to the FAQ list:
- * 1. Dot-grid pattern (back)
- * 2. Soft color glow blob
- * 3. Main photo card
- * 4. Floating "rating" chip
- * 5. Floating "users" chip
- */
 function FAQVisual() {
   return (
-    <div className="relative mx-auto h-[380px] w-full max-w-sm sm:h-[440px] lg:mx-0">
-      {/* Layer 1: Dot-grid pattern */}
+    <div className="relative mx-auto h-[380px] w-full max-w-sm sm:h-[440px] lg:mx-0 flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="absolute -left-4 -top-4 h-40 w-40 rounded-2xl opacity-60 dark:opacity-40"
+        className="absolute -left-2 -top-2 h-40 w-40 rounded-2xl opacity-40 dark:opacity-20"
         style={{
-          backgroundImage:
-            "radial-gradient(currentColor 1.5px, transparent 1.5px)",
+          backgroundImage: "radial-gradient(currentColor 1.5px, transparent 1.5px)",
           backgroundSize: "14px 14px",
           color: "#0F766E",
         }}
       />
 
-      {/* Layer 2: Soft glow blob */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.7 }}
-        className="absolute inset-6 rounded-[2rem] bg-[#0F766E]/20 dark:bg-[#14B8A6]/15 blur-2xl"
+        className="absolute inset-6 rounded-[2rem] bg-[#0F766E]/15 dark:bg-[#14B8A6]/10 blur-3xl"
       />
 
-      {/* Layer 3: Main photo card */}
       <motion.div
-        initial={{ opacity: 0, y: 30, rotate: -4 }}
-        whileInView={{ opacity: 1, y: 0, rotate: -3 }}
+        initial={{ opacity: 0, y: 20, rotate: -2 }}
+        whileInView={{ opacity: 1, y: 0, rotate: -2 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="absolute inset-4 overflow-hidden rounded-[1.75rem] shadow-[8px_8px_24px_#c7d0d8,-8px_-8px_24px_#ffffff] dark:shadow-[8px_8px_24px_#080b0f,-6px_-6px_18px_rgba(255,255,255,0.02)] border border-white/50 dark:border-white/[0.06]"
+        className="absolute inset-4 overflow-hidden rounded-[1.75rem] bg-[#EBF1F5] dark:bg-[#141B24] p-6 shadow-[4px_4px_16px_#d1d9e0,-4px_-4px_16px_#ffffff] dark:shadow-[4px_4px_16px_#080b0f,-3px_-3px_12px_rgba(255,255,255,0.01)] border border-white/40 dark:border-white/[0.05] flex flex-col justify-between"
       >
-        <img
-          src="https://picsum.photos/seed/promptverse-faq/600/720"
-          alt="Creator working with AI prompts"
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0F141C]/50 via-transparent to-transparent" />
+        <div>
+          <div className="flex items-center justify-between pb-4 border-b border-slate-300/40 dark:border-slate-800">
+            <div className="flex items-center gap-2">
+              <span className="h-3 w-3 rounded-full bg-rose-500/80 inline-block" />
+              <span className="h-3 w-3 rounded-full bg-amber-500/80 inline-block" />
+              <span className="h-3 w-3 rounded-full bg-emerald-500/80 inline-block" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#0F766E] dark:text-[#14B8A6]">
+              PromptVerse OS
+            </span>
+          </div>
+
+          <div className="mt-6 space-y-3">
+            <div className="flex items-center gap-2 text-[#0F766E] dark:text-[#14B8A6]">
+              <HiCodeBracket size={18} />
+              <span className="text-xs font-bold tracking-wider">AI_OPTIMIZER.prpt</span>
+            </div>
+            <div className="rounded-xl bg-white/60 dark:bg-[#0F141C]/60 p-4 font-mono text-xs text-[#1E293B] dark:text-slate-300 shadow-inner">
+              <p className="text-emerald-600 dark:text-emerald-400">&gt; System.init(&#123; mode: "creative" &#125;)</p>
+              <p className="mt-2 text-slate-500 dark:text-slate-400">// Generating context-aware responses...</p>
+              <motion.div
+                animate={{ opacity: [0.3, 1, 0.3] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="mt-3 h-2 w-3/4 rounded bg-[#0F766E]/30 dark:bg-[#14B8A6]/30"
+              />
+              <motion.div
+                animate={{ opacity: [1, 0.3, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="mt-2 h-2 w-1/2 rounded bg-[#0F766E]/20 dark:bg-[#14B8A6]/20"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-xl bg-white/40 dark:bg-[#0F141C]/40 p-3 flex items-center justify-between">
+          <span className="text-xs font-semibold text-[#64748B] dark:text-slate-400">Status</span>
+          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" /> Live & Ready
+          </span>
+        </div>
       </motion.div>
 
-      {/* Layer 4: Floating rating chip */}
       <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0, y: [0, -10, 0] }}
+        initial={{ opacity: 0, x: -15 }}
+        animate={{ opacity: 1, x: 0, y: [0, -8, 0] }}
         transition={{
           opacity: { duration: 0.5, delay: 0.3 },
           x: { duration: 0.5, delay: 0.3 },
           y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
         }}
-        className="absolute -right-4 top-8 flex items-center gap-2 rounded-2xl bg-[#EBF1F5] dark:bg-[#141B24] px-4 py-3 shadow-[5px_5px_14px_#c7d0d8,-5px_-5px_14px_#ffffff] dark:shadow-[5px_5px_14px_#080b0f,-4px_-4px_10px_rgba(255,255,255,0.02)] border border-white/60 dark:border-white/[0.06]"
+        className="absolute -right-2 top-10 flex items-center gap-2 rounded-2xl bg-[#EBF1F5] dark:bg-[#141B24] px-4 py-2.5 shadow-[3px_3px_10px_#d1d9e0,-3px_-3px_10px_#ffffff] dark:shadow-[3px_3px_10px_#080b0f,-3px_-3px_8px_rgba(255,255,255,0.01)] border border-white/50 dark:border-white/[0.05]"
       >
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#0F766E]/10 dark:bg-[#14B8A6]/15 text-[#0F766E] dark:text-[#14B8A6]">
-          <HiOutlineSparkles size={16} />
+        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0F766E]/10 dark:bg-[#14B8A6]/15 text-[#0F766E] dark:text-[#14B8A6]">
+          <HiOutlineSparkles size={14} />
         </div>
         <div>
           <p className="text-xs font-extrabold text-[#1E293B] dark:text-[#F8FAFC]">4.9 / 5</p>
-          <p className="text-[10px] font-semibold text-[#64748B] dark:text-[#94A3B8]">Avg. rating</p>
+          <p className="text-[9px] font-semibold text-[#64748B] dark:text-[#94A3B8]">Avg. rating</p>
         </div>
       </motion.div>
 
-      {/* Layer 5: Floating users chip */}
       <motion.div
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0, y: [0, 10, 0] }}
+        initial={{ opacity: 0, x: 15 }}
+        animate={{ opacity: 1, x: 0, y: [0, 8, 0] }}
         transition={{
           opacity: { duration: 0.5, delay: 0.45 },
           x: { duration: 0.5, delay: 0.45 },
           y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
         }}
-        className="absolute -left-6 bottom-6 flex items-center gap-2 rounded-2xl bg-[#EBF1F5] dark:bg-[#141B24] px-4 py-3 shadow-[5px_5px_14px_#c7d0d8,-5px_-5px_14px_#ffffff] dark:shadow-[5px_5px_14px_#080b0f,-4px_-4px_10px_rgba(255,255,255,0.02)] border border-white/60 dark:border-white/[0.06]"
+        className="absolute -left-4 bottom-10 flex items-center gap-2 rounded-2xl bg-[#EBF1F5] dark:bg-[#141B24] px-4 py-2.5 shadow-[3px_3px_10px_#d1d9e0,-3px_-3px_10px_#ffffff] dark:shadow-[3px_3px_10px_#080b0f,-3px_-3px_8px_rgba(255,255,255,0.01)] border border-white/50 dark:border-white/[0.05]"
       >
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#0F766E]/10 dark:bg-[#14B8A6]/15 text-[#0F766E] dark:text-[#14B8A6]">
-          <HiOutlineUserGroup size={16} />
+        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0F766E]/10 dark:bg-[#14B8A6]/15 text-[#0F766E] dark:text-[#14B8A6]">
+          <HiOutlineUserGroup size={14} />
         </div>
         <div>
           <p className="text-xs font-extrabold text-[#1E293B] dark:text-[#F8FAFC]">12,500+</p>
-          <p className="text-[10px] font-semibold text-[#64748B] dark:text-[#94A3B8]">Happy users</p>
+          <p className="text-[9px] font-semibold text-[#64748B] dark:text-[#94A3B8]">Happy users</p>
         </div>
       </motion.div>
     </div>
@@ -126,12 +146,14 @@ export default function FAQSection() {
 
   return (
     <section className="relative overflow-hidden bg-[#EBF1F5] dark:bg-[#0F141C] py-20 lg:py-28 transition-colors duration-300">
-      <div className="relative mx-auto max-w-6xl px-6 z-10">
+      {/* Updated to max-w-7xl to match Featured Prompts */}
+      <div className="relative mx-auto max-w-7xl px-6 z-10">
+        
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-14 flex flex-col items-center text-center lg:hidden"
+          className="mb-14 flex flex-col items-center text-center"
         >
           <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#EBF1F5] dark:bg-[#141B24] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#0F766E] dark:text-[#14B8A6] shadow-[2px_2px_5px_#d1d9e0,-2px_-2px_5px_#ffffff] dark:shadow-[2px_2px_5px_#080b0f,-2px_-2px_5px_rgba(255,255,255,0.03)] border border-white/50 dark:border-white/[0.06]">
             FAQ
@@ -147,32 +169,11 @@ export default function FAQSection() {
         </motion.div>
 
         <div className="grid gap-16 lg:grid-cols-2 lg:items-center lg:gap-12">
-          {/* Left: 5-layer visual */}
-          <div className="hidden lg:block">
+          <div>
             <FAQVisual />
           </div>
 
-          {/* Right: FAQ list */}
           <div>
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mb-10 hidden text-left lg:block"
-            >
-              <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#EBF1F5] dark:bg-[#141B24] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#0F766E] dark:text-[#14B8A6] shadow-[2px_2px_5px_#d1d9e0,-2px_-2px_5px_#ffffff] dark:shadow-[2px_2px_5px_#080b0f,-2px_-2px_5px_rgba(255,255,255,0.03)] border border-white/50 dark:border-white/[0.06]">
-                FAQ
-              </span>
-
-              <h2 className="text-3xl font-extrabold tracking-tight text-[#1E293B] dark:text-[#F8FAFC] sm:text-4xl leading-tight">
-                Got Questions?
-              </h2>
-
-              <p className="mt-4 max-w-md text-sm sm:text-base leading-relaxed text-[#64748B] dark:text-[#94A3B8] font-medium">
-                Everything you need to know before you dive in.
-              </p>
-            </motion.div>
-
             <div className="space-y-4">
               {FAQS.map((item, i) => {
                 const isOpen = openIndex === i;

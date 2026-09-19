@@ -57,7 +57,9 @@ const CATEGORIES = [
 export default function CategoriesShowcase() {
   return (
     <section className="relative overflow-hidden bg-[#EBF1F5] dark:bg-[#0F141C] py-20 lg:py-28 transition-colors duration-300">
+      {/* Updated to max-w-7xl to match the rest of the sections */}
       <div className="relative mx-auto max-w-7xl px-6 z-10">
+        
         {/* Section Heading */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}

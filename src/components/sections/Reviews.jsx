@@ -36,12 +36,10 @@ export default function CustomerReviews() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Duplicate reviews array to create a seamless infinite loop effect
   const duplicatedReviews = [...reviews, ...reviews, ...reviews];
 
   return (
     <section className="relative overflow-hidden bg-[#EBF1F5] dark:bg-[#0F141C] py-20 lg:py-28 transition-colors duration-300">
-      {/* Standard Style Tag for Marquee Animation */}
       <style>{`
         @keyframes scrollMarquee {
           0% {
@@ -61,8 +59,9 @@ export default function CustomerReviews() {
         }
       `}</style>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
-        {/* Heading Section */}
+      {/* Updated to max-w-7xl to match Featured Prompts */}
+      <div className="relative mx-auto max-w-7xl px-6 z-10">
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -83,7 +82,6 @@ export default function CustomerReviews() {
           </p>
         </motion.div>
 
-        {/* Loading State */}
         {loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="px-6 py-3 rounded-full bg-[#EBF1F5] dark:bg-[#141B24] shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#080b0f,inset_-2px_-2px_4px_rgba(255,255,255,0.02)] text-xs font-bold text-[#0F766E] dark:text-[#14B8A6] animate-pulse">
@@ -95,7 +93,6 @@ export default function CustomerReviews() {
             No reviews yet.
           </p>
         ) : (
-          /* Infinite Scrolling Carousel Container */
           <div className="relative w-full overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
             <div className="marquee-container gap-6 py-4">
               {duplicatedReviews.map((review, i) => (
@@ -104,7 +101,6 @@ export default function CustomerReviews() {
                   className="w-[320px] sm:w-[380px] shrink-0 rounded-3xl bg-[#EBF1F5] dark:bg-[#141B24] p-8 shadow-[6px_6px_16px_#d1d9e0,-6px_-6px_16px_#ffffff] dark:shadow-[6px_6px_16px_#080b0f,-4px_-4px_12px_rgba(255,255,255,0.02)] border border-white/40 dark:border-white/[0.06] flex flex-col justify-between"
                 >
                   <div>
-                    {/* Quote Icon */}
                     <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#EBF1F5] dark:bg-[#0F141C] text-xl font-black text-[#0F766E] dark:text-[#14B8A6] shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#080b0f,inset_-2px_-2px_4px_rgba(255,255,255,0.02)] border border-white/30 dark:border-white/[0.06]">
                       "
                     </div>
