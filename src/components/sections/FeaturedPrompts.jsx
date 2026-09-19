@@ -60,7 +60,7 @@ export default function FeaturedPrompts() {
         <div className="mb-16 flex flex-col items-center text-center">
           {/* Neumorphic Badge */}
           <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#EBF1F5] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#0F766E] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] border border-white/60">
-            ✨ Featured Collection
+            Featured Collection
           </span>
 
           <h2 className="text-3xl font-extrabold tracking-tight text-[#1E293B] sm:text-4xl lg:text-5xl">

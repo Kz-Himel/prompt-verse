@@ -72,7 +72,7 @@ export default function BannerSection() {
               AI-Powered
             </span>
             <span className="flex items-center gap-1.5 font-semibold tracking-tight text-[#64748B]">
-              🚀 #1 Marketplace for AI Prompts
+              #1 Marketplace for AI Prompts
               <ArrowUpRight className="h-3.5 w-3.5 text-[#0F766E]" />
             </span>
           </motion.div>

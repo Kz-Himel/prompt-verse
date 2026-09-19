@@ -35,7 +35,7 @@ export default function TopCreators() {
         >
           {/* Neumorphic Badge */}
           <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#EBF1F5] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#0F766E] shadow-[2px_2px_5px_#d1d9e0,-2px_-2px_5px_#ffffff] border border-white/50">
-            🏆 Top Creators
+            Top Creators
           </span>
 
           <h2 className="text-3xl font-extrabold tracking-tight text-[#1E293B] sm:text-4xl lg:text-5xl leading-tight">
