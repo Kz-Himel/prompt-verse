@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 const StarRating = ({ rating }) => (
   <div className="flex gap-1">
@@ -19,15 +18,9 @@ const StarRating = ({ rating }) => (
   </div>
 );
 
-const AUTOPLAY_DELAY = 5000;
-
 export default function CustomerReviews() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [index, setIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
-  const [paused, setPaused] = useState(false);
-  const timerRef = useRef(null);
 
   useEffect(() => {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -43,41 +36,32 @@ export default function CustomerReviews() {
       .finally(() => setLoading(false));
   }, []);
 
-  const goTo = useCallback(
-    (nextIndex, dir) => {
-      if (!reviews.length) return;
-      setDirection(dir);
-      setIndex(((nextIndex % reviews.length) + reviews.length) % reviews.length);
-    },
-    [reviews.length]
-  );
-
-  const next = useCallback(() => goTo(index + 1, 1), [goTo, index]);
-  const prev = useCallback(() => goTo(index - 1, -1), [goTo, index]);
-
-  // Autoplay
-  useEffect(() => {
-    if (paused || reviews.length <= 1) return;
-
-    timerRef.current = setInterval(() => {
-      setIndex((prevIndex) => (prevIndex + 1) % reviews.length);
-      setDirection(1);
-    }, AUTOPLAY_DELAY);
-
-    return () => clearInterval(timerRef.current);
-  }, [paused, reviews.length]);
-
-  const slideVariants = {
-    enter: (dir) => ({ x: dir > 0 ? 60 : -60, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (dir) => ({ x: dir > 0 ? -60 : 60, opacity: 0 }),
-  };
-
-  const active = reviews[index];
+  // Duplicate reviews array to create a seamless infinite loop effect
+  const duplicatedReviews = [...reviews, ...reviews, ...reviews];
 
   return (
     <section className="relative overflow-hidden bg-[#EBF1F5] dark:bg-[#0F141C] py-20 lg:py-28 transition-colors duration-300">
-      <div className="relative z-10 mx-auto max-w-4xl px-6">
+      {/* Standard Style Tag for Marquee Animation */}
+      <style>{`
+        @keyframes scrollMarquee {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-33.333%);
+          }
+        }
+        .marquee-container {
+          display: flex;
+          width: max-content;
+          animation: scrollMarquee 35s linear infinite;
+        }
+        .marquee-container:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-6">
         {/* Heading Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -111,97 +95,50 @@ export default function CustomerReviews() {
             No reviews yet.
           </p>
         ) : (
-          /* Carousel */
-          <div
-            className="relative"
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-          >
-            <div className="relative overflow-hidden rounded-3xl bg-[#EBF1F5] dark:bg-[#141B24] px-6 py-10 sm:px-12 sm:py-14 shadow-[6px_6px_16px_#d1d9e0,-6px_-6px_16px_#ffffff] dark:shadow-[6px_6px_16px_#080b0f,-4px_-4px_12px_rgba(255,255,255,0.02)] border border-white/40 dark:border-white/[0.06]">
-              <AnimatePresence mode="wait" custom={direction}>
-                <motion.div
-                  key={index}
-                  custom={direction}
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.35, ease: "easeInOut" }}
-                  className="flex flex-col items-center text-center"
+          /* Infinite Scrolling Carousel Container */
+          <div className="relative w-full overflow-hidden [mask-image:_linear-gradient(to_right,transparent_0,_black_128px,_black_calc(100%-128px),transparent_100%)]">
+            <div className="marquee-container gap-6 py-4">
+              {duplicatedReviews.map((review, i) => (
+                <div
+                  key={i}
+                  className="w-[320px] sm:w-[380px] shrink-0 rounded-3xl bg-[#EBF1F5] dark:bg-[#141B24] p-8 shadow-[6px_6px_16px_#d1d9e0,-6px_-6px_16px_#ffffff] dark:shadow-[6px_6px_16px_#080b0f,-4px_-4px_12px_rgba(255,255,255,0.02)] border border-white/40 dark:border-white/[0.06] flex flex-col justify-between"
                 >
-                  {/* Quote Icon */}
-                  <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EBF1F5] dark:bg-[#0F141C] text-2xl font-black text-[#0F766E] dark:text-[#14B8A6] shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#080b0f,inset_-2px_-2px_4px_rgba(255,255,255,0.02)] border border-white/30 dark:border-white/[0.06]">
-                    "
-                  </div>
-
-                  <p className="max-w-xl text-sm sm:text-lg font-medium leading-relaxed text-[#1E293B] dark:text-[#F8FAFC]">
-                    "{active.text}"
-                  </p>
-
-                  <div className="mt-6">
-                    <StarRating rating={active.rating} />
-                  </div>
-
-                  <div className="mt-6 flex items-center gap-3.5">
-                    <div
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EBF1F5] dark:bg-[#0F141C] text-xs font-black shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#080b0f,inset_-2px_-2px_4px_rgba(255,255,255,0.02)] border border-white/30 dark:border-white/[0.06]"
-                      style={{ color: active.color || "#0F766E" }}
-                    >
-                      {active.initials}
+                  <div>
+                    {/* Quote Icon */}
+                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#EBF1F5] dark:bg-[#0F141C] text-xl font-black text-[#0F766E] dark:text-[#14B8A6] shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#080b0f,inset_-2px_-2px_4px_rgba(255,255,255,0.02)] border border-white/30 dark:border-white/[0.06]">
+                      "
                     </div>
-                    <div className="text-left">
-                      <h4 className="text-sm font-extrabold text-[#1E293B] dark:text-[#F8FAFC]">
-                        {active.name}
-                      </h4>
-                      <p className="text-xs font-semibold text-[#64748B] dark:text-[#94A3B8]">
-                        {active.role}
-                      </p>
+
+                    <p className="text-sm sm:text-base font-medium leading-relaxed text-[#1E293B] dark:text-[#F8FAFC] line-clamp-4">
+                      "{review.text}"
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="mt-6">
+                      <StarRating rating={review.rating} />
+                    </div>
+
+                    <div className="mt-4 flex items-center gap-3.5 pt-4 border-t border-slate-300/40 dark:border-slate-800">
+                      <div
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EBF1F5] dark:bg-[#0F141C] text-xs font-black shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#080b0f,inset_-2px_-2px_4px_rgba(255,255,255,0.02)] border border-white/30 dark:border-white/[0.06]"
+                        style={{ color: review.color || "#0F766E" }}
+                      >
+                        {review.initials}
+                      </div>
+                      <div className="text-left overflow-hidden">
+                        <h4 className="text-sm font-extrabold text-[#1E293B] dark:text-[#F8FAFC] truncate">
+                          {review.name}
+                        </h4>
+                        <p className="text-xs font-semibold text-[#64748B] dark:text-[#94A3B8] truncate">
+                          {review.role}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </motion.div>
-              </AnimatePresence>
+                </div>
+              ))}
             </div>
-
-            {/* Prev / Next Buttons */}
-            {reviews.length > 1 && (
-              <>
-                <button
-                  type="button"
-                  onClick={prev}
-                  aria-label="Previous review"
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-5 flex h-10 w-10 items-center justify-center rounded-full bg-[#EBF1F5] dark:bg-[#141B24] text-[#64748B] dark:text-[#94A3B8] shadow-[3px_3px_8px_#d1d9e0,-3px_-3px_8px_#ffffff] dark:shadow-[3px_3px_8px_#080b0f,-3px_-3px_8px_rgba(255,255,255,0.02)] border border-white/40 dark:border-white/[0.06] hover:text-[#0F766E] dark:hover:text-[#14B8A6] transition-colors active:scale-90"
-                >
-                  <HiChevronLeft size={20} />
-                </button>
-                <button
-                  type="button"
-                  onClick={next}
-                  aria-label="Next review"
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-5 flex h-10 w-10 items-center justify-center rounded-full bg-[#EBF1F5] dark:bg-[#141B24] text-[#64748B] dark:text-[#94A3B8] shadow-[3px_3px_8px_#d1d9e0,-3px_-3px_8px_#ffffff] dark:shadow-[3px_3px_8px_#080b0f,-3px_-3px_8px_rgba(255,255,255,0.02)] border border-white/40 dark:border-white/[0.06] hover:text-[#0F766E] dark:hover:text-[#14B8A6] transition-colors active:scale-90"
-                >
-                  <HiChevronRight size={20} />
-                </button>
-              </>
-            )}
-
-            {/* Dots */}
-            {reviews.length > 1 && (
-              <div className="mt-8 flex items-center justify-center gap-2">
-                {reviews.map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    aria-label={`Go to review ${i + 1}`}
-                    onClick={() => goTo(i, i > index ? 1 : -1)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      i === index
-                        ? "w-6 bg-[#0F766E] dark:bg-[#14B8A6]"
-                        : "w-2 bg-[#64748B]/30 dark:bg-[#94A3B8]/30"
-                    }`}
-                  />
-                ))}
-              </div>
-            )}
           </div>
         )}
       </div>
