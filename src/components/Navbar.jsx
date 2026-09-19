@@ -13,15 +13,18 @@ import {
   HiOutlineArrowRightOnRectangle,
   HiOutlineMagnifyingGlass,
   HiOutlineSun,
+  HiOutlineMoon,
   HiOutlineBell,
 } from "react-icons/hi2";
 import { useSession, signOut } from "@/lib/auth-client";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
   const { data: session, isPending } = useSession();
+  const { theme, toggleTheme } = useTheme();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -131,8 +134,13 @@ export default function Navbar() {
 
         {/* Desktop Controls & User Profile */}
         <div className="hidden items-center gap-3 md:flex">
-          <button className="w-9 h-9 rounded-full bg-[#EBF1F5] flex items-center justify-center text-[#64748B] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] hover:text-[#1E293B] active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff]">
-            <HiOutlineSun size={18} />
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            className="w-9 h-9 rounded-full bg-[#EBF1F5] dark:bg-[#1B242F] flex items-center justify-center text-[#64748B] dark:text-[#94A3B8] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] dark:shadow-[3px_3px_6px_#080b0f,-3px_-3px_6px_rgba(255,255,255,0.03)] hover:text-[#1E293B] dark:hover:text-white active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff] transition-colors"
+          >
+            {theme === "dark" ? <HiOutlineSun size={18} /> : <HiOutlineMoon size={18} />}
           </button>
 
           <button className="w-9 h-9 rounded-full bg-[#EBF1F5] flex items-center justify-center text-[#64748B] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] hover:text-[#1E293B] active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff]">

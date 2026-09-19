@@ -1,5 +1,6 @@
 @import "tailwindcss";
-@import "@heroui/styles"; 
+@import "@heroui/styles";
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
   /* PromptVerse Light Theme - Ultra Minimal Neumorphic Soft UI */
