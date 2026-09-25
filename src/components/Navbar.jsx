@@ -106,7 +106,7 @@ export default function Navbar() {
         </Link>
 
         {/* Search Bar - Gawter Moto Inset Shadow */}
-        <div className="hidden lg:flex relative flex-1 max-w-md mx-4">
+        {/* <div className="hidden lg:flex relative flex-1 max-w-md mx-4">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B] dark:text-[#94A3B8]">
             <HiOutlineMagnifyingGlass size={18} />
           </div>
@@ -120,7 +120,7 @@ export default function Navbar() {
               Ctrl K
             </span>
           </div>
-        </div>
+        </div> */}
 
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-2 md:flex">
