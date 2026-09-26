@@ -7,6 +7,7 @@ import { RiSparklingFill } from "react-icons/ri";
 import { toast } from "react-toastify";
 
 import { useSession, authClient } from "@/lib/auth-client";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 // Modular Sub-components
 import BasicInfoSection from "../components/add-prompt/BasicInfoSection";
@@ -188,17 +189,22 @@ export default function AddPromptPage({
   // Loading Screen
   if (status === "loading" || (userEmail && loadingCount)) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-white">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-violet-600"></div>
-      </div>
+      <LoadingSpinner
+        text="Loading Editor..."
+        subtext="Preparing the prompt builder"
+      />
     );
   }
 
   // Auth Check
   if (!session) {
     return (
-      <div className="flex items-center justify-center p-6 h-full bg-white min-h-screen">
-        <p className="text-slate-600">Please log in to add a prompt.</p>
+      <div className="w-full flex items-center justify-center p-6 min-h-[350px]">
+        <div className="neu-card p-8 rounded-2xl max-w-md w-full text-center space-y-2 border border-black/5 dark:border-white/5">
+          <p className="text-[var(--text)] font-semibold text-sm">
+            Please log in to add a prompt.
+          </p>
+        </div>
       </div>
     );
   }
@@ -216,7 +222,7 @@ export default function AddPromptPage({
 
   // Main Form View
   return (
-    <div className="py-6 px-4 sm:px-6 lg:px-8 bg-white min-h-screen">
+    <div className="py-6 px-4 sm:px-6 lg:px-8 min-h-screen">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <motion.div
@@ -224,18 +230,18 @@ export default function AddPromptPage({
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="flex items-center gap-2 text-slate-400 text-xs mb-3">
+          <div className="flex items-center gap-2 text-[var(--text-muted)] text-xs mb-3 font-medium">
             <span>Dashboard</span>
             <span>/</span>
-            <span className="text-slate-600">Add Prompt</span>
+            <span className="text-[var(--text)]">Add Prompt</span>
           </div>
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between flex-wrap gap-3">
             <div>
-              <h1 className="text-slate-800 text-2xl font-bold tracking-tight flex items-center gap-2">
-                <RiSparklingFill className="text-violet-600" />
+              <h1 className="text-[var(--text)] text-2xl font-bold tracking-tight flex items-center gap-2">
+                <RiSparklingFill className="text-[var(--primary)]" />
                 Add New Prompt
               </h1>
-              <p className="text-slate-500 text-sm mt-1">
+              <p className="text-[var(--text-muted)] text-sm mt-1">
                 {isUser
                   ? `Free plan · ${currentCount} / ${FREE_USER_LIMIT} prompts used`
                   : "Creator plan · Unlimited prompts"}
@@ -243,7 +249,7 @@ export default function AddPromptPage({
             </div>
 
             {isUser && (
-              <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-medium px-3 py-1.5 rounded-full">
+              <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 text-xs font-semibold px-3 py-1.5 rounded-full">
                 <FiAlertCircle className="text-xs" />
                 {Math.max(0, FREE_USER_LIMIT - currentCount)} slots left
               </div>
@@ -256,17 +262,17 @@ export default function AddPromptPage({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.08 }}
-          className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden"
+          className="neu-card rounded-2xl overflow-hidden border border-black/5 dark:border-white/5"
         >
           {/* Section 1: Basic Info */}
           <BasicInfoSection form={form} errors={errors} set={set} />
-          
-          <div className="h-px bg-slate-100" />
+
+          <div className="h-px bg-black/5 dark:bg-white/5" />
 
           {/* Section 2: Content */}
           <ContentSection form={form} errors={errors} set={set} />
-          
-          <div className="h-px bg-slate-100" />
+
+          <div className="h-px bg-black/5 dark:bg-white/5" />
 
           {/* Section 3: Tags & Difficulty */}
           <TagsSection
@@ -279,7 +285,7 @@ export default function AddPromptPage({
             removeTag={removeTag}
           />
 
-          <div className="h-px bg-slate-100" />
+          <div className="h-px bg-black/5 dark:bg-white/5" />
 
           {/* Section 4: Thumbnail */}
           <ThumbnailSection
@@ -291,7 +297,7 @@ export default function AddPromptPage({
             handleThumbnail={handleThumbnail}
           />
 
-          <div className="h-px bg-slate-100" />
+          <div className="h-px bg-black/5 dark:bg-white/5" />
 
           {/* Section 5: Visibility */}
           <VisibilitySection form={form} set={set} />
@@ -300,7 +306,7 @@ export default function AddPromptPage({
           <div className="px-6 pb-6 pt-2 flex items-center gap-3">
             <button
               type="button"
-              className="flex-1 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium py-3 rounded-xl transition-all duration-200 text-sm shadow-sm"
+              className="flex-1 neu-input hover:opacity-90 text-[var(--text)] font-medium py-3 rounded-xl transition-all duration-200 text-sm cursor-pointer"
             >
               Save as Draft
             </button>
@@ -308,7 +314,7 @@ export default function AddPromptPage({
               type="button"
               disabled={isSubmitting}
               onClick={handleSubmit}
-              className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 text-white font-semibold py-3 rounded-xl transition-all duration-200 text-sm flex items-center justify-center gap-2 shadow-md shadow-violet-500/10 disabled:opacity-50"
+              className="flex-1 neu-button-primary font-semibold py-3 rounded-xl text-sm flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
             >
               {isSubmitting ? (
                 "Publishing..."
@@ -320,7 +326,7 @@ export default function AddPromptPage({
             </button>
           </div>
         </motion.div>
-        
+
         <div className="h-12" />
       </div>
     </div>
