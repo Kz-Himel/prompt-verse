@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Spinner } from "@heroui/react";
+import LoadingSpinner from "../LoadingSpinner";
 import { ArrowUpRight } from "@gravity-ui/icons";
 import PromptCard from "../PromptCard";
 import Link from "next/link";
@@ -89,22 +89,13 @@ export default function FeaturedPrompts() {
 
         {/* Loading Handle */}
         {loading && (
-          <div className="flex justify-center items-center py-20">
-            <Spinner
-              size="lg"
-              className={{
-                circle1: "border-b-[#0F766E]",
-                circle2: "border-b-[#0F766E]",
-              }}
-              label="Loading Featured Prompts..."
-            />
-          </div>
+          <LoadingSpinner />
         )}
 
         {/* Error Handle */}
         {error && (
           <div className="mx-auto max-w-md rounded-2xl bg-[#EBF1F5] p-6 text-center text-red-500 font-bold shadow-[inset_3px_3px_6px_#c7d0d8,inset_-3px_-3px_6px_#ffffff] border border-white/40">
-            ❌ {error}. Please try again later.
+            {error}. Please try again later.
           </div>
         )}
 
