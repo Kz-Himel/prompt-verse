@@ -1,21 +1,70 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { HiCheck, HiX } from "react-icons/hi";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client"; 
+import { authClient } from "@/lib/auth-client";
 import { FiAward, FiCheckCircle, FiZap } from "react-icons/fi";
 
 export default function PricingPage() {
   const router = useRouter();
-  
+
   const { data: session, isPending } = authClient.useSession();
-  
-  const isPremiumUser = session?.user?.status === "Premium";
+  const currentUser = session?.user;
+
+  const [subscription, setSubscription] = useState("Free");
+  const [loadingStatus, setLoadingStatus] = useState(true);
+
+  useEffect(() => {
+    const fetchSubscriptionStatus = async () => {
+      if (!currentUser?.email) {
+        setLoadingStatus(false);
+        return;
+      }
+
+      try {
+        const tokenRes = await authClient.token?.();
+        const token = tokenRes?.data?.token;
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/user/dashboard-stats`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const resData = await res.json();
+
+        if (res.ok && resData.success && resData.stats?.subscription) {
+          setSubscription(resData.stats.subscription);
+        }
+      } catch (err) {
+        console.error("Failed to fetch subscription status:", err);
+      } finally {
+        setLoadingStatus(false);
+      }
+    };
+
+    if (!isPending) fetchSubscriptionStatus();
+  }, [currentUser?.email, isPending]);
+
+  // Works for both "user" and "creator" roles — premium/creator/unlimited subscription all count
+  const isPremiumUser =
+    subscription.toLowerCase() === "premium" ||
+    subscription.toLowerCase() === "creator" ||
+    subscription.toLowerCase() === "unlimited" ||
+    currentUser?.role === "creator";
+
+  const isPending2 = isPending || loadingStatus;
 
   const handleUpgrade = (e) => {
     e.preventDefault();
-    if (isPremiumUser) return; 
-    
+    if (isPremiumUser) return;
+
     router.push("/checkout?plan=pro&price=5");
   };
 
@@ -86,13 +135,13 @@ export default function PricingPage() {
             <div className="pt-8">
               <button 
                 className={`w-full font-semibold py-3 px-4 rounded-xl text-sm transition-all text-center ${
-                  !isPremiumUser && !isPending
+                  !isPremiumUser && !isPending2
                     ? "neu-card text-[var(--text)] font-bold hover:text-[var(--primary)]"
                     : "neu-input text-[var(--text-muted)] cursor-not-allowed opacity-70"
                 }`}
-                disabled={isPremiumUser || isPending}
+                disabled={isPremiumUser || isPending2}
               >
-                {!isPremiumUser && !isPending ? "Your Active Plan" : "Starter Mode"}
+                {!isPremiumUser && !isPending2 ? "Your Active Plan" : "Starter Mode"}
               </button>
             </div>
           </div>
@@ -161,7 +210,7 @@ export default function PricingPage() {
             </div>
 
             <div className="pt-8">
-              {isPending ? (
+              {isPending2 ? (
                 <button disabled className="w-full font-bold py-3 px-4 neu-input text-[var(--text-muted)] text-sm cursor-wait text-center">
                   Checking Account Status...
                 </button>
