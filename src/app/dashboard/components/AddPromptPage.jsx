@@ -283,6 +283,8 @@ export default function AddPromptPage({
 
           {/* Section 4: Thumbnail */}
           <ThumbnailSection
+            form={form}
+            set={set}
             thumbnailPreview={thumbnailPreview}
             setThumbnail={setThumbnail}
             setThumbnailPreview={setThumbnailPreview}
