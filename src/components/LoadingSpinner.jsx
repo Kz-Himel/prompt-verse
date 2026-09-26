@@ -21,7 +21,6 @@ export default function AppLoader({
     <div className="flex flex-col items-center justify-center gap-6 p-6">
       {/* Neumorphic Logo & Outer Orbit Container */}
       <div className="relative flex items-center justify-center">
-        
         {/* 1. Outer Rotating Gradient Spinner Ring */}
         <motion.div
           animate={{ rotate: 360 }}
@@ -40,14 +39,35 @@ export default function AppLoader({
         />
 
         {/* 3. Center Neumorphic Logo Card */}
-        <div className={`${currentSize.box} neu-card rounded-2xl flex items-center justify-center relative z-10 border border-[var(--border)]`}>
+        <div
+          className={`${currentSize.box} neu-card rounded-2xl flex items-center justify-center relative z-10 border border-[var(--border)]`}
+        >
           <motion.div
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
             className="text-[var(--primary)]"
           >
-            {/* এখানে তোমার নিজস্ব ব্র্যান্ড লোগো/SVG বসাতে পারো */}
-            <FiCpu className={`${currentSize.icon} drop-shadow-sm`} />
+            {/* Logo */}
+            <svg
+              className={`${currentSize.icon} drop-shadow-sm`}
+              width="1em"
+              height="1em"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M8 6l6 6-6 6" />
+              <line x1="16" y1="17" x2="16" y2="17" strokeWidth="3" />
+              <path
+                d="M19 6.5l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7.7-1.6z"
+                fill="currentColor"
+                fillOpacity="0.6"
+                stroke="none"
+              />
+            </svg>
           </motion.div>
         </div>
       </div>
