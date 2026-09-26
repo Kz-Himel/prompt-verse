@@ -35,12 +35,28 @@ export default function Footer() {
           {/* Logo & Description Column */}
           <div className="lg:col-span-1 space-y-4">
             <div className="flex items-center space-x-2.5">
-              {/* <div className="w-9 h-9 rounded-xl bg-[#EBF1F5] flex items-center justify-center shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] border border-white/40">
-                <svg className="w-5 h-5 text-[#0F766E]" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
-                  <polygon points="12,6.5 13.5,9.5 16.8,9.5 14.2,11.5 15.2,14.8 12,12.8 8.8,14.8 9.8,11.5 7.2,9.5 10.5,9.5" fill="#0F766E" />
-                </svg>
-              </div> */}
+              <div className="w-9 h-9 rounded-xl bg-[#EBF1F5] flex items-center justify-center shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] border border-white/40">
+                <div className="relative w-9 h-9 rounded-xl bg-[#EBF1F5] dark:bg-[#141B24] flex items-center justify-center shadow-[4px_4px_8px_#c7d0d8,-4px_-4px_8px_#ffffff] dark:shadow-[4px_4px_8px_#080b0f,-4px_-4px_8px_rgba(255,255,255,0.03)] border border-white/60 dark:border-white/[0.08] transition-transform duration-300 group-hover:scale-105">
+                  <svg
+                    className="w-5 h-5 text-[#0F766E] dark:text-[#14B8A6] drop-shadow-sm"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M8 6l6 6-6 6" />
+                    <line x1="16" y1="17" x2="16" y2="17" strokeWidth="3" />
+                    <path
+                      d="M19 6.5l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7.7-1.6z"
+                      fill="currentColor"
+                      fillOpacity="0.6"
+                      stroke="none"
+                    />
+                  </svg>
+                </div>
+              </div>
               <h1 className="text-lg font-black tracking-tight flex items-center">
                 <span className="text-[#111827] dark:text-[#F8FAFC]">
                   Prompt

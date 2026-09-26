@@ -89,19 +89,33 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-[#EBF1F5] dark:bg-[#0F141C] border-b border-white/60 dark:border-white/[0.06] shadow-[0_4px_20px_rgba(0,0,0,0.02)] transition-colors duration-300">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8 gap-4">
-
         {/* 4. The Quantum Spark / Neural Node Matrix Logo */}
         <Link href="/" className="group flex items-center gap-3 shrink-0">
-          {/* <div className="relative w-9 h-9 rounded-xl bg-[#EBF1F5] dark:bg-[#141B24] flex items-center justify-center shadow-[4px_4px_8px_#c7d0d8,-4px_-4px_8px_#ffffff] dark:shadow-[4px_4px_8px_#080b0f,-4px_-4px_8px_rgba(255,255,255,0.03)] border border-white/60 dark:border-white/[0.08] transition-transform duration-300 group-hover:scale-105">
-            <svg className="w-5 h-5 text-[#0F766E] dark:text-[#14B8A6] drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2v20M2 12h20M5.636 5.636l12.728 12.728M5.636 18.364L18.364 5.636" className="opacity-30" />
-              <path d="M12 6l2 4 4 2-4 2-2 4-2-4-4-2 4-2 2-4z" fill="currentColor" fillOpacity="0.15" />
-              <circle cx="12" cy="12" r="2.5" fill="currentColor" />
+          <div className="relative w-9 h-9 rounded-xl bg-[#EBF1F5] dark:bg-[#141B24] flex items-center justify-center shadow-[4px_4px_8px_#c7d0d8,-4px_-4px_8px_#ffffff] dark:shadow-[4px_4px_8px_#080b0f,-4px_-4px_8px_rgba(255,255,255,0.03)] border border-white/60 dark:border-white/[0.08] transition-transform duration-300 group-hover:scale-105">
+            <svg
+              className="w-5 h-5 text-[#0F766E] dark:text-[#14B8A6] drop-shadow-sm"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M8 6l6 6-6 6" />
+              <line x1="16" y1="17" x2="16" y2="17" strokeWidth="3" />
+              <path
+                d="M19 6.5l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7.7-1.6z"
+                fill="currentColor"
+                fillOpacity="0.6"
+                stroke="none"
+              />
             </svg>
-          </div> */}
+          </div>
           <h1 className="text-lg font-black tracking-tight flex items-center">
             <span className="text-[#111827] dark:text-[#F8FAFC]">Prompt</span>
-            <span className="text-[#0F766E] dark:text-[#14B8A6] ml-[1px]">Verse</span>
+            <span className="text-[#0F766E] dark:text-[#14B8A6] ml-[1px]">
+              Verse
+            </span>
           </h1>
         </Link>
 
@@ -143,7 +157,11 @@ export default function Navbar() {
             aria-label="Toggle theme"
             className="w-9 h-9 rounded-full bg-[#EBF1F5] dark:bg-[#141B24] flex items-center justify-center text-[#64748B] dark:text-[#94A3B8] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] dark:shadow-[3px_3px_6px_#080b0f,-3px_-3px_6px_rgba(255,255,255,0.03)] border border-white/40 dark:border-white/[0.05] hover:text-[#1E293B] dark:hover:text-white active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff] transition-colors"
           >
-            {theme === "dark" ? <HiOutlineSun size={18} /> : <HiOutlineMoon size={18} />}
+            {theme === "dark" ? (
+              <HiOutlineSun size={18} />
+            ) : (
+              <HiOutlineMoon size={18} />
+            )}
           </button>
 
           <button className="w-9 h-9 rounded-full bg-[#EBF1F5] dark:bg-[#141B24] flex items-center justify-center text-[#64748B] dark:text-[#94A3B8] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] dark:shadow-[3px_3px_6px_#080b0f,-3px_-3px_6px_rgba(255,255,255,0.03)] border border-white/40 dark:border-white/[0.05] hover:text-[#1E293B] dark:hover:text-white active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff]">
@@ -175,7 +193,11 @@ export default function Navbar() {
               >
                 <Avatar
                   size="sm"
-                  src={session?.user?.image ? String(session.user.image) : undefined}
+                  src={
+                    session?.user?.image
+                      ? String(session.user.image)
+                      : undefined
+                  }
                   name={session?.user?.name || "U"}
                   className="w-7 h-7"
                 />
@@ -183,9 +205,15 @@ export default function Navbar() {
                   {session?.user?.name || "User"}
                 </span>
                 {profileOpen ? (
-                  <HiChevronUp size={14} className="text-[#64748B] dark:text-[#94A3B8]" />
+                  <HiChevronUp
+                    size={14}
+                    className="text-[#64748B] dark:text-[#94A3B8]"
+                  />
                 ) : (
-                  <HiChevronDown size={14} className="text-[#64748B] dark:text-[#94A3B8]" />
+                  <HiChevronDown
+                    size={14}
+                    className="text-[#64748B] dark:text-[#94A3B8]"
+                  />
                 )}
               </button>
 
@@ -196,7 +224,11 @@ export default function Navbar() {
                     <div className="flex items-center gap-3">
                       <Avatar
                         size="md"
-                        src={session?.user?.image ? String(session.user.image) : undefined}
+                        src={
+                          session?.user?.image
+                            ? String(session.user.image)
+                            : undefined
+                        }
                         name={session?.user?.name || "User"}
                       />
                       <div className="min-w-0">
@@ -218,7 +250,10 @@ export default function Navbar() {
                     onClick={() => setProfileOpen(false)}
                     className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] hover:bg-black/5 dark:hover:bg-white/5 transition"
                   >
-                    <HiOutlineSquares2X2 size={18} className="text-[#0F766E] dark:text-[#14B8A6]" />
+                    <HiOutlineSquares2X2
+                      size={18}
+                      className="text-[#0F766E] dark:text-[#14B8A6]"
+                    />
                     Dashboard
                   </Link>
 
@@ -297,7 +332,11 @@ export default function Navbar() {
                 <div className="flex items-center gap-3 px-4 py-2">
                   <Avatar
                     size="sm"
-                    src={session?.user?.image ? String(session.user.image) : undefined}
+                    src={
+                      session?.user?.image
+                        ? String(session.user.image)
+                        : undefined
+                    }
                     name={session?.user?.name || "U"}
                   />
                   <div className="min-w-0">
@@ -315,7 +354,10 @@ export default function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   className="flex items-center gap-3 px-4 py-2 text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC]"
                 >
-                  <HiOutlineSquares2X2 size={18} className="text-[#0F766E] dark:text-[#14B8A6]" />
+                  <HiOutlineSquares2X2
+                    size={18}
+                    className="text-[#0F766E] dark:text-[#14B8A6]"
+                  />
                   Dashboard
                 </Link>
                 <button

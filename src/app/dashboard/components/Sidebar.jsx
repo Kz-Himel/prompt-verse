@@ -4,7 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button, Drawer } from "@heroui/react";
 import { TbLayoutSidebar } from "react-icons/tb";
-import { FaGithub, FaXTwitter, FaDiscord, FaLinkedin, FaCrown } from "react-icons/fa6";
+import {
+  FaGithub,
+  FaXTwitter,
+  FaDiscord,
+  FaLinkedin,
+  FaCrown,
+} from "react-icons/fa6";
 import { FiZap } from "react-icons/fi";
 
 import { sidebarLinks } from "../data/sidebar-links";
@@ -21,7 +27,26 @@ export default function Sidebar({ role = "user" }) {
         {/* ── Brand Logo Header ── */}
         <div className="flex items-center gap-2.5 px-3 py-1.5 mb-4">
           <div className="w-8 h-8 rounded-xl bg-[var(--primary)] flex items-center justify-center text-white shadow-sm shrink-0">
-            <FiZap className="text-lg" />
+            <div className="relative w-9 h-9 rounded-xl bg-[#EBF1F5] dark:bg-[#141B24] flex items-center justify-center shadow-[4px_4px_8px_#c7d0d8,-4px_-4px_8px_#ffffff] dark:shadow-[4px_4px_8px_#080b0f,-4px_-4px_8px_rgba(255,255,255,0.03)] border border-white/60 dark:border-white/[0.08] transition-transform duration-300 group-hover:scale-105">
+              <svg
+                className="w-5 h-5 text-[#0F766E] dark:text-[#14B8A6] drop-shadow-sm"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M8 6l6 6-6 6" />
+                <line x1="16" y1="17" x2="16" y2="17" strokeWidth="3" />
+                <path
+                  d="M19 6.5l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7.7-1.6z"
+                  fill="currentColor"
+                  fillOpacity="0.6"
+                  stroke="none"
+                />
+              </svg>
+            </div>
           </div>
           <span className="text-lg font-extrabold tracking-tight text-[var(--text)]">
             PromptVerse
@@ -47,7 +72,9 @@ export default function Sidebar({ role = "user" }) {
                   }
                 `}
               >
-                <Icon className={`size-4.5 shrink-0 ${active ? "text-[var(--primary)]" : "text-[var(--text-muted)]"}`} />
+                <Icon
+                  className={`size-4.5 shrink-0 ${active ? "text-[var(--primary)]" : "text-[var(--text-muted)]"}`}
+                />
                 <span className="truncate">{item.label}</span>
               </Link>
             );
@@ -57,7 +84,6 @@ export default function Sidebar({ role = "user" }) {
 
       {/* ── Bottom Section (Promo Card & Social Footer) ── */}
       <div className="space-y-4 pt-2">
-        
         {/* Neumorphic Promo Card (শুধু ফ্রি ইউজারদের দেখাবে) */}
         {isFreeUser && (
           <div className="neu-card p-3.5 rounded-2xl flex flex-col space-y-2.5">
@@ -65,7 +91,9 @@ export default function Sidebar({ role = "user" }) {
               <FaCrown className="text-sm" />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-[var(--text)]">Go Premium</h4>
+              <h4 className="text-xs font-bold text-[var(--text)]">
+                Go Premium
+              </h4>
               <p className="text-[11px] text-[var(--text-muted)] mt-0.5 leading-tight">
                 Unlock unlimited prompts & premium features.
               </p>
@@ -82,16 +110,37 @@ export default function Sidebar({ role = "user" }) {
         {/* Social Icons & Copyright */}
         <div className="space-y-2 px-1">
           <div className="flex items-center gap-3 text-[var(--text-muted)] text-xs">
-            <a href="#" className="hover:text-[var(--primary)] transition-colors"><FaGithub /></a>
-            <a href="#" className="hover:text-[var(--primary)] transition-colors"><FaXTwitter /></a>
-            <a href="#" className="hover:text-[var(--primary)] transition-colors"><FaDiscord /></a>
-            <a href="#" className="hover:text-[var(--primary)] transition-colors"><FaLinkedin /></a>
+            <a
+              href="#"
+              className="hover:text-[var(--primary)] transition-colors"
+            >
+              <FaGithub />
+            </a>
+            <a
+              href="#"
+              className="hover:text-[var(--primary)] transition-colors"
+            >
+              <FaXTwitter />
+            </a>
+            <a
+              href="#"
+              className="hover:text-[var(--primary)] transition-colors"
+            >
+              <FaDiscord />
+            </a>
+            <a
+              href="#"
+              className="hover:text-[var(--primary)] transition-colors"
+            >
+              <FaLinkedin />
+            </a>
           </div>
           <p className="text-[10px] text-[var(--text-muted)] leading-normal">
-            © 2026 PromptVerse.<br />All rights reserved.
+            © 2026 PromptVerse.
+            <br />
+            All rights reserved.
           </p>
         </div>
-
       </div>
     </div>
   );
