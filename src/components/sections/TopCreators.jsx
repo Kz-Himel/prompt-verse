@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { FiAward, FiArrowUpRight, FiZap } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiAward, FiZap, FiChevronLeft, FiChevronRight, FiStar } from "react-icons/fi";
 
 export default function TopCreators() {
   const [creators, setCreators] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [active, setActive] = useState(0);
 
   useEffect(() => {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -22,40 +23,37 @@ export default function TopCreators() {
       .finally(() => setLoading(false));
   }, []);
 
-  const top = creators[0];
-  const rest = creators.slice(1);
-  const marqueeItems = rest.length ? [...rest, ...rest] : [];
+  const handleNext = () => {
+    if (creators.length === 0) return;
+    setActive((prev) => (prev + 1) % creators.length);
+  };
+
+  const handlePrev = () => {
+    if (creators.length === 0) return;
+    setActive((prev) => (prev - 1 + creators.length) % creators.length);
+  };
+
+  const current = creators[active];
 
   return (
-    <section className="relative overflow-hidden bg-[var(--bg)] py-24 lg:py-32">
-      {/* Background ambient glow shapes for unique atmosphere */}
+    <section className="relative overflow-hidden bg-[var(--bg)] py-20 lg:py-28 px-6">
+      {/* Background ambient glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[var(--primary)] opacity-[0.03] blur-[120px] rounded-full pointer-events-none" />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 mx-auto max-w-6xl w-full flex flex-col items-center">
         
-        {/* Editorial Heading Style */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-black/5 dark:border-white/5 pb-10"
-        >
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="flex h-2 w-2 rounded-full bg-[var(--primary)] animate-ping" />
-              <span className="text-xs font-black uppercase tracking-[0.2em] text-[var(--primary)]">
-                Elite Pioneers
-              </span>
-            </div>
-            <h2 className="text-3xl font-black tracking-tight text-[var(--text)] sm:text-4xl lg:text-5xl">
-              Architects of <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary)] to-amber-500">AI Prompting</span>
-            </h2>
-          </div>
-          <p className="max-w-sm text-sm sm:text-base leading-relaxed text-[var(--text-muted)] font-medium">
+        {/* Section Heading — WhyChooseUs এর স্টাইলের মতো হুবহু */}
+        <div className="mb-12 flex flex-col items-center text-center">
+          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--primary)] neu-card border border-black/5 dark:border-white/5">
+            Elite Pioneers
+          </span>
+          <h2 className="text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl lg:text-5xl leading-tight">
+            Architects of <span className="text-[var(--primary)]">AI Prompting</span>
+          </h2>
+          <p className="max-w-md text-sm sm:text-base font-medium leading-relaxed text-[var(--text-muted)] mt-3">
             The visionary minds crafting state-of-the-art context streams. Explore, follow, and elevate your workflow.
           </p>
-        </motion.div>
+        </div>
 
         {loading ? (
           <div className="flex justify-center items-center py-20">
@@ -64,128 +62,125 @@ export default function TopCreators() {
               <FiZap className="text-[var(--primary)] text-xl animate-pulse" />
             </div>
           </div>
-        ) : !top ? (
+        ) : !current ? (
           <div className="text-center py-12 text-sm text-[var(--text-muted)] font-medium">
             No elite creators discovered yet.
           </div>
         ) : (
-          <>
-            {/* #1 Creator — Unique Floating Bento Hero Spot */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.97 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="relative group mb-20 p-8 sm:p-12 rounded-[2.5rem] bg-gradient-to-br from-black/[0.02] to-transparent dark:from-white/[0.02] border border-black/5 dark:border-white/5 backdrop-blur-xl overflow-hidden"
-            >
-              <div className="absolute -right-10 -bottom-10 opacity-[0.03] dark:opacity-[0.05] text-[12rem] font-black pointer-events-none select-none">
-                01
-              </div>
-
-              <div className="flex flex-col lg:flex-row items-center lg:items-start gap-10">
-                {/* Avatar with Floating Crown/Award */}
-                <div className="relative shrink-0">
-                  <motion.div
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                    className="flex h-36 w-36 items-center justify-center rounded-[2rem] bg-gradient-to-tr from-[var(--primary)]/10 to-amber-500/10 border border-black/10 dark:border-white/10 shadow-2xl"
-                  >
-                    <span
-                      className="text-4xl font-black tracking-wider"
-                      style={{ color: top.color || "var(--primary)" }}
-                    >
-                      {top.initials}
-                    </span>
-                  </motion.div>
-                  <div className="absolute -top-3 -right-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-400 text-white shadow-lg shadow-amber-500/30 rotate-12 group-hover:rotate-0 transition-transform duration-300">
-                    <FiAward className="text-lg" />
+          <div className="w-full flex flex-col items-center">
+            
+            {/* Carousel Main Stage — আলাদা এবং প্রিমিয়াম স্পেস লেআউট */}
+            <div className="w-full relative flex items-center justify-center min-h-[340px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`creator-${active}`}
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                  transition={{ duration: 0.35, ease: "easeInOut" }}
+                  className="w-full max-w-3xl p-8 sm:p-12 rounded-[2.5rem] bg-gradient-to-br from-black/[0.02] to-transparent dark:from-white/[0.02] border border-black/5 dark:border-white/5 backdrop-blur-xl relative overflow-hidden flex flex-col md:flex-row items-center gap-8 md:gap-12"
+                >
+                  {/* Background Watermark Number */}
+                  <div className="absolute right-6 -bottom-6 opacity-[0.03] dark:opacity-[0.05] text-[10rem] font-black pointer-events-none select-none">
+                    0{active + 1}
                   </div>
-                </div>
 
-                {/* Details */}
-                <div className="flex-1 text-center lg:text-left">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-black tracking-wider uppercase mb-3">
-                    Creator of the Month
-                  </div>
-                  <h3 className="text-3xl sm:text-4xl font-black text-[var(--text)] tracking-tight">
-                    {top.name}
-                  </h3>
-                  <p className="text-base font-semibold text-[var(--text-muted)] mt-1">
-                    {top.role}
-                  </p>
-
-                  {/* Metrics bar */}
-                  <div className="flex flex-wrap items-center justify-center lg:justify-start gap-8 mt-6 pt-6 border-t border-black/5 dark:border-white/5">
-                    <div>
-                      <span className="block text-2xl font-black text-[var(--text)]">
-                        {top.prompts}
-                      </span>
-                      <span className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
-                        Published Prompts
-                      </span>
-                    </div>
-                    <div className="h-8 w-px bg-black/10 dark:bg-white/10 hidden sm:block" />
-                    <div>
-                      <span className="block text-2xl font-black text-amber-500 flex items-center gap-1">
-                        ★ {top.rating}
-                      </span>
-                      <span className="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
-                        Global Rating
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Unique Asymmetric Marquee Stream for the Rest */}
-            {marqueeItems.length > 0 && (
-              <div className="relative py-4 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
-                <div className="flex gap-6 w-max animate-creators-marquee hover:[animation-play-state:paused]">
-                  {marqueeItems.map((c, i) => (
-                    <div
-                      key={`${c.name}-${i}`}
-                      className="group/item flex items-center gap-4 px-6 py-4 rounded-2xl bg-black/[0.01] dark:bg-white/[0.01] border border-black/5 dark:border-white/5 hover:border-[var(--primary)]/40 transition-colors shrink-0 cursor-pointer"
-                    >
-                      <div
-                        className="flex h-12 w-12 items-center justify-center rounded-xl bg-black/5 dark:bg-white/5 text-sm font-black transition-transform group-hover/item:scale-110"
-                        style={{ color: c.color || "var(--primary)" }}
+                  {/* Avatar / Initials Box */}
+                  <div className="relative shrink-0">
+                    <div className="flex h-32 w-32 sm:h-36 sm:w-36 items-center justify-center rounded-[2rem] bg-gradient-to-tr from-[var(--primary)]/10 to-amber-500/10 border border-black/10 dark:border-white/10 shadow-xl">
+                      <span
+                        className="text-4xl sm:text-5xl font-black tracking-wider"
+                        style={{ color: current.color || "var(--primary)" }}
                       >
-                        {c.initials}
+                        {current.initials}
+                      </span>
+                    </div>
+                    {active === 0 && (
+                      <div className="absolute -top-3 -right-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-400 text-white shadow-lg shadow-amber-500/30 rotate-12">
+                        <FiAward className="text-lg" />
                       </div>
+                    )}
+                  </div>
+
+                  {/* Creator Info & Stats */}
+                  <div className="flex-1 text-center md:text-left z-10">
+                    {active === 0 && (
+                      <span className="inline-block px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-black tracking-wider uppercase mb-3">
+                        Creator of the Month
+                      </span>
+                    )}
+                    <h3 className="text-2xl sm:text-3xl font-black text-[var(--text)] tracking-tight">
+                      {current.name}
+                    </h3>
+                    <p className="text-sm sm:text-base font-semibold text-[var(--text-muted)] mt-1">
+                      {current.role || "Elite Prompt Engineer"}
+                    </p>
+
+                    {/* Metrics */}
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 mt-6 pt-6 border-t border-black/5 dark:border-white/5">
                       <div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-bold text-[var(--text)] group-hover/item:text-[var(--primary)] transition-colors">
-                            {c.name}
-                          </p>
-                          <FiArrowUpRight className="text-xs opacity-0 group-hover/item:opacity-100 transition-opacity text-[var(--primary)]" />
-                        </div>
-                        <p className="text-xs font-medium text-[var(--text-muted)] mt-0.5">
-                          {c.prompts} prompts · <span className="text-amber-500 font-bold">★ {c.rating}</span>
-                        </p>
+                        <span className="block text-xl sm:text-2xl font-black text-[var(--text)]">
+                          {current.prompts}
+                        </span>
+                        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                          Published Prompts
+                        </span>
+                      </div>
+                      <div className="h-6 w-px bg-black/10 dark:bg-white/10 hidden sm:block" />
+                      <div>
+                        <span className="block text-xl sm:text-2xl font-black text-amber-500 flex items-center gap-1 justify-center md:justify-start">
+                          <FiStar className="text-sm fill-amber-500" /> {current.rating}
+                        </span>
+                        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                          Global Rating
+                        </span>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Carousel Navigation (Arrows & Dots) — WhyChooseUs এর স্টাইলের হুবহু */}
+            <div className="mt-10 flex items-center justify-between w-full max-w-xs">
+              {/* Prev Button */}
+              <button
+                onClick={handlePrev}
+                className="p-3 rounded-full neu-card hover:text-[var(--primary)] text-[var(--text)] border border-black/5 dark:border-white/5 transition-colors cursor-pointer"
+                aria-label="Previous Creator"
+              >
+                <FiChevronLeft size={20} />
+              </button>
+
+              {/* Progress dots */}
+              <div className="flex items-center gap-2">
+                {creators.map((c, i) => (
+                  <button
+                    key={c.name || i}
+                    onClick={() => setActive(i)}
+                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                      i === active
+                        ? "w-8 bg-[var(--primary)]"
+                        : "w-2 bg-[var(--text-muted)]/30 hover:bg-[var(--text-muted)]/60"
+                    }`}
+                    aria-label={`Go to creator ${i + 1}`}
+                  />
+                ))}
               </div>
-            )}
-          </>
+
+              {/* Next Button */}
+              <button
+                onClick={handleNext}
+                className="p-3 rounded-full neu-card hover:text-[var(--primary)] text-[var(--text)] border border-black/5 dark:border-white/5 transition-colors cursor-pointer"
+                aria-label="Next Creator"
+              >
+                <FiChevronRight size={20} />
+              </button>
+            </div>
+
+          </div>
         )}
       </div>
-
-      <style jsx>{`
-        @keyframes creators-marquee {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-50%);
-          }
-        }
-        .animate-creators-marquee {
-          animation: creators-marquee 35s linear infinite;
-        }
-      `}</style>
     </section>
   );
 }
