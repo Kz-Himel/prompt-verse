@@ -26,8 +26,8 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="relative overflow-hidden bg-[#EBF1F5] py-20 lg:py-28">
-      <div className="relative mx-auto max-w-7xl px-6 z-10">
+    <section id="how-it-works" className="relative overflow-hidden bg-[var(--bg)] py-20 lg:py-28 transition-colors duration-300">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 z-10">
         
         {/* Section Heading */}
         <motion.div
@@ -37,24 +37,24 @@ export default function HowItWorks() {
           className="mb-20 flex flex-col items-center text-center"
         >
           {/* Neumorphic Badge */}
-          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#EBF1F5] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#0F766E] shadow-[2px_2px_5px_#d1d9e0,-2px_-2px_5px_#ffffff] border border-white/50">
+          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--primary)] neu-badge">
             How It Works
           </span>
 
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#1E293B] sm:text-4xl lg:text-5xl leading-tight">
+          <h2 className="text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl lg:text-5xl leading-tight">
             Up and Running in Minutes
           </h2>
 
-          <p className="mt-4 max-w-md text-sm sm:text-base leading-relaxed text-[#64748B] font-medium">
+          <p className="mt-4 max-w-md text-sm sm:text-base leading-relaxed text-[var(--text-muted)] font-medium">
             Three simple steps to start creating, discovering, and earning with AI prompts.
           </p>
         </motion.div>
 
-        {/* Steps Container (No Cards) */}
+        {/* Steps Container */}
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 relative">
           
           {/* Connecting Line (Desktop) */}
-          <div className="hidden lg:block absolute top-[40px] left-[15%] right-[15%] h-[2px] bg-gradient-to-r from-transparent via-[#0F766E]/20 to-transparent pointer-events-none" />
+          <div className="hidden lg:block absolute top-[40px] left-[15%] right-[15%] h-[2px] bg-gradient-to-r from-transparent via-[var(--primary)]/20 to-transparent pointer-events-none" />
 
           {STEPS.map((s, i) => (
             <motion.div
@@ -66,20 +66,20 @@ export default function HowItWorks() {
               className="px-4 text-center relative"
             >
               {/* Neumorphic Circle Icon Box */}
-              <div className="relative mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-[#EBF1F5] text-2xl shadow-[5px_5px_12px_#d1d9e0,-5px_-5px_12px_#ffffff] border border-white/60">
+              <div className="relative mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full neu-card text-2xl">
                 <span>{s.icon}</span>
 
                 {/* Step Badge */}
-                <div className="absolute -top-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-[#0F766E] text-xs font-extrabold text-white shadow-md">
+                <div className="absolute -top-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--primary)] text-xs font-extrabold text-white shadow-md">
                   {s.step.replace('0', '')}
                 </div>
               </div>
 
-              <h3 className="mb-3 text-lg font-extrabold text-[#1E293B]">
+              <h3 className="mb-3 text-lg font-extrabold text-[var(--text)]">
                 {s.title}
               </h3>
 
-              <p className="mx-auto max-w-xs text-xs sm:text-sm font-medium leading-relaxed text-[#64748B]">
+              <p className="mx-auto max-w-xs text-xs sm:text-sm font-medium leading-relaxed text-[var(--text-muted)]">
                 {s.desc}
               </p>
             </motion.div>
@@ -92,20 +92,20 @@ export default function HowItWorks() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.3 }}
-          className="mt-20 rounded-3xl bg-[#EBF1F5] p-8 sm:p-12 text-center shadow-[4px_4px_10px_#d1d9e0,-4px_-4px_10px_#ffffff] border border-white/50"
+          className="mt-20 rounded-3xl neu-card p-8 sm:p-12 text-center"
         >
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1E293B] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[var(--text)] tracking-tight">
             Start Your AI Journey Today
           </h2>
 
-          <p className="mt-3 text-xs sm:text-sm font-medium text-[#64748B] max-w-lg mx-auto leading-relaxed">
+          <p className="mt-3 text-xs sm:text-sm font-medium text-[var(--text-muted)] max-w-lg mx-auto leading-relaxed">
             Join 12,500+ creators who are already discovering and publishing world-class AI prompts.
           </p>
 
           <div className="mt-8">
             <Link
               href="/auth/register"
-              className="inline-flex items-center gap-2 rounded-xl bg-[#0F766E] hover:bg-[#0D9488] px-7 py-3 text-xs sm:text-sm font-extrabold text-white shadow-[0px_4px_12px_rgba(15,118,110,0.25)] transition-all duration-300 active:scale-95"
+              className="neu-button-primary px-8 py-3.5 text-xs sm:text-sm font-extrabold rounded-xl inline-flex items-center gap-2"
             >
               <span>Get Started for Free</span>
               <svg

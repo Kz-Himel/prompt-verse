@@ -53,21 +53,21 @@ export default function FeaturedPrompts() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-[#EBF1F5] py-20 lg:py-28">
-      <div className="relative mx-auto max-w-7xl px-6">
+    <section className="relative overflow-hidden bg-[var(--bg)] py-20 lg:py-28 transition-colors duration-300">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="mb-16 flex flex-col items-center text-center">
           {/* Neumorphic Badge */}
-          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#EBF1F5] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#0F766E] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] border border-white/60">
+          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--primary)] neu-badge">
             Featured Collection
           </span>
 
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#1E293B] sm:text-4xl lg:text-5xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl lg:text-5xl leading-tight">
             Featured Prompts
           </h2>
 
-          <p className="mt-4 max-w-2xl text-sm sm:text-base leading-relaxed text-[#64748B] font-medium">
+          <p className="mt-4 max-w-2xl text-sm sm:text-base leading-relaxed text-[var(--text-muted)] font-medium">
             Handpicked high-converting prompt scripts vetted by our team.
             Discover premium prompts built to save time and maximize
             productivity.
@@ -76,13 +76,12 @@ export default function FeaturedPrompts() {
           {/* Neumorphic "View All" Button */}
           <Link
             href="/prompts"
-            className="group mt-8 inline-flex items-center gap-2 rounded-full bg-[#EBF1F5] px-6 py-2.5 text-xs md:text-sm font-bold text-[#1E293B] shadow-[5px_5px_12px_#c7d0d8,-5px_-5px_12px_#ffffff] border border-white/60 transition-all duration-300 hover:text-[#0F766E] active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff]"
+            className="group mt-8 inline-flex items-center gap-2 rounded-full neu-button-secondary px-6 py-2.5 text-xs md:text-sm font-bold"
           >
             <span>View All</span>
-
             <ArrowUpRight
               size={16}
-              className="text-[#0F766E] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              className="text-[var(--primary)] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
             />
           </Link>
         </div>
@@ -94,7 +93,7 @@ export default function FeaturedPrompts() {
 
         {/* Error Handle */}
         {error && (
-          <div className="mx-auto max-w-md rounded-2xl bg-[#EBF1F5] p-6 text-center text-red-500 font-bold shadow-[inset_3px_3px_6px_#c7d0d8,inset_-3px_-3px_6px_#ffffff] border border-white/40">
+          <div className="mx-auto max-w-md rounded-2xl neu-card p-6 text-center text-rose-500 font-bold">
             {error}. Please try again later.
           </div>
         )}

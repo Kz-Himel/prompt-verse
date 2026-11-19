@@ -56,9 +56,8 @@ const CATEGORIES = [
 
 export default function CategoriesShowcase() {
   return (
-    <section className="relative overflow-hidden bg-[#EBF1F5] dark:bg-[#0F141C] py-20 lg:py-28 transition-colors duration-300">
-      {/* Updated to max-w-7xl to match the rest of the sections */}
-      <div className="relative mx-auto max-w-7xl px-6 z-10">
+    <section className="relative overflow-hidden bg-[var(--bg)] py-20 lg:py-28 transition-colors duration-300">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 z-10">
         
         {/* Section Heading */}
         <motion.div
@@ -67,16 +66,16 @@ export default function CategoriesShowcase() {
           viewport={{ once: true }}
           className="mb-14 flex flex-col items-center text-center"
         >
-          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#EBF1F5] dark:bg-[#141B24] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#0F766E] dark:text-[#14B8A6] shadow-[2px_2px_5px_#d1d9e0,-2px_-2px_5px_#ffffff] dark:shadow-[2px_2px_5px_#080b0f,-2px_-2px_5px_rgba(255,255,255,0.03)] border border-white/50 dark:border-white/[0.06]">
+          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--primary)] neu-badge">
             Browse by Category
           </span>
 
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#1E293B] dark:text-[#F8FAFC] sm:text-4xl lg:text-5xl leading-tight">
+          <h2 className="text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl lg:text-5xl leading-tight">
             Find Prompts for Your{" "}
-            <span className="text-[#0F766E] dark:text-[#14B8A6]">Favorite AI Tool</span>
+            <span className="text-[var(--primary)]">Favorite AI Tool</span>
           </h2>
 
-          <p className="mt-4 max-w-xl text-sm sm:text-base leading-relaxed text-[#64748B] dark:text-[#94A3B8] font-medium">
+          <p className="mt-4 max-w-xl text-sm sm:text-base leading-relaxed text-[var(--text-muted)] font-medium">
             Every prompt is tagged and organized by platform, so you jump straight to
             what works for the tool you already use.
           </p>
@@ -94,10 +93,10 @@ export default function CategoriesShowcase() {
             >
               <Link
                 href={`/prompts?category=${cat.id}`}
-                className="group relative flex items-center gap-5 rounded-2xl bg-[#EBF1F5] dark:bg-[#141B24] p-6 shadow-[4px_4px_10px_#d1d9e0,-4px_-4px_10px_#ffffff] dark:shadow-[4px_4px_10px_#080b0f,-3px_-3px_9px_rgba(255,255,255,0.02)] border border-white/40 dark:border-white/[0.06] transition-all duration-300 hover:scale-[1.02]"
+                className="group relative flex items-center gap-5 rounded-2xl neu-card p-6 transition-all duration-300 hover:scale-[1.02]"
               >
                 <div
-                  className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#080b0f,inset_-2px_-2px_4px_rgba(255,255,255,0.02)]"
+                  className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl text-2xl neu-card-inset"
                   style={{ backgroundColor: `${cat.accent}1A` }}
                 >
                   {cat.icon}
@@ -105,7 +104,7 @@ export default function CategoriesShowcase() {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-base font-extrabold text-[#1E293B] dark:text-[#F8FAFC] group-hover:text-[#0F766E] dark:group-hover:text-[#14B8A6] transition-colors">
+                    <h3 className="text-base font-extrabold text-[var(--text)] group-hover:text-[var(--primary)] transition-colors">
                       {cat.name}
                     </h3>
                     <span
@@ -115,7 +114,7 @@ export default function CategoriesShowcase() {
                       {cat.count}
                     </span>
                   </div>
-                  <p className="mt-1 text-xs font-medium text-[#64748B] dark:text-[#94A3B8] truncate">
+                  <p className="mt-1 text-xs font-medium text-[var(--text-muted)] truncate">
                     {cat.desc}
                   </p>
                 </div>

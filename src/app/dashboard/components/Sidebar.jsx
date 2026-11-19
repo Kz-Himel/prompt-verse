@@ -25,33 +25,31 @@ export default function Sidebar({ role = "user" }) {
     <div className="flex flex-col justify-between h-full space-y-4">
       <div>
         {/* ── Brand Logo Header ── */}
-        <div className="flex items-center gap-2.5 px-3 py-1.5 mb-4">
-          <div className="w-8 h-8 rounded-xl bg-[var(--primary)] flex items-center justify-center text-white shadow-sm shrink-0">
-            <div className="relative w-9 h-9 rounded-xl bg-[#EBF1F5] dark:bg-[#141B24] flex items-center justify-center shadow-[4px_4px_8px_#c7d0d8,-4px_-4px_8px_#ffffff] dark:shadow-[4px_4px_8px_#080b0f,-4px_-4px_8px_rgba(255,255,255,0.03)] border border-white/60 dark:border-white/[0.08] transition-transform duration-300 group-hover:scale-105">
-              <svg
-                className="w-5 h-5 text-[#0F766E] dark:text-[#14B8A6] drop-shadow-sm"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M8 6l6 6-6 6" />
-                <line x1="16" y1="17" x2="16" y2="17" strokeWidth="3" />
-                <path
-                  d="M19 6.5l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7.7-1.6z"
-                  fill="currentColor"
-                  fillOpacity="0.6"
-                  stroke="none"
-                />
-              </svg>
-            </div>
+        <Link href="/" className="flex items-center gap-2.5 px-3 py-1.5 mb-4 group">
+          <div className="w-8 h-8 rounded-xl neu-card flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105">
+            <svg
+              className="w-4.5 h-4.5 text-[var(--primary)] drop-shadow-sm"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M8 6l6 6-6 6" />
+              <line x1="16" y1="17" x2="16" y2="17" strokeWidth="3" />
+              <path
+                d="M19 6.5l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7.7-1.6z"
+                fill="currentColor"
+                fillOpacity="0.6"
+                stroke="none"
+              />
+            </svg>
           </div>
-          <span className="text-lg font-extrabold tracking-tight text-[var(--text)]">
-            PromptVerse
+          <span className="text-base font-black tracking-tight text-[var(--text)]">
+            Prompt<span className="text-[var(--primary)]">Verse</span>
           </span>
-        </div>
+        </Link>
 
         {/* ── Navigation Links ── */}
         <nav className="flex flex-col gap-1.5">
@@ -100,7 +98,7 @@ export default function Sidebar({ role = "user" }) {
             </div>
             <Link
               href="/pricing"
-              className="w-full font-bold py-2 px-3 rounded-xl bg-[var(--primary)] hover:opacity-90 text-white text-[11px] text-center transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1"
+              className="neu-button-primary w-full py-2 px-3 text-[11px] font-bold flex items-center justify-center gap-1"
             >
               Upgrade Now →
             </Link>

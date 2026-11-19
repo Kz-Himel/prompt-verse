@@ -39,7 +39,7 @@ export default function CustomerReviews() {
   const duplicatedReviews = [...reviews, ...reviews, ...reviews];
 
   return (
-    <section className="relative overflow-hidden bg-[#EBF1F5] dark:bg-[#0F141C] py-20 lg:py-28 transition-colors duration-300">
+    <section id="reviews" className="relative overflow-hidden bg-[var(--bg)] py-20 lg:py-28 transition-colors duration-300">
       <style>{`
         @keyframes scrollMarquee {
           0% {
@@ -59,8 +59,7 @@ export default function CustomerReviews() {
         }
       `}</style>
 
-      {/* Updated to max-w-7xl to match Featured Prompts */}
-      <div className="relative mx-auto max-w-7xl px-6 z-10">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 z-10">
         
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -69,27 +68,27 @@ export default function CustomerReviews() {
           transition={{ duration: 0.6 }}
           className="mb-14 flex flex-col items-center text-center"
         >
-          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#EBF1F5] dark:bg-[#141B24] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#0F766E] dark:text-[#14B8A6] shadow-[2px_2px_5px_#d1d9e0,-2px_-2px_5px_#ffffff] dark:shadow-[2px_2px_5px_#080b0f,-2px_-2px_5px_rgba(255,255,255,0.03)] border border-white/50 dark:border-white/[0.06]">
+          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--primary)] neu-badge">
             Community Love
           </span>
 
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#1E293B] dark:text-[#F8FAFC] sm:text-4xl lg:text-5xl leading-tight">
+          <h2 className="text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl lg:text-5xl leading-tight">
             What Our Users Say
           </h2>
 
-          <p className="mt-4 max-w-md text-sm sm:text-base leading-relaxed text-[#64748B] dark:text-[#94A3B8] font-medium">
+          <p className="mt-4 max-w-md text-sm sm:text-base leading-relaxed text-[var(--text-muted)] font-medium">
             Over 12,500 creators and buyers trust PromptVerse to supercharge their workflow.
           </p>
         </motion.div>
 
         {loading ? (
           <div className="flex justify-center items-center py-12">
-            <div className="px-6 py-3 rounded-full bg-[#EBF1F5] dark:bg-[#141B24] shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#080b0f,inset_-2px_-2px_4px_rgba(255,255,255,0.02)] text-xs font-bold text-[#0F766E] dark:text-[#14B8A6] animate-pulse">
+            <div className="px-6 py-3 rounded-full neu-card-inset text-xs font-bold text-[var(--primary)] animate-pulse">
               Loading community reviews...
             </div>
           </div>
         ) : reviews.length === 0 ? (
-          <p className="text-center text-sm text-[#64748B] dark:text-[#94A3B8]">
+          <p className="text-center text-sm text-[var(--text-muted)]">
             No reviews yet.
           </p>
         ) : (
@@ -98,14 +97,14 @@ export default function CustomerReviews() {
               {duplicatedReviews.map((review, i) => (
                 <div
                   key={i}
-                  className="w-[320px] sm:w-[380px] shrink-0 rounded-3xl bg-[#EBF1F5] dark:bg-[#141B24] p-8 shadow-[6px_6px_16px_#d1d9e0,-6px_-6px_16px_#ffffff] dark:shadow-[6px_6px_16px_#080b0f,-4px_-4px_12px_rgba(255,255,255,0.02)] border border-white/40 dark:border-white/[0.06] flex flex-col justify-between"
+                  className="w-[320px] sm:w-[380px] shrink-0 rounded-3xl neu-card p-8 flex flex-col justify-between"
                 >
                   <div>
-                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[#EBF1F5] dark:bg-[#0F141C] text-xl font-black text-[#0F766E] dark:text-[#14B8A6] shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#080b0f,inset_-2px_-2px_4px_rgba(255,255,255,0.02)] border border-white/30 dark:border-white/[0.06]">
+                    <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl neu-card-inset text-xl font-black text-[var(--primary)]">
                       "
                     </div>
 
-                    <p className="text-sm sm:text-base font-medium leading-relaxed text-[#1E293B] dark:text-[#F8FAFC] line-clamp-4">
+                    <p className="text-sm sm:text-base font-medium leading-relaxed text-[var(--text)] line-clamp-4">
                       "{review.text}"
                     </p>
                   </div>
@@ -115,18 +114,18 @@ export default function CustomerReviews() {
                       <StarRating rating={review.rating} />
                     </div>
 
-                    <div className="mt-4 flex items-center gap-3.5 pt-4 border-t border-slate-300/40 dark:border-slate-800">
+                    <div className="mt-4 flex items-center gap-3.5 pt-4 border-t border-[var(--border)]">
                       <div
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EBF1F5] dark:bg-[#0F141C] text-xs font-black shadow-[inset_2px_2px_4px_#d1d9e0,inset_-2px_-2px_4px_#ffffff] dark:shadow-[inset_2px_2px_4px_#080b0f,inset_-2px_-2px_4px_rgba(255,255,255,0.02)] border border-white/30 dark:border-white/[0.06]"
-                        style={{ color: review.color || "#0F766E" }}
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl neu-card-inset text-xs font-black"
+                        style={{ color: review.color || "var(--primary)" }}
                       >
-                        {review.initials}
+                        {review.initials || "PV"}
                       </div>
                       <div className="text-left overflow-hidden">
-                        <h4 className="text-sm font-extrabold text-[#1E293B] dark:text-[#F8FAFC] truncate">
+                        <h4 className="text-sm font-extrabold text-[var(--text)] truncate">
                           {review.name}
                         </h4>
-                        <p className="text-xs font-semibold text-[#64748B] dark:text-[#94A3B8] truncate">
+                        <p className="text-xs font-semibold text-[var(--text-muted)] truncate">
                           {review.role}
                         </p>
                       </div>

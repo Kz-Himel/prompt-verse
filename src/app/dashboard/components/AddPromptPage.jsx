@@ -306,7 +306,7 @@ export default function AddPromptPage({
           <div className="px-6 pb-6 pt-2 flex items-center gap-3">
             <button
               type="button"
-              className="flex-1 neu-input hover:opacity-90 text-[var(--text)] font-medium py-3 rounded-xl transition-all duration-200 text-sm cursor-pointer"
+              className="flex-1 neu-button-secondary text-[var(--text)] font-semibold py-3 rounded-xl transition-all duration-200 text-sm cursor-pointer"
             >
               Save as Draft
             </button>

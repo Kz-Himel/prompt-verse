@@ -88,21 +88,21 @@ export default function LiveStatsSection() {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-[#EBF1F5] dark:bg-[#0F141C] py-20 lg:py-24 transition-colors duration-300">
-      <div className="relative mx-auto max-w-6xl px-6 z-10">
+    <section className="relative overflow-hidden bg-[var(--bg)] py-20 lg:py-24 transition-colors duration-300">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 z-10">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="rounded-3xl bg-[#EBF1F5] dark:bg-[#141B24] p-8 sm:p-12 shadow-[6px_6px_16px_#d1d9e0,-6px_-6px_16px_#ffffff] dark:shadow-[6px_6px_16px_#080b0f,-4px_-4px_12px_rgba(255,255,255,0.02)] border border-white/40 dark:border-white/[0.06]"
+          className="rounded-3xl neu-card p-8 sm:p-12"
         >
           {/* Live Badge */}
           <div className="mb-10 flex items-center justify-center gap-2">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#0F766E] dark:bg-[#14B8A6] opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#0F766E] dark:bg-[#14B8A6]" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--primary)] opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--primary)]" />
             </span>
-            <span className="text-xs font-bold uppercase tracking-[0.15em] text-[#0F766E] dark:text-[#14B8A6]">
+            <span className="text-xs font-bold uppercase tracking-[0.15em] text-[var(--primary)]">
               {isLive ? "Live Platform Stats" : "Platform Pulse"}
             </span>
           </div>
@@ -111,14 +111,14 @@ export default function LiveStatsSection() {
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
             {STAT_ITEMS.map((item) => (
               <div key={item.label} className="text-center">
-                <h3 className="text-2xl sm:text-4xl font-extrabold text-[#1E293B] dark:text-[#F8FAFC]">
+                <h3 className="text-2xl sm:text-4xl font-extrabold text-[var(--text)]">
                   <Counter
                     value={item.value}
                     decimals={item.decimals || 0}
                     suffix={item.suffix}
                   />
                 </h3>
-                <p className="mt-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8]">
+                <p className="mt-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">
                   {item.label}
                 </p>
               </div>

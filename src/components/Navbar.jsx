@@ -11,7 +11,6 @@ import {
   HiChevronUp,
   HiOutlineSquares2X2,
   HiOutlineArrowRightOnRectangle,
-  HiOutlineMagnifyingGlass,
   HiOutlineSun,
   HiOutlineMoon,
   HiOutlineBell,
@@ -33,7 +32,9 @@ export default function Navbar() {
   const dropdownRef = useRef(null);
 
   const dashboardHref =
-    session?.user?.role === "creator"
+    session?.user?.role === "admin"
+      ? "/dashboard/admin"
+      : session?.user?.role === "creator"
       ? "/dashboard/creator"
       : "/dashboard/user";
 
@@ -80,20 +81,20 @@ export default function Navbar() {
   };
 
   const navLinkClass = (href) =>
-    `rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
+    `rounded-full px-4 py-2 text-xs sm:text-sm font-semibold transition-all duration-200 ${
       isActive(href)
-        ? "bg-[#0F766E] text-white shadow-[0px_4px_12px_rgba(15,118,110,0.3)]"
-        : "text-[#64748B] dark:text-[#94A3B8] hover:text-[#1E293B] dark:hover:text-white hover:shadow-[inset_2px_2px_5px_#c7d0d8,inset_-2px_-2px_5px_#ffffff] dark:hover:shadow-[inset_2px_2px_5px_#080b0f,inset_-2px_-2px_5px_rgba(255,255,255,0.02)]"
+        ? "bg-[var(--primary)] text-white shadow-[0px_3px_10px_rgba(15,118,110,0.35)]"
+        : "text-[var(--text-muted)] hover:text-[var(--text)] hover:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff] dark:hover:shadow-[inset_2px_2px_4px_#080b0f,inset_-2px_-2px_4px_rgba(255,255,255,0.02)]"
     }`;
 
   return (
-    <header className="sticky top-0 z-50 bg-[#EBF1F5] dark:bg-[#0F141C] border-b border-white/60 dark:border-white/[0.06] shadow-[0_4px_20px_rgba(0,0,0,0.02)] transition-colors duration-300">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8 gap-4">
-        {/* 4. The Quantum Spark / Neural Node Matrix Logo */}
+    <header className="sticky top-0 z-50 bg-[var(--bg)] border-b border-[var(--border)] shadow-[0_4px_20px_rgba(0,0,0,0.02)] transition-colors duration-300">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 gap-4">
+        {/* Brand Logo */}
         <Link href="/" className="group flex items-center gap-3 shrink-0">
-          <div className="relative w-9 h-9 rounded-xl bg-[#EBF1F5] dark:bg-[#141B24] flex items-center justify-center shadow-[4px_4px_8px_#c7d0d8,-4px_-4px_8px_#ffffff] dark:shadow-[4px_4px_8px_#080b0f,-4px_-4px_8px_rgba(255,255,255,0.03)] border border-white/60 dark:border-white/[0.08] transition-transform duration-300 group-hover:scale-105">
+          <div className="w-9 h-9 rounded-xl neu-card flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
             <svg
-              className="w-5 h-5 text-[#0F766E] dark:text-[#14B8A6] drop-shadow-sm"
+              className="w-5 h-5 text-[var(--primary)] drop-shadow-sm"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -112,29 +113,12 @@ export default function Navbar() {
             </svg>
           </div>
           <h1 className="text-lg font-black tracking-tight flex items-center">
-            <span className="text-[#111827] dark:text-[#F8FAFC]">Prompt</span>
-            <span className="text-[#0F766E] dark:text-[#14B8A6] ml-[1px]">
+            <span className="text-[var(--text)]">Prompt</span>
+            <span className="text-[var(--primary)] ml-[1px]">
               Verse
             </span>
           </h1>
         </Link>
-
-        {/* Search Bar - Gawter Moto Inset Shadow */}
-        {/* <div className="hidden lg:flex relative flex-1 max-w-md mx-4">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#64748B] dark:text-[#94A3B8]">
-            <HiOutlineMagnifyingGlass size={18} />
-          </div>
-          <input
-            type="text"
-            placeholder="Search prompts, categories, or creators..."
-            className="w-full pl-10 pr-16 py-2 rounded-full bg-[#EBF1F5] dark:bg-[#141B24] text-xs text-[#1E293B] dark:text-[#F8FAFC] placeholder-[#64748B] dark:placeholder-[#94A3B8] outline-none shadow-[inset_3px_3px_6px_#c7d0d8,inset_-3px_-3px_6px_#ffffff] dark:shadow-[inset_3px_3px_6px_#080b0f,inset_-3px_-3px_6px_rgba(255,255,255,0.02)] border border-white/40 dark:border-white/[0.05] focus:border-[#0F766E]/40 dark:focus:border-[#14B8A6]/40 transition-all font-medium"
-          />
-          <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-            <span className="text-[10px] font-semibold text-[#64748B] dark:text-[#94A3B8] bg-[#EBF1F5] dark:bg-[#0F141C] px-1.5 py-0.5 rounded shadow-[2px_2px_4px_#c7d0d8,-2px_-2px_4px_#ffffff] dark:shadow-[2px_2px_4px_#080b0f,-2px_-2px_4px_rgba(255,255,255,0.02)] border border-white/30 dark:border-white/[0.05]">
-              Ctrl K
-            </span>
-          </div>
-        </div> */}
 
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-2 md:flex">
@@ -155,7 +139,7 @@ export default function Navbar() {
             type="button"
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            className="w-9 h-9 rounded-full bg-[#EBF1F5] dark:bg-[#141B24] flex items-center justify-center text-[#64748B] dark:text-[#94A3B8] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] dark:shadow-[3px_3px_6px_#080b0f,-3px_-3px_6px_rgba(255,255,255,0.03)] border border-white/40 dark:border-white/[0.05] hover:text-[#1E293B] dark:hover:text-white active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff] transition-colors"
+            className="neu-icon-button w-9 h-9 rounded-full"
           >
             {theme === "dark" ? (
               <HiOutlineSun size={18} />
@@ -164,7 +148,11 @@ export default function Navbar() {
             )}
           </button>
 
-          <button className="w-9 h-9 rounded-full bg-[#EBF1F5] dark:bg-[#141B24] flex items-center justify-center text-[#64748B] dark:text-[#94A3B8] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] dark:shadow-[3px_3px_6px_#080b0f,-3px_-3px_6px_rgba(255,255,255,0.03)] border border-white/40 dark:border-white/[0.05] hover:text-[#1E293B] dark:hover:text-white active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff]">
+          <button
+            type="button"
+            aria-label="Notifications"
+            className="neu-icon-button w-9 h-9 rounded-full"
+          >
             <HiOutlineBell size={18} />
           </button>
 
@@ -176,7 +164,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/auth/register"
-                className="rounded-full bg-[#0F766E] dark:bg-[#14B8A6] hover:bg-[#0D9488] dark:hover:bg-[#0D9488] px-5 py-2 text-sm font-semibold text-white shadow-[0px_4px_12px_rgba(15,118,110,0.35)] transition active:scale-95"
+                className="neu-button-primary px-5 py-2 text-xs sm:text-sm font-semibold rounded-full"
               >
                 Register
               </Link>
@@ -189,7 +177,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="flex items-center gap-2 rounded-full bg-[#EBF1F5] dark:bg-[#141B24] py-1 pl-1 pr-3 shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] dark:shadow-[3px_3px_6px_#080b0f,-3px_-3px_6px_rgba(255,255,255,0.03)] border border-white/60 dark:border-white/[0.06] transition active:shadow-[inset_2px_2px_4px_#c7d0d8,inset_-2px_-2px_4px_#ffffff]"
+                className="neu-button-secondary py-1 pl-1.5 pr-3 rounded-full flex items-center gap-2"
               >
                 <Avatar
                   size="sm"
@@ -201,26 +189,26 @@ export default function Navbar() {
                   name={session?.user?.name || "U"}
                   className="w-7 h-7"
                 />
-                <span className="max-w-[110px] truncate text-xs font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+                <span className="max-w-[110px] truncate text-xs font-bold text-[var(--text)]">
                   {session?.user?.name || "User"}
                 </span>
                 {profileOpen ? (
                   <HiChevronUp
                     size={14}
-                    className="text-[#64748B] dark:text-[#94A3B8]"
+                    className="text-[var(--text-muted)]"
                   />
                 ) : (
                   <HiChevronDown
                     size={14}
-                    className="text-[#64748B] dark:text-[#94A3B8]"
+                    className="text-[var(--text-muted)]"
                   />
                 )}
               </button>
 
               {/* Profile Dropdown Menu */}
               {profileOpen && (
-                <div className="absolute right-0 top-full mt-3 w-72 overflow-hidden rounded-2xl bg-[#EBF1F5] dark:bg-[#141B24] shadow-[8px_8px_20px_#c7d0d8,-8px_-8px_20px_#ffffff] dark:shadow-[8px_8px_20px_#080b0f,-8px_-8px_20px_rgba(255,255,255,0.02)] border border-white/60 dark:border-white/[0.06]">
-                  <div className="border-b border-black/5 dark:border-white/5 p-4">
+                <div className="absolute right-0 top-full mt-3 w-72 overflow-hidden rounded-2xl neu-card p-0 shadow-[var(--shadow-elevated)] border border-[var(--border)] z-50">
+                  <div className="border-b border-[var(--border)] p-4">
                     <div className="flex items-center gap-3">
                       <Avatar
                         size="md"
@@ -232,15 +220,15 @@ export default function Navbar() {
                         name={session?.user?.name || "User"}
                       />
                       <div className="min-w-0">
-                        <p className="truncate font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+                        <p className="truncate font-bold text-[var(--text)] text-sm">
                           {session?.user?.name}
                         </p>
-                        <p className="truncate text-xs text-[#64748B] dark:text-[#94A3B8]">
+                        <p className="truncate text-xs text-[var(--text-muted)]">
                           {session?.user?.email}
                         </p>
-                        <p className="mt-1 text-xs font-semibold capitalize text-[#0F766E] dark:text-[#14B8A6]">
-                          {session?.user?.role}
-                        </p>
+                        <span className="inline-block mt-1 text-[10px] font-bold uppercase tracking-wider text-[var(--primary)] px-2 py-0.5 rounded-full bg-[var(--primary)]/10">
+                          {session?.user?.role || "user"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -248,11 +236,11 @@ export default function Navbar() {
                   <Link
                     href={dashboardHref}
                     onClick={() => setProfileOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC] hover:bg-black/5 dark:hover:bg-white/5 transition"
+                    className="flex items-center gap-3 px-4 py-3 text-xs sm:text-sm font-semibold text-[var(--text)] hover:bg-black/5 dark:hover:bg-white/5 transition"
                   >
                     <HiOutlineSquares2X2
                       size={18}
-                      className="text-[#0F766E] dark:text-[#14B8A6]"
+                      className="text-[var(--primary)]"
                     />
                     Dashboard
                   </Link>
@@ -260,7 +248,7 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-red-500 hover:bg-red-500/10 transition"
+                    className="flex w-full items-center gap-3 px-4 py-3 text-left text-xs sm:text-sm font-semibold text-rose-500 hover:bg-rose-500/10 transition border-t border-[var(--border)]"
                   >
                     <HiOutlineArrowRightOnRectangle size={18} />
                     Logout
@@ -274,17 +262,17 @@ export default function Navbar() {
         {/* Mobile Toggle Button */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="rounded-xl p-2 bg-[#EBF1F5] dark:bg-[#141B24] text-[#1E293B] dark:text-[#F8FAFC] shadow-[3px_3px_6px_#c7d0d8,-3px_-3px_6px_#ffffff] dark:shadow-[3px_3px_6px_#080b0f,-3px_-3px_6px_rgba(255,255,255,0.03)] border border-white/40 dark:border-white/[0.05] md:hidden"
+          className="neu-icon-button w-9 h-9 rounded-xl md:hidden"
           aria-label="Toggle menu"
           aria-expanded={mobileOpen}
         >
-          {mobileOpen ? <HiXMark size={22} /> : <HiBars3 size={22} />}
+          {mobileOpen ? <HiXMark size={20} /> : <HiBars3 size={20} />}
         </button>
       </div>
 
       {/* Mobile Menu Panel */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-white/60 dark:border-white/[0.06] bg-[#EBF1F5] dark:bg-[#0F141C] px-4 py-4 space-y-2">
+        <div className="md:hidden border-t border-[var(--border)] bg-[var(--bg)] px-4 py-4 space-y-2 animate-in slide-in-from-top-2 duration-200">
           <Link
             href="/"
             onClick={() => setMobileOpen(false)}
@@ -307,9 +295,9 @@ export default function Navbar() {
             Pricing
           </Link>
 
-          <div className="pt-2 border-t border-black/5 dark:border-white/5">
+          <div className="pt-3 border-t border-[var(--border)]">
             {mounted && !isPending && !session && (
-              <div className="flex flex-col gap-2 mt-2">
+              <div className="flex flex-col gap-2.5 mt-2">
                 <Link
                   href="/auth/login"
                   onClick={() => setMobileOpen(false)}
@@ -320,7 +308,7 @@ export default function Navbar() {
                 <Link
                   href="/auth/register"
                   onClick={() => setMobileOpen(false)}
-                  className="block text-center rounded-full bg-[#0F766E] dark:bg-[#14B8A6] hover:bg-[#0D9488] dark:hover:bg-[#0D9488] px-5 py-2 text-sm font-semibold text-white transition active:scale-95"
+                  className="block text-center neu-button-primary px-5 py-2.5 text-xs sm:text-sm font-semibold rounded-full"
                 >
                   Register
                 </Link>
@@ -329,7 +317,7 @@ export default function Navbar() {
 
             {mounted && !isPending && session && (
               <div className="flex flex-col gap-2 mt-2">
-                <div className="flex items-center gap-3 px-4 py-2">
+                <div className="flex items-center gap-3 px-3 py-2">
                   <Avatar
                     size="sm"
                     src={
@@ -340,10 +328,10 @@ export default function Navbar() {
                     name={session?.user?.name || "U"}
                   />
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+                    <p className="truncate text-xs sm:text-sm font-bold text-[var(--text)]">
                       {session?.user?.name || "User"}
                     </p>
-                    <p className="truncate text-xs text-[#64748B] dark:text-[#94A3B8]">
+                    <p className="truncate text-[11px] text-[var(--text-muted)]">
                       {session?.user?.email}
                     </p>
                   </div>
@@ -352,11 +340,11 @@ export default function Navbar() {
                 <Link
                   href={dashboardHref}
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2 text-sm font-medium text-[#1E293B] dark:text-[#F8FAFC]"
+                  className="flex items-center gap-3 px-3 py-2 text-xs sm:text-sm font-medium text-[var(--text)]"
                 >
                   <HiOutlineSquares2X2
                     size={18}
-                    className="text-[#0F766E] dark:text-[#14B8A6]"
+                    className="text-[var(--primary)]"
                   />
                   Dashboard
                 </Link>
@@ -366,7 +354,7 @@ export default function Navbar() {
                     setMobileOpen(false);
                     handleLogout();
                   }}
-                  className="flex items-center gap-3 px-4 py-2 text-left text-sm font-medium text-red-500"
+                  className="flex items-center gap-3 px-3 py-2 text-left text-xs sm:text-sm font-medium text-rose-500"
                 >
                   <HiOutlineArrowRightOnRectangle size={18} />
                   Logout

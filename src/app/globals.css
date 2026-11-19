@@ -7,48 +7,57 @@
   --bg: #EBF1F5;
   --card: #EBF1F5;
   --primary: #0F766E;        /* Deep Teal Green */
+  --primary-hover: #0D9488;  /* Lighter Teal */
   --primary-light: #99F6E4;  /* Soft Cyan/Teal Highlight */
   --text: #1E293B;           /* Dark Slate Blue */
-  --text-muted: #64748B;     /* Cool Gray */
-  --border: rgba(255, 255, 255, 0.8);
+  --text-muted: #64748B;     /* Cool Slate Gray */
+  --border: rgba(255, 255, 255, 0.7);
 
-  /* Minimal Light Shadows (Extremely Low Blur & Offset) */
-  --shadow-flat: 3px 3px 6px #d1d9e0, -3px -3px 6px #ffffff;
-  --shadow-hover: 5px 5px 10px #cad3dc, -5px -5px 10px #ffffff;
-  --shadow-pressed: inset 2px 2px 4px #d1d9e0, inset -2px -2px 4px #ffffff;
-  --glow-primary: 0px 2px 8px rgba(15, 118, 110, 0.2);
+  /* Precise Neumorphic Light Shadows */
+  --shadow-flat: 4px 4px 10px #c7d0d8, -4px -4px 10px #ffffff;
+  --shadow-hover: 6px 6px 14px #bdc7d0, -6px -6px 14px #ffffff;
+  --shadow-pressed: inset 2px 2px 5px #c7d0d8, inset -2px -2px 5px #ffffff;
+  --shadow-elevated: 8px 8px 22px #c7d0d8, -8px -8px 22px #ffffff;
+  --glow-primary: 0px 4px 14px rgba(15, 118, 110, 0.3);
 }
 
 [data-theme="dark"] {
-  /* Luxury Dark Theme - Minimal Glow & Soft Depth */
+  /* Luxury Dark Theme - Tactile Depth & Soft Glow */
   --bg: #0F141C;
   --card: #141B24;
   --primary: #14B8A6;        /* Vibrant Emerald/Teal */
+  --primary-hover: #0D9488;
   --primary-light: #0F766E;
   --text: #F8FAFC;           /* Bright White/Slate */
   --text-muted: #94A3B8;     /* Muted Silver */
-  --border: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.07);
 
-  /* Minimal Dark Shadows (Subtle, Clean Elevation) */
-  --shadow-flat: 4px 4px 8px #080b0f, -3px -3px 7px rgba(255, 255, 255, 0.02);
-  --shadow-hover: 6px 6px 12px #05070a, -4px -4px 9px rgba(255, 255, 255, 0.035);
+  /* Precise Neumorphic Dark Shadows */
+  --shadow-flat: 4px 4px 10px #080b0f, -3px -3px 8px rgba(255, 255, 255, 0.02);
+  --shadow-hover: 6px 6px 14px #05070a, -4px -4px 10px rgba(255, 255, 255, 0.035);
   --shadow-pressed: inset 2px 2px 5px #080b0f, inset -2px -2px 5px rgba(255, 255, 255, 0.02);
-  --glow-primary: 0px 3px 10px rgba(20, 184, 166, 0.25);
+  --shadow-elevated: 8px 8px 24px #05070a, -4px -4px 14px rgba(255, 255, 255, 0.025);
+  --glow-primary: 0px 4px 14px rgba(20, 184, 166, 0.35);
 }
 
 body {
   background-color: var(--bg);
   color: var(--text);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* Base Neumorphic Card Style (Reduced Blur & Elevation) */
+/* ========================================================
+   UNIFIED NEUMORPHIC DESIGN SYSTEM COMPONENTS
+   ======================================================== */
+
+/* 1. Base Neumorphic Card */
 .neu-card {
   background: var(--card);
   box-shadow: var(--shadow-flat);
   border-radius: 20px;
   border: 1px solid var(--border);
+  color: var(--text);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -57,19 +66,52 @@ body {
   transform: translateY(-1px);
 }
 
-/* Interactive Button Effects */
-.neu-button-primary {
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  color: #ffffff;
-  border-radius: 12px;
-  box-shadow: var(--glow-primary);
+/* 2. Inset / Recessed Card Area (Prompt Viewport, Code Area, Sinks) */
+.neu-card-inset {
+  background: var(--card);
+  box-shadow: var(--shadow-pressed);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+/* 3. Soft Pill Badge (Tags, Categories, Filters) */
+.neu-badge {
+  background: var(--card);
+  box-shadow: var(--shadow-flat);
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  color: var(--primary);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.neu-badge:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-0.5px);
+}
+
+/* 4. Primary Brand Button */
+.neu-button-primary {
+  background-color: var(--primary);
+  color: #ffffff;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  box-shadow: var(--glow-primary);
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 .neu-button-primary:hover {
-  opacity: 0.95;
+  background-color: var(--primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0px 4px 12px rgba(20, 184, 166, 0.35);
+  box-shadow: 0px 6px 18px rgba(15, 118, 110, 0.4);
 }
 
 .neu-button-primary:active {
@@ -77,17 +119,95 @@ body {
   box-shadow: var(--shadow-pressed);
 }
 
-/* Input Fields */
+/* 5. Secondary Neumorphic Soft Button */
+.neu-button-secondary {
+  background: var(--card);
+  color: var(--text);
+  box-shadow: var(--shadow-flat);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.neu-button-secondary:hover {
+  color: var(--primary);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+.neu-button-secondary:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-pressed);
+}
+
+/* 6. Danger / Warning Button */
+.neu-button-danger {
+  background-color: #E11D48;
+  color: #ffffff;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  box-shadow: 0px 4px 12px rgba(225, 29, 72, 0.3);
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.neu-button-danger:hover {
+  background-color: #BE123C;
+  transform: translateY(-1px);
+  box-shadow: 0px 6px 16px rgba(225, 29, 72, 0.4);
+}
+
+.neu-button-danger:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-pressed);
+}
+
+/* 7. Icon Action Button (Round / Squircle) */
+.neu-icon-button {
+  background: var(--card);
+  color: var(--text-muted);
+  box-shadow: var(--shadow-flat);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.neu-icon-button:hover {
+  color: var(--primary);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+.neu-icon-button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-pressed);
+}
+
+/* 8. Unified Input Fields (Inputs, Selects, Textareas) */
 .neu-input {
   background: var(--card);
   box-shadow: var(--shadow-pressed);
   border-radius: 14px;
   border: 1px solid var(--border);
   color: var(--text);
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .neu-input:focus {
   outline: none;
   border-color: var(--primary);
+  box-shadow: var(--shadow-pressed), 0 0 0 1px var(--primary);
 }

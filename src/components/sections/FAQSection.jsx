@@ -35,11 +35,11 @@ function FAQVisual() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="absolute -left-2 -top-2 h-40 w-40 rounded-2xl opacity-40 dark:opacity-20"
+        className="absolute -left-2 -top-2 h-40 w-40 rounded-2xl opacity-30 dark:opacity-10 pointer-events-none"
         style={{
           backgroundImage: "radial-gradient(currentColor 1.5px, transparent 1.5px)",
           backgroundSize: "14px 14px",
-          color: "#0F766E",
+          color: "var(--primary)",
         }}
       />
 
@@ -48,7 +48,7 @@ function FAQVisual() {
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.7 }}
-        className="absolute inset-6 rounded-[2rem] bg-[#0F766E]/15 dark:bg-[#14B8A6]/10 blur-3xl"
+        className="absolute inset-6 rounded-[2rem] bg-[var(--primary)]/10 blur-3xl"
       />
 
       <motion.div
@@ -56,47 +56,36 @@ function FAQVisual() {
         whileInView={{ opacity: 1, y: 0, rotate: -2 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="absolute inset-4 overflow-hidden rounded-[1.75rem] bg-[#EBF1F5] dark:bg-[#141B24] p-6 shadow-[4px_4px_16px_#d1d9e0,-4px_-4px_16px_#ffffff] dark:shadow-[4px_4px_16px_#080b0f,-3px_-3px_12px_rgba(255,255,255,0.01)] border border-white/40 dark:border-white/[0.05] flex flex-col justify-between"
+        className="absolute inset-4 overflow-hidden rounded-[1.75rem] neu-card p-6 flex flex-col justify-between"
       >
         <div>
-          <div className="flex items-center justify-between pb-4 border-b border-slate-300/40 dark:border-slate-800">
+          <div className="flex items-center justify-between pb-4 border-b border-[var(--border)]">
             <div className="flex items-center gap-2">
               <span className="h-3 w-3 rounded-full bg-rose-500/80 inline-block" />
               <span className="h-3 w-3 rounded-full bg-amber-500/80 inline-block" />
               <span className="h-3 w-3 rounded-full bg-emerald-500/80 inline-block" />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-[#0F766E] dark:text-[#14B8A6]">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--primary)]">
               PromptVerse OS
             </span>
           </div>
 
-          <div className="mt-6 space-y-3">
-            <div className="flex items-center gap-2 text-[#0F766E] dark:text-[#14B8A6]">
-              <HiCodeBracket size={18} />
-              <span className="text-xs font-bold tracking-wider">AI_OPTIMIZER.prpt</span>
+          <div className="mt-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono text-[var(--primary)]">Prompt::</span>
+              <span className="text-xs font-mono text-[var(--text-muted)]">optimize_workflow()</span>
             </div>
-            <div className="rounded-xl bg-white/60 dark:bg-[#0F141C]/60 p-4 font-mono text-xs text-[#1E293B] dark:text-slate-300 shadow-inner">
-              <p className="text-emerald-600 dark:text-emerald-400">&gt; System.init(&#123; mode: "creative" &#125;)</p>
-              <p className="mt-2 text-slate-500 dark:text-slate-400">// Generating context-aware responses...</p>
-              <motion.div
-                animate={{ opacity: [0.3, 1, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="mt-3 h-2 w-3/4 rounded bg-[#0F766E]/30 dark:bg-[#14B8A6]/30"
-              />
-              <motion.div
-                animate={{ opacity: [1, 0.3, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="mt-2 h-2 w-1/2 rounded bg-[#0F766E]/20 dark:bg-[#14B8A6]/20"
-              />
+            <div className="neu-card-inset p-3 text-xs font-mono text-[var(--text-muted)] leading-relaxed">
+              <p>› Models: Claude 3.5, GPT-4o</p>
+              <p>› Speed: Instant Execution</p>
+              <p>› Token Optimization: +42%</p>
             </div>
           </div>
         </div>
 
-        <div className="rounded-xl bg-white/40 dark:bg-[#0F141C]/40 p-3 flex items-center justify-between">
-          <span className="text-xs font-semibold text-[#64748B] dark:text-slate-400">Status</span>
-          <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" /> Live & Ready
-          </span>
+        <div className="pt-4 border-t border-[var(--border)] flex items-center justify-between">
+          <span className="text-[11px] font-bold text-[var(--text)]">Status: Verified</span>
+          <span className="text-[11px] font-mono text-[var(--primary)]">Ready to use</span>
         </div>
       </motion.div>
 
@@ -108,14 +97,14 @@ function FAQVisual() {
           x: { duration: 0.5, delay: 0.3 },
           y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
         }}
-        className="absolute -right-2 top-10 flex items-center gap-2 rounded-2xl bg-[#EBF1F5] dark:bg-[#141B24] px-4 py-2.5 shadow-[3px_3px_10px_#d1d9e0,-3px_-3px_10px_#ffffff] dark:shadow-[3px_3px_10px_#080b0f,-3px_-3px_8px_rgba(255,255,255,0.01)] border border-white/50 dark:border-white/[0.05]"
+        className="absolute -right-2 top-10 flex items-center gap-2 rounded-2xl neu-card px-4 py-2.5"
       >
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0F766E]/10 dark:bg-[#14B8A6]/15 text-[#0F766E] dark:text-[#14B8A6]">
+        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--primary)]/15 text-[var(--primary)]">
           <HiOutlineSparkles size={14} />
         </div>
         <div>
-          <p className="text-xs font-extrabold text-[#1E293B] dark:text-[#F8FAFC]">4.9 / 5</p>
-          <p className="text-[9px] font-semibold text-[#64748B] dark:text-[#94A3B8]">Avg. rating</p>
+          <p className="text-xs font-extrabold text-[var(--text)]">4.9 / 5</p>
+          <p className="text-[9px] font-semibold text-[var(--text-muted)]">Avg. rating</p>
         </div>
       </motion.div>
 
@@ -127,14 +116,14 @@ function FAQVisual() {
           x: { duration: 0.5, delay: 0.45 },
           y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
         }}
-        className="absolute -left-4 bottom-10 flex items-center gap-2 rounded-2xl bg-[#EBF1F5] dark:bg-[#141B24] px-4 py-2.5 shadow-[3px_3px_10px_#d1d9e0,-3px_-3px_10px_#ffffff] dark:shadow-[3px_3px_10px_#080b0f,-3px_-3px_8px_rgba(255,255,255,0.01)] border border-white/50 dark:border-white/[0.05]"
+        className="absolute -left-4 bottom-10 flex items-center gap-2 rounded-2xl neu-card px-4 py-2.5"
       >
-        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0F766E]/10 dark:bg-[#14B8A6]/15 text-[#0F766E] dark:text-[#14B8A6]">
+        <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--primary)]/15 text-[var(--primary)]">
           <HiOutlineUserGroup size={14} />
         </div>
         <div>
-          <p className="text-xs font-extrabold text-[#1E293B] dark:text-[#F8FAFC]">12,500+</p>
-          <p className="text-[9px] font-semibold text-[#64748B] dark:text-[#94A3B8]">Happy users</p>
+          <p className="text-xs font-extrabold text-[var(--text)]">12,500+</p>
+          <p className="text-[9px] font-semibold text-[var(--text-muted)]">Happy users</p>
         </div>
       </motion.div>
     </div>
@@ -145,9 +134,8 @@ export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <section className="relative overflow-hidden bg-[#EBF1F5] dark:bg-[#0F141C] py-20 lg:py-28 transition-colors duration-300">
-      {/* Updated to max-w-7xl to match Featured Prompts */}
-      <div className="relative mx-auto max-w-7xl px-6 z-10">
+    <section id="faq" className="relative overflow-hidden bg-[var(--bg)] py-20 lg:py-28 transition-colors duration-300">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 z-10">
         
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -155,15 +143,15 @@ export default function FAQSection() {
           viewport={{ once: true }}
           className="mb-14 flex flex-col items-center text-center"
         >
-          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-[#EBF1F5] dark:bg-[#141B24] px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[#0F766E] dark:text-[#14B8A6] shadow-[2px_2px_5px_#d1d9e0,-2px_-2px_5px_#ffffff] dark:shadow-[2px_2px_5px_#080b0f,-2px_-2px_5px_rgba(255,255,255,0.03)] border border-white/50 dark:border-white/[0.06]">
+          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-[0.15em] text-[var(--primary)] neu-badge">
             FAQ
           </span>
 
-          <h2 className="text-3xl font-extrabold tracking-tight text-[#1E293B] dark:text-[#F8FAFC] sm:text-4xl leading-tight">
+          <h2 className="text-3xl font-extrabold tracking-tight text-[var(--text)] sm:text-4xl leading-tight">
             Got Questions?
           </h2>
 
-          <p className="mt-4 max-w-md text-sm sm:text-base leading-relaxed text-[#64748B] dark:text-[#94A3B8] font-medium">
+          <p className="mt-4 max-w-md text-sm sm:text-base leading-relaxed text-[var(--text-muted)] font-medium">
             Everything you need to know before you dive in.
           </p>
         </motion.div>
@@ -185,20 +173,20 @@ export default function FAQSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.06, duration: 0.4 }}
-                    className="overflow-hidden rounded-2xl bg-[#EBF1F5] dark:bg-[#141B24] shadow-[4px_4px_10px_#d1d9e0,-4px_-4px_10px_#ffffff] dark:shadow-[4px_4px_10px_#080b0f,-3px_-3px_9px_rgba(255,255,255,0.02)] border border-white/40 dark:border-white/[0.06]"
+                    className="overflow-hidden rounded-2xl neu-card"
                   >
                     <button
                       type="button"
                       onClick={() => setOpenIndex(isOpen ? -1 : i)}
                       aria-expanded={isOpen}
-                      className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
+                      className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left cursor-pointer"
                     >
-                      <span className="text-sm sm:text-base font-bold text-[#1E293B] dark:text-[#F8FAFC]">
+                      <span className="text-sm sm:text-base font-bold text-[var(--text)]">
                         {item.q}
                       </span>
                       <HiChevronDown
                         size={20}
-                        className={`shrink-0 text-[#0F766E] dark:text-[#14B8A6] transition-transform duration-300 ${
+                        className={`shrink-0 text-[var(--primary)] transition-transform duration-300 ${
                           isOpen ? "rotate-180" : ""
                         }`}
                       />
@@ -212,7 +200,7 @@ export default function FAQSection() {
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.25, ease: "easeInOut" }}
                         >
-                          <p className="px-6 pb-5 text-xs sm:text-sm font-medium leading-relaxed text-[#64748B] dark:text-[#94A3B8]">
+                          <p className="px-6 pb-5 text-xs sm:text-sm font-medium leading-relaxed text-[var(--text-muted)]">
                             {item.a}
                           </p>
                         </motion.div>
