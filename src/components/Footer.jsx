@@ -44,13 +44,13 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-[var(--card)] text-[var(--text-muted)] font-sans text-sm pt-16 pb-8 px-6 sm:px-12 lg:px-24 border-t border-[var(--border)] transition-colors duration-300">
-      <div className="max-w-7xl mx-auto">
+    <footer className="bg-[var(--card)] text-[var(--text-muted)] font-sans text-sm pt-16 pb-8 border-t border-[var(--border)] transition-colors duration-300">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
         {/* Main Grid Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
           {/* Logo & Description Column */}
           <div className="lg:col-span-1 space-y-4">
-            <Link href="/" className="group flex items-center gap-3 shrink-0">
+            <Link href="/" className="group flex items-center gap-2.5 shrink-0">
               <div className="w-9 h-9 rounded-xl neu-card flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
                 <svg
                   className="w-5 h-5 text-[var(--primary)] drop-shadow-sm"
@@ -71,10 +71,9 @@ export default function Footer() {
                   />
                 </svg>
               </div>
-              <h1 className="text-lg font-black tracking-tight flex items-center">
-                <span className="text-[var(--text)]">Prompt</span>
-                <span className="text-[var(--primary)] ml-[1px]">Verse</span>
-              </h1>
+              <span className="text-lg font-black tracking-tight text-[var(--text)]">
+                Prompt<span className="text-[var(--primary)]">Verse</span>
+              </span>
             </Link>
 
             <p className="text-[var(--text-muted)] text-xs sm:text-sm max-w-xs leading-relaxed font-medium">
