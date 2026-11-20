@@ -9,6 +9,7 @@ import {
   RiShieldLine,
   RiTeamLine,
   RiBankCardLine,
+  RiMegaphoneLine,
 } from "react-icons/ri";
 
 export const sidebarLinks = {
@@ -96,6 +97,11 @@ export const sidebarLinks = {
       label: "Reported Prompts",
       href: "/dashboard/admin/reported-prompts",
       icon: RiShieldLine,
+    },
+    {
+      label: "Broadcast Notices",
+      href: "/dashboard/admin/notices",
+      icon: RiMegaphoneLine,
     },
     {
       label: "Profile",

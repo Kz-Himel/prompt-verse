@@ -1,5 +1,6 @@
 import "@/app/globals.css";
 import Navbar from "@/components/Navbar";
+import UrgentAnnouncementBanner from "@/components/UrgentAnnouncementBanner";
 import Footer from "@/components/Footer";
 import Toaster from "@/components/Toaster";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -31,6 +32,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className="min-h-full flex flex-col bg-[#EBF1F5] text-[#1E293B] dark:bg-[#151C24] dark:text-[#F1F5F9] transition-colors duration-300">
         <ThemeProvider>
+          <UrgentAnnouncementBanner />
           <Navbar />
           <main className="relative min-h-screen bg-[#EBF1F5] dark:bg-[#151C24] overflow-hidden">
             {children}

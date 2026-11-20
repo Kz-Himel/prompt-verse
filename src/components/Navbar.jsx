@@ -18,6 +18,7 @@ import {
 } from "react-icons/hi2";
 import { useSession, signOut } from "@/lib/auth-client";
 import { useTheme } from "@/contexts/ThemeContext";
+import NotificationCenter from "@/components/NotificationCenter";
 
 function UserAvatar({ src, name, size = "sm" }) {
   const [imgError, setImgError] = useState(false);
@@ -201,15 +202,8 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* Notifications Button */}
-          <button
-            type="button"
-            aria-label="Notifications"
-            className="neu-icon-button w-9 h-9 rounded-full relative cursor-pointer"
-          >
-            <HiOutlineBell size={18} />
-            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[var(--primary)]" />
-          </button>
+          {/* Dynamic Notifications Center */}
+          <NotificationCenter />
 
           {/* Loading Skeleton */}
           {(!mounted || isPending) && (
@@ -348,6 +342,8 @@ export default function Navbar() {
               <HiOutlineMoon size={18} className="text-slate-600" />
             )}
           </button>
+
+          <NotificationCenter />
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
